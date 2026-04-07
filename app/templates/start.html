@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% set active = 'start' %}
+{% block title %}Bořen – Start{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>▲ Startovní čára</h2>
+  <p style="color:#555; font-size:0.9rem; margin-bottom:20px;">
+    Zadej své jméno a stiskni tlačítko. Časomíra se spustí okamžitě.
+  </p>
+  <form id="startForm">
+    <label for="name">Tvoje jméno</label>
+    <input type="text" id="name" name="name" placeholder="Např. Jan Novák" maxlength="80" autocomplete="off" autofocus>
+    <p class="error" id="error"></p>
+    <button type="submit" class="btn btn-green" id="submitBtn">▲ Začít výstup</button>
+  </form>
+</div>
+
+<div class="card" id="activeClimb" style="display:none; text-align:center;">
+  <p style="font-size:0.9rem; color:#555; margin-bottom:4px;">Výstup probíhá pro</p>
+  <p id="activeName" style="font-size:1.3rem; font-weight:700; color:#2d6a2d;"></p>
+  <p style="font-size:0.85rem; color:#888; margin-top:8px;">Naskenuj QR kód na vrcholu až dorazíš! 🏁</p>
+  <button class="btn" id="cancelBtn" style="background:#e0e0e0; color:#333; margin-top:16px; font-size:0.9rem;">Zrušit výstup</button>
+</div>
+
+<script>
+  const STORAGE_KEY = 'boren_climb';
+
+  function showActive(data) {
+    document.getElementById('startForm').parentElement.style.display = 'none';
+    const box = document.getElementById('activeClimb');
+    box.style.display = 'block';
+    document.getElementById('activeName').textContent = data.name;
+  }
+
+  // Check if climb already in progress
+  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+  if (existing && existing.climb_id) {
+    showActive(existing);
+  }
+
+  document.getElementById('cancelBtn').addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  });
+
+  document.getElementById('startForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const err  = document.getElementById('error');
+    const btn  = document.getElementById('submitBtn');
+
+    if (!name) {
+      err.textContent = 'Zadej prosím své jméno.';
+      err.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Spouštím…';
+    err.style.display = 'none';
+
+    const body = new FormData();
+    body.append('name', name);
+
+    try {
+      const res = await fetch('/api/start', { method: 'POST', body });
+      if (!res.ok) {
+        const data = await res.json();
+        err.textContent = data.detail || 'Chyba serveru.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '▲ Začít výstup';
+        return;
+      }
+      const data = await res.json();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      showActive(data);
+    } catch {
+      err.textContent = 'Nepodařilo se spojit se serverem.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '▲ Začít výstup';
+    }
+  });
+</script>
+{% endblock %}

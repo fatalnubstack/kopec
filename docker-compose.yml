@@ -1,0 +1,15 @@
+services:
+  boren:
+    build: .
+    container_name: boren-tracker
+    ports:
+      - "8090:8090"
+    volumes:
+      - boren_data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:////app/data/boren.db
+      - ADMIN_PASSWORD=boren2024   # změň před deployem!
+    restart: unless-stopped
+
+volumes:
+  boren_data:

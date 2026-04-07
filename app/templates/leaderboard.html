@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% set active = 'leaderboard' %}
+{% block title %}Bořen – Žebříček{% endblock %}
+{% block content %}
+
+<div class="card">
+  <h2>🏆 Žebříček</h2>
+
+  <div class="tabs" id="periodTabs">
+    <button class="tab active" data-days="">Všechny časy</button>
+    <button class="tab" data-days="30">30 dní</button>
+    <button class="tab" data-days="90">90 dní</button>
+    <button class="tab" data-days="180">180 dní</button>
+    <button class="tab" data-days="365">1 rok</button>
+  </div>
+
+  <!-- Nejrychlejší -->
+  <h3>⚡ Nejrychlejší výstup</h3>
+  <div id="fastestWrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Jméno</th><th>Čas</th><th>Datum</th></tr>
+      </thead>
+      <tbody id="fastestBody"></tbody>
+    </table>
+    <p id="fastestEmpty" class="info" style="display:none; margin:12px 0;">Žádné záznamy.</p>
+  </div>
+
+  <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
+
+  <!-- Nejvíce výstupů -->
+  <h3>🔁 Nejvíce výstupů</h3>
+  <div id="mostWrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Jméno</th><th>Výstupů</th><th>Nejlepší čas</th></tr>
+      </thead>
+      <tbody id="mostBody"></tbody>
+    </table>
+    <p id="mostEmpty" class="info" style="display:none; margin:12px 0;">Žádné záznamy.</p>
+  </div>
+</div>
+
+<script>
+  let currentDays = null;
+
+  async function loadLeaderboard(days) {
+    currentDays = days;
+    const url = days ? `/api/leaderboard?days=${days}` : '/api/leaderboard';
+    try {
+      const res  = await fetch(url);
+      const data = await res.json();
+      renderFastest(data.fastest);
+      renderMost(data.most);
+    } catch {
+      // silent fail
+    }
+  }
+
+  function renderFastest(rows) {
+    const tbody = document.getElementById('fastestBody');
+    const empty = document.getElementById('fastestEmpty');
+    tbody.innerHTML = '';
+    if (!rows.length) { empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="rank">${r.rank}</td><td>${esc(r.name)}</td><td><strong>${esc(r.duration_fmt)}</strong></td><td>${esc(r.date)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderMost(rows) {
+    const tbody = document.getElementById('mostBody');
+    const empty = document.getElementById('mostEmpty');
+    tbody.innerHTML = '';
+    if (!rows.length) { empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="rank">${r.rank}</td><td>${esc(r.name)}</td><td><strong>${r.total}×</strong></td><td>${esc(r.best_fmt)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  document.getElementById('periodTabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab');
+    if (!btn) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const days = btn.dataset.days ? parseInt(btn.dataset.days) : null;
+    loadLeaderboard(days);
+  });
+
+  loadLeaderboard(null);
+</script>
+{% endblock %}

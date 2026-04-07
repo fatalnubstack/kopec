@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% set active = 'finish' %}
+{% block title %}Bořen – Cíl{% endblock %}
+{% block content %}
+
+<!-- Stav: žádný aktivní výstup -->
+<div id="noClimb" class="card" style="text-align:center; display:none;">
+  <div style="font-size:2.5rem; margin-bottom:12px;">🤔</div>
+  <h2>Nemáš spuštěný výstup</h2>
+  <p style="color:#555; font-size:0.9rem; margin:12px 0 20px;">
+    Nejdřív naskenuj QR kód u paty kopce a zadej jméno.
+  </p>
+  <a href="/start" class="btn btn-green" style="text-decoration:none; text-align:center; display:block;">▲ Jít na start</a>
+</div>
+
+<!-- Stav: nahrávám výsledek -->
+<div id="loading" class="card" style="text-align:center; display:none;">
+  <div style="font-size:2rem; margin-bottom:12px;"><span class="spinner" style="border-color:rgba(45,106,45,.3); border-top-color:#2d6a2d;"></span></div>
+  <p style="color:#555;">Ukládám výsledek…</p>
+</div>
+
+<!-- Stav: výsledek -->
+<div id="result" class="card" style="text-align:center; display:none;">
+  <div style="font-size:2rem; margin-bottom:4px;">🏁</div>
+  <p style="font-size:0.9rem; color:#555;">Výstup dokončen!</p>
+  <p id="resultName" style="font-size:1.4rem; font-weight:700; margin: 6px 0;"></p>
+  <div class="big-time" id="resultTime"></div>
+  <p id="resultRank" class="info"></p>
+  <div style="margin-top:20px; display:flex; gap:10px;">
+    <a href="/leaderboard" class="btn btn-blue" style="text-decoration:none; text-align:center; flex:1;">🏆 Žebříček</a>
+    <a href="/start" class="btn btn-green" style="text-decoration:none; text-align:center; flex:1;">▲ Znovu</a>
+  </div>
+</div>
+
+<!-- Stav: chyba -->
+<div id="errorBox" class="card" style="text-align:center; display:none;">
+  <div style="font-size:2rem; margin-bottom:8px;">⚠️</div>
+  <p id="errorMsg" style="color:#c0392b;"></p>
+  <a href="/start" class="btn btn-green" style="text-decoration:none; text-align:center; display:block; margin-top:14px;">▲ Zkusit znovu</a>
+</div>
+
+<script>
+  const STORAGE_KEY = 'boren_climb';
+
+  function show(id) {
+    ['noClimb','loading','result','errorBox'].forEach(s => {
+      document.getElementById(s).style.display = s === id ? 'block' : 'none';
+    });
+  }
+
+  async function finish() {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (!data || !data.climb_id) {
+      show('noClimb');
+      return;
+    }
+
+    show('loading');
+
+    const body = new FormData();
+    body.append('climb_id', data.climb_id);
+
+    try {
+      const res = await fetch('/api/finish', { method: 'POST', body });
+      const result = await res.json();
+
+      if (!res.ok) {
+        document.getElementById('errorMsg').textContent = result.detail || 'Chyba serveru.';
+        show('errorBox');
+        return;
+      }
+
+      localStorage.removeItem(STORAGE_KEY);
+
+      document.getElementById('resultName').textContent = result.name;
+      document.getElementById('resultTime').textContent = result.duration_fmt;
+      if (result.rank) {
+        document.getElementById('resultRank').textContent = `Tvoje pořadí (all-time): ${result.rank}. místo`;
+      }
+      show('result');
+
+    } catch {
+      document.getElementById('errorMsg').textContent = 'Nepodařilo se spojit se serverem. Zkus to znovu.';
+      show('errorBox');
+    }
+  }
+
+  finish();
+</script>
+{% endblock %}
