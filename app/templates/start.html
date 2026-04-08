@@ -146,7 +146,6 @@
     try {
       const res = await fetch('/api/finish', { method: 'POST', body });
       if (res.ok) {
-        localStorage.removeItem(STORAGE_KEY);
         window.location.href = '/finish';
       } else {
         alert('Nepodařilo se uložit výstup. Zkus naskenovat QR kód.');
