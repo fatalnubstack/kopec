@@ -27,8 +27,14 @@ for stmt in [
     except Exception:
         pass
 
-# Upload adresář
-DATA_DIR = os.getenv("DATA_DIR", "app/data")
+# Upload adresář — odvozený ze stejného místa jako SQLite databáze (= Railway volume)
+_db_url = os.getenv("DATABASE_URL", "sqlite:///./data/boren.db")
+if _db_url.startswith("sqlite:///"):
+    _db_path = _db_url.replace("sqlite:///", "")
+    DATA_DIR = os.path.dirname(os.path.abspath(_db_path))
+else:
+    DATA_DIR = os.getenv("DATA_DIR", "app/data")
+
 UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
