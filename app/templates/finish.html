@@ -70,6 +70,21 @@
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (!data || !data.climb_id) { show('noClimb'); return; }
 
+    // Kontrola příliš krátkého času (pod 10 minut)
+    if (data.start_time) {
+      const elapsed = (Date.now() - new Date(data.start_time).getTime()) / 1000;
+      if (elapsed < 600) {
+        const ok = confirm(
+          'Ty si teda rychlík! 😮\n\nOpravdu jsi nahoře na vrcholu, nebo ses ukliknul?\n\n' +
+          'Potvrď jen pokud jsi opravdu na Bořenu.'
+        );
+        if (!ok) {
+          window.location.href = '/start';
+          return;
+        }
+      }
+    }
+
     show('loading');
     const body = new FormData();
     body.append('climb_id', data.climb_id);
