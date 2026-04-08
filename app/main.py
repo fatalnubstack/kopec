@@ -101,6 +101,16 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+@app.get("/preview-siluety", response_class=HTMLResponse)
+async def preview_siluety(request: Request):
+    return templates.TemplateResponse("preview_siluety.html", {"request": request})
+
+
+@app.get("/preview-pocasi", response_class=HTMLResponse)
+async def preview_pocasi(request: Request):
+    return templates.TemplateResponse("preview_pocasi.html", {"request": request})
+
+
 @app.get("/start", response_class=HTMLResponse)
 async def start_page(request: Request):
     return templates.TemplateResponse("start.html", {"request": request})

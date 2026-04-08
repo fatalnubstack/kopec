@@ -24,19 +24,22 @@
 
 <!-- Výsledek -->
 <div id="result" style="display:none;">
-  <div style="position:relative; height:220px; overflow:hidden; border-radius:0 0 24px 24px;">
-    <img src="/static/boren.jpg" alt="Bořen" style="width:100%; height:100%; object-fit:cover; object-position:center 30%;">
-    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(17,26,17,0.3), rgba(17,26,17,0.9));"></div>
+  <!-- Fotka z vrcholu -->
+  <div style="position:relative; height:240px; overflow:hidden; border-radius:0 0 24px 24px;">
+    <img src="/static/vrchol.png" alt="Vrchol Bořenu 539m"
+         style="width:100%; height:100%; object-fit:cover; object-position:center 35%;">
+    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(17,26,17,0.92) 100%);"></div>
     <div style="position:absolute; bottom:20px; left:0; right:0; text-align:center;">
-      <p style="font-size:0.8rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.1em;">Vrchol zdolán!</p>
-      <p id="resultName" style="font-size:1.5rem; font-weight:800; color:#fff; margin-top:4px;"></p>
+      <p style="font-size:0.75rem; color:rgba(255,255,255,0.55); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">🥾 Vrchol zdolán!</p>
+      <p id="resultName" style="font-size:1.5rem; font-weight:800; color:#fff;"></p>
     </div>
   </div>
 
+  <!-- Čas -->
   <div class="card" style="text-align:center; padding:28px 20px;">
-    <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Čas výstupu</p>
+    <p style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Čas výstupu</p>
     <div class="big-time" id="resultTime"></div>
-    <p id="resultRank" class="info gold" style="margin-top:10px; font-weight:600;"></p>
+    <p id="resultRank" class="info" style="margin-top:10px; font-weight:600; color:var(--gold);"></p>
   </div>
 
   <div style="margin: 0 16px; display:flex; gap:10px;">

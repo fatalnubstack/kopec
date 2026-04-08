@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Návrhy siluety Bořenu</title>
+  <style>
+    body { background: #0a0f0a; color: #f0ede8; font-family: -apple-system, sans-serif; padding: 20px; }
+    h1 { margin-bottom: 6px; font-size: 1.3rem; }
+    p.sub { color: #8a9e85; font-size: 0.85rem; margin-bottom: 24px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 860px; }
+    @media(max-width:600px) { .grid { grid-template-columns: 1fr; } }
+    .variant { background: #111a11; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.07); }
+    .variant h2 { padding: 12px 16px 0; font-size: 0.95rem; color: #5a8a3a; }
+    .variant p  { padding: 4px 16px 12px; font-size: 0.78rem; color: #6a7e65; margin: 0; }
+    svg { width: 100%; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Návrhy siluety Bořenu</h1>
+  <p class="sub">Varianty C1–C4 — všechny ve stylu vrstvené krajiny. Řekni co se ti líbí.</p>
+
+  <div class="grid">
+
+    <!-- C1: Skalnatý Bořen — přesnější silueta z Bíliny -->
+    <div class="variant">
+      <h2>C1 — Skalnatý vrchol (věrný)</h2>
+      <p>Dle fotky z Bíliny — členité skalní vrcholy</p>
+      <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skC1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d1520"/>
+            <stop offset="60%" stop-color="#1a3550"/>
+            <stop offset="100%" stop-color="#2a5570"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="220" fill="url(#skC1)"/>
+        <!-- Vzdálené kopce -->
+        <path d="M0,220 L0,145 Q60,133 120,135 Q180,137 200,132 Q220,137 280,135 Q340,133 400,140 L400,220 Z" fill="#1e2e28" opacity="0.5"/>
+        <!-- Střední kopce -->
+        <path d="M0,220 L0,165 Q50,158 100,162 Q140,166 165,158 Q185,152 200,162 Q215,152 235,158 Q270,166 320,160 Q360,155 400,162 L400,220 Z" fill="#162012" opacity="0.7"/>
+
+        <!-- Bořen — skalnatý, členitý tvar -->
+        <path d="
+          M0,220 L0,195
+          Q25,192 50,188
+          Q72,184 90,178
+          Q105,173 116,165
+          Q124,158 130,150
+          Q135,143 139,136
+          Q142,130 145,124
+          Q148,119 151,115
+          Q154,111 157,108
+          Q160,105 163,103
+          Q166,101 169,103
+          Q171,105 172,108
+          Q174,105 176,101
+          Q178,97 181,94
+          Q184,91 187,88
+          Q189,86 191,88
+          Q193,91 194,94
+          Q195,97 196,93
+          Q197,89 200,86
+          Q202,83 205,86
+          Q207,89 208,93
+          Q209,96 210,93
+          Q211,89 214,86
+          Q216,83 219,86
+          Q222,89 223,93
+          Q225,97 227,101
+          Q229,105 231,109
+          Q234,113 237,118
+          Q240,124 243,131
+          Q247,140 252,150
+          Q258,161 265,170
+          Q272,178 280,184
+          Q288,188 292,183
+          Q296,177 300,182
+          Q304,187 308,191
+          Q318,198 338,206
+          Q362,212 390,215
+          L400,216 L400,220 Z"
+          fill="#0f1a0f"/>
+        <!-- Les vpředu -->
+        <path d="M0,220 L0,208 Q18,200 36,210 Q52,218 70,207 Q86,197 104,210 Q120,221 140,208 Q157,197 176,211 Q194,223 214,208 Q232,196 252,210 Q270,222 290,208 Q308,197 328,211 Q346,222 368,208 Q384,198 400,208 L400,220 Z" fill="#080d08"/>
+      </svg>
+    </div>
+
+    <!-- C2: Stylizovaná skalnatá silueta — trochu zjednodušená -->
+    <div class="variant">
+      <h2>C2 — Stylizovaná skála</h2>
+      <p>Rozpoznatelný tvar, trochu grafičtější</p>
+      <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skC2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a1020"/>
+            <stop offset="60%" stop-color="#2a2040"/>
+            <stop offset="100%" stop-color="#4a3a60"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="220" fill="url(#skC2)"/>
+        <path d="M0,220 L0,145 Q100,132 200,135 Q300,132 400,140 L400,220 Z" fill="#251828" opacity="0.5"/>
+        <path d="M0,220 L0,168 Q80,160 140,164 Q175,158 200,165 Q225,158 260,164 Q320,160 400,165 L400,220 Z" fill="#1a1020" opacity="0.7"/>
+
+        <!-- Bořen — stylizovaný, čistší hrany -->
+        <path d="
+          M20,220 L20,198
+          Q55,192 85,184
+          Q110,176 128,165
+          Q140,156 148,145
+          Q154,136 158,127
+          Q161,120 164,114
+          Q167,109 170,106
+          Q173,103 175,106
+          Q177,109 178,106
+          Q180,102 183,97
+          Q186,92 190,89
+          Q193,86 196,89
+          Q198,92 199,96
+          Q200,92 202,88
+          Q205,84 208,88
+          Q211,93 212,97
+          Q213,93 215,89
+          Q218,85 221,88
+          Q224,92 226,98
+          Q229,106 232,114
+          Q236,124 241,135
+          Q247,148 255,160
+          Q264,172 274,180
+          Q282,186 286,181
+          Q290,175 295,180
+          Q300,186 306,192
+          Q320,202 348,210
+          Q372,215 400,217
+          L400,220 Z"
+          fill="#150d20"/>
+        <path d="M0,220 L0,210 Q30,202 55,212 Q75,220 100,209 Q122,199 148,212 Q170,223 195,210 Q218,198 244,212 Q268,224 295,210 Q318,198 345,212 Q368,222 400,210 L400,220 Z" fill="#0d0810"/>
+      </svg>
+    </div>
+
+    <!-- C3: Podobné C ale s vrstvami a ranním světlem -->
+    <div class="variant">
+      <h2>C3 — Ranní světlo</h2>
+      <p>Teplé nebe, silueta Bořenu v popředí</p>
+      <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skC3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a0a10"/>
+            <stop offset="40%" stop-color="#8a3020"/>
+            <stop offset="100%" stop-color="#c87040"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="220" fill="url(#skC3)"/>
+        <path d="M0,220 L0,148 Q80,138 160,140 Q240,142 320,140 Q360,139 400,142 L400,220 Z" fill="#2a1810" opacity="0.6"/>
+        <path d="M0,220 L0,165 Q60,158 120,162 Q165,155 200,163 Q235,155 280,162 Q340,158 400,162 L400,220 Z" fill="#1a1008" opacity="0.8"/>
+
+        <path d="
+          M0,220 L0,192
+          Q30,188 58,182
+          Q82,176 100,167
+          Q114,158 122,147
+          Q128,138 133,129
+          Q137,121 141,114
+          Q145,108 149,103
+          Q152,98 155,95
+          Q158,92 161,95
+          Q163,98 164,102
+          Q166,98 168,93
+          Q171,88 175,84
+          Q178,80 182,84
+          Q185,88 186,93
+          Q187,88 190,83
+          Q193,78 197,82
+          Q200,86 201,91
+          Q202,86 205,81
+          Q208,76 212,80
+          Q215,85 216,90
+          Q218,85 220,81
+          Q223,77 226,80
+          Q229,84 231,90
+          Q234,98 238,108
+          Q243,120 249,132
+          Q256,146 264,157
+          Q273,168 282,175
+          Q289,181 293,175
+          Q297,169 302,175
+          Q307,181 315,188
+          Q330,198 358,208
+          L400,212 L400,220 Z"
+          fill="#120c08"/>
+        <path d="M0,220 L0,210 Q25,201 48,212 Q68,221 90,209 Q112,198 136,211 Q158,222 182,209 Q204,197 228,211 Q250,223 275,208 Q298,196 324,210 Q346,222 372,208 Q388,198 400,208 L400,220 Z" fill="#090806"/>
+      </svg>
+    </div>
+
+    <!-- C4: Noc — hvězdy, měsíc, Bořen v siluetě -->
+    <div class="variant">
+      <h2>C4 — Noční verze</h2>
+      <p>Hvězdy, měsíc, tmavá silueta</p>
+      <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skC4" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#020610"/>
+            <stop offset="60%" stop-color="#060e22"/>
+            <stop offset="100%" stop-color="#0c1830"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="220" fill="url(#skC4)"/>
+        <!-- Hvězdy -->
+        <circle cx="25"  cy="12" r="1"   fill="#fff" opacity="0.8"/>
+        <circle cx="60"  cy="6"  r="1.2" fill="#fff" opacity="0.7"/>
+        <circle cx="100" cy="18" r="0.8" fill="#fff" opacity="0.9"/>
+        <circle cx="145" cy="8"  r="1"   fill="#fff" opacity="0.75"/>
+        <circle cx="180" cy="22" r="1.1" fill="#fff" opacity="0.8"/>
+        <circle cx="215" cy="5"  r="0.9" fill="#fff" opacity="0.85"/>
+        <circle cx="255" cy="16" r="1"   fill="#fff" opacity="0.7"/>
+        <circle cx="290" cy="9"  r="1.2" fill="#fff" opacity="0.8"/>
+        <circle cx="330" cy="20" r="0.8" fill="#fff" opacity="0.9"/>
+        <circle cx="370" cy="10" r="1"   fill="#fff" opacity="0.75"/>
+        <circle cx="42"  cy="35" r="0.7" fill="#cce" opacity="0.6"/>
+        <circle cx="128" cy="30" r="0.9" fill="#cce" opacity="0.65"/>
+        <circle cx="205" cy="38" r="0.7" fill="#cce" opacity="0.6"/>
+        <circle cx="275" cy="28" r="0.8" fill="#cce" opacity="0.7"/>
+        <circle cx="348" cy="34" r="0.7" fill="#cce" opacity="0.6"/>
+        <!-- Měsíc -->
+        <circle cx="340" cy="35" r="16" fill="#fffde0" opacity="0.12"/>
+        <circle cx="340" cy="35" r="11" fill="#fffbe8" opacity="0.9"/>
+
+        <path d="M0,220 L0,148 Q80,138 160,140 Q240,142 320,140 Q360,139 400,142 L400,220 Z" fill="#0c1410" opacity="0.7"/>
+        <path d="M0,220 L0,165 Q60,158 120,162 Q165,155 200,163 Q235,155 280,162 Q340,158 400,162 L400,220 Z" fill="#080e08" opacity="0.85"/>
+
+        <path d="
+          M0,220 L0,192
+          Q30,188 58,182
+          Q82,176 100,167
+          Q114,158 122,147
+          Q128,138 133,129
+          Q137,121 141,114
+          Q145,108 149,103
+          Q152,98 155,95
+          Q158,92 161,95
+          Q163,98 164,102
+          Q166,98 168,93
+          Q171,88 175,84
+          Q178,80 182,84
+          Q185,88 186,93
+          Q187,88 190,83
+          Q193,78 197,82
+          Q200,86 201,91
+          Q202,86 205,81
+          Q208,76 212,80
+          Q215,85 216,90
+          Q218,85 220,81
+          Q223,77 226,80
+          Q229,84 231,90
+          Q234,98 238,108
+          Q243,120 249,132
+          Q256,146 264,157
+          Q273,168 282,175
+          Q289,181 293,175
+          Q297,169 302,175
+          Q307,181 315,188
+          Q330,198 358,208
+          L400,212 L400,220 Z"
+          fill="#060c06"/>
+        <path d="M0,220 L0,212 Q22,204 42,213 Q60,221 82,211 Q102,201 126,213 Q148,224 172,211 Q194,199 218,213 Q240,225 264,210 Q286,198 312,212 Q334,224 360,210 Q378,200 400,210 L400,220 Z" fill="#040804"/>
+      </svg>
+    </div>
+
+  </div>
+
+  <p style="margin-top:24px; color:#5a6e55; font-size:0.85rem;">Řekni mi C1/C2/C3/C4 nebo kombinaci — co se ti líbí a co ne.</p>
+</body>
+</html>

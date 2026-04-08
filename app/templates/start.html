@@ -30,15 +30,25 @@
 </div>
 
 <!-- Aktivní výstup -->
-<div class="card" id="activeClimb" style="display:none; text-align:center; padding:32px 20px;">
-  <div style="font-size:2.5rem; margin-bottom:12px;">🧗</div>
+<div class="card" id="activeClimb" style="display:none; text-align:center; padding:28px 20px;">
+  <div style="font-size:2.5rem; margin-bottom:12px;">🥾</div>
   <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Výstup probíhá</p>
   <p id="activeName" style="font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:16px;"></p>
-  <div style="background:var(--card2); border-radius:12px; padding:14px; margin-bottom:20px;">
-    <p style="font-size:0.85rem; color:var(--muted);">Naskenuj QR kód na vrcholu až dorazíš</p>
-    <p style="font-size:1.3rem; margin-top:4px;">🏁</p>
+
+  <div style="background:var(--card2); border-radius:12px; padding:16px; margin-bottom:8px; text-align:left;">
+    <p style="font-size:0.9rem; font-weight:700; color:var(--text); margin-bottom:4px;">🏁 Jak dokončit výstup?</p>
+    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">Na vrcholu naskenuj QR kód — výstup se automaticky uloží.</p>
   </div>
-  <button class="btn btn-outline" id="cancelBtn" style="font-size:0.88rem; padding:14px;">Zrušit výstup</button>
+
+  <div style="background:rgba(90,138,58,0.12); border:1px solid rgba(90,138,58,0.25); border-radius:12px; padding:14px; margin-bottom:20px; text-align:left;">
+    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">📵 Mobil můžeš zamknout a prohlížeč zavřít — čas poběží na serveru. Stačí nahoře naskenovat QR kód.</p>
+  </div>
+
+  <button class="btn" id="cancelBtn"
+    style="background:rgba(200,60,60,0.12); border:1.5px solid rgba(200,60,60,0.35); color:#e05a5a; font-size:0.85rem; padding:14px; margin-top:4px;">
+    ✕ Zrušit výstup
+  </button>
+  <p style="font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.4;">Zrušení výstup <strong>nesmaže</strong> — jen přestaneš sledovat čas. Výsledek se <strong>nezaznamená</strong>.</p>
 </div>
 
 <script>
@@ -83,8 +93,10 @@
   if (existing && existing.climb_id) showActive(existing);
 
   document.getElementById('cancelBtn').addEventListener('click', () => {
-    localStorage.removeItem(STORAGE_KEY);
-    location.reload();
+    if (confirm('Opravdu chceš zrušit výstup? Výsledek se nezaznamená do žebříčku.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
   });
 
   document.getElementById('startForm').addEventListener('submit', async (e) => {
