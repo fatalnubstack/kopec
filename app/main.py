@@ -113,6 +113,11 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+@app.get("/preview-ikony", response_class=HTMLResponse)
+async def preview_ikony(request: Request):
+    return templates.TemplateResponse("preview_ikony.html", {"request": request})
+
+
 @app.get("/preview-siluety", response_class=HTMLResponse)
 async def preview_siluety(request: Request):
     return templates.TemplateResponse("preview_siluety.html", {"request": request})
@@ -145,8 +150,19 @@ async def nastenka_page(request: Request):
 
 # ── API ───────────────────────────────────────────────────────────────────────
 
+def cleanup_expired_climbs(db: Session):
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    db.query(Climb).filter(
+        Climb.completed == False,  # noqa: E712
+        Climb.start_time < cutoff,
+    ).delete()
+    db.commit()
+
+
 @app.post("/api/start")
 async def api_start(name: str = Form(...), city: str = Form(""), db: Session = Depends(get_db)):
+    cleanup_expired_climbs(db)
+
     name = name.strip()
     city = city.strip()
 
