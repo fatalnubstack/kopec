@@ -103,7 +103,9 @@
 
   fetch('/api/stats').then(r => r.json()).then(d => {
     const el = document.getElementById('stats');
-    if (d.last_24h > 0) {
+    if (d.last_24h === 0) {
+      el.textContent = 'Dnes tu ještě nikdo nebyl — budeš první dobrodruh!';
+    } else {
       el.textContent = `Za posledních 24 hodin zdolalo Bořen ${d.last_24h} ${d.last_24h === 1 ? 'dobrodruh' : d.last_24h < 5 ? 'dobrodruzi' : 'dobrodruhů'}`;
     }
   });
