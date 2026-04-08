@@ -46,8 +46,8 @@
         <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px;">
 
           ${p.photo_url ? `
-          <div style="margin:-16px -16px 14px; border-radius:16px 16px 0 0; overflow:hidden;">
-            <img src="${p.photo_url}" alt="Fotka" style="width:100%; height:auto; display:block;">
+          <div style="margin:-16px -16px 14px; border-radius:16px 16px 0 0; overflow:hidden; height:180px; cursor:pointer;" onclick="openPhoto('${p.photo_url}')">
+            <img src="${p.photo_url}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block;">
           </div>` : ''}
 
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
@@ -78,6 +78,23 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  function openPhoto(url) {
+    document.getElementById('lightbox').style.display = 'flex';
+    document.getElementById('lightboxImg').src = url;
+  }
+  function closePhoto() {
+    document.getElementById('lightbox').style.display = 'none';
+  }
+
   loadWall();
 </script>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closePhoto()"
+  style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000;
+         align-items:center; justify-content:center; padding:16px;">
+  <img id="lightboxImg" src="" alt="Fotka"
+    style="max-width:100%; max-height:100%; border-radius:12px; object-fit:contain;">
+  <div style="position:absolute; top:16px; right:20px; font-size:1.8rem; color:#fff; cursor:pointer; line-height:1;">✕</div>
+</div>
 {% endblock %}
