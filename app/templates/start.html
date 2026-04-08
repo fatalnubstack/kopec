@@ -24,6 +24,13 @@
 
 <script>
   const STORAGE_KEY = 'boren_climb';
+  const NAME_KEY = 'boren_name';
+
+  // Předvyplnit jméno z minulého výstupu
+  const savedName = localStorage.getItem(NAME_KEY);
+  if (savedName) {
+    document.getElementById('name').value = savedName;
+  }
 
   function showActive(data) {
     document.getElementById('startForm').parentElement.style.display = 'none';
@@ -74,6 +81,7 @@
       }
       const data = await res.json();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(NAME_KEY, name);
       showActive(data);
     } catch {
       err.textContent = 'Nepodařilo se spojit se serverem.';
