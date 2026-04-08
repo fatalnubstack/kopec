@@ -3,12 +3,17 @@
 {% block title %}Bořen – Start{% endblock %}
 {% block content %}
 
-<!-- Počasí -->
+<!-- Počasí + datum/čas -->
 <div id="weatherCard" style="margin:16px 16px 0; display:none;">
-  <div class="card-sm" style="display:flex; justify-content:space-between; align-items:center;">
-    <span id="wLeft" style="font-size:0.9rem;"></span>
-    <span style="font-size:0.82rem; color:var(--muted);">🌅 <span id="wSunset"></span></span>
+  <div class="card-sm" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+    <span id="wLeft" style="font-size:0.88rem;"></span>
+    <span style="font-size:0.82rem; color:var(--muted);">Západ slunce: <span id="wSunset"></span></span>
   </div>
+</div>
+
+<!-- Datum a čas -->
+<div style="margin:10px 16px 0; text-align:right;">
+  <span id="liveClock" style="font-size:0.8rem; color:var(--muted);"></span>
 </div>
 
 <!-- Start formulář -->
@@ -35,17 +40,27 @@
   <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Výstup probíhá</p>
   <p id="activeName" style="font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:16px;"></p>
 
+  <!-- Info: jak dokončit -->
   <div style="background:var(--card2); border-radius:12px; padding:16px; margin-bottom:8px; text-align:left;">
     <p style="font-size:0.9rem; font-weight:700; color:var(--text); margin-bottom:4px;">🏁 Jak dokončit výstup?</p>
-    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">Na vrcholu naskenuj QR kód — výstup se automaticky uloží.</p>
+    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">Na vrcholu naskenuj QR kód na sloupu — výstup se automaticky uloží.</p>
   </div>
 
-  <div style="background:rgba(90,138,58,0.12); border:1px solid rgba(90,138,58,0.25); border-radius:12px; padding:14px; margin-bottom:20px; text-align:left;">
-    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">📵 Mobil můžeš zamknout a prohlížeč zavřít — čas poběží na serveru. Stačí nahoře naskenovat QR kód.</p>
+  <!-- Tip: zamknout mobil -->
+  <div style="background:rgba(90,138,58,0.12); border:1px solid rgba(90,138,58,0.25); border-radius:12px; padding:14px; margin-bottom:16px; text-align:left;">
+    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">📵 Mobil můžeš zamknout a aplikaci zavřít. Stačí nahoře naskenovat QR kód a záznam se uloží.</p>
   </div>
 
+  <!-- Jsem na vrcholu (záložní možnost) -->
+  <button class="btn" id="summitBtn"
+    style="background:rgba(90,138,58,0.15); border:1.5px solid rgba(90,138,58,0.35); color:var(--green); font-size:0.88rem; padding:14px; margin-bottom:8px;">
+    ⛰ Jsem na vrcholu
+  </button>
+  <p style="font-size:0.72rem; color:var(--muted); margin-bottom:16px; line-height:1.4;">Záložní možnost pokud nejde naskenovat QR kód.<br>Doporučujeme použít QR kód na sloupu.</p>
+
+  <!-- Zrušit výstup -->
   <button class="btn" id="cancelBtn"
-    style="background:rgba(200,60,60,0.12); border:1.5px solid rgba(200,60,60,0.35); color:#e05a5a; font-size:0.85rem; padding:14px; margin-top:4px;">
+    style="background:rgba(200,60,60,0.12); border:1.5px solid rgba(200,60,60,0.35); color:#e05a5a; font-size:0.85rem; padding:14px;">
     ✕ Zrušit výstup
   </button>
   <p style="font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.4;">Zrušení výstup <strong>nesmaže</strong> — jen přestaneš sledovat čas. Výsledek se <strong>nezaznamená</strong>.</p>
@@ -53,8 +68,22 @@
 
 <script>
   const STORAGE_KEY = 'boren_climb';
-  const NAME_KEY = 'boren_name';
+  const NAME_KEY    = 'boren_name';
+  const CITY_KEY    = 'boren_city';
 
+  // Živé hodiny + datum
+  function updateClock() {
+    const now = new Date();
+    const days = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
+    const d = days[now.getDay()];
+    const date = `${now.getDate()}. ${now.getMonth()+1}. ${now.getFullYear()}`;
+    const time = now.toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('liveClock').textContent = `${d} ${date} · ${time}`;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // Počasí
   const WMO = {
     0:['☀️','Jasno'],1:['🌤️','Převážně jasno'],2:['⛅','Polojasno'],3:['☁️','Zataženo'],
     45:['🌫️','Mlha'],48:['🌫️','Mlha'],51:['🌦️','Mrholení'],53:['🌦️','Mrholení'],55:['🌧️','Mrholení'],
@@ -67,14 +96,14 @@
   fetch('https://api.open-meteo.com/v1/forecast?latitude=50.556&longitude=13.775&current=temperature_2m,weathercode&daily=sunset&timezone=Europe%2FPrague&forecast_days=1')
     .then(r=>r.json()).then(d=>{
       const [icon,desc] = WMO[d.current.weathercode]||['🌡️','Počasí'];
-      const temp = Math.round(d.current.temperature_2m);
+      const temp   = Math.round(d.current.temperature_2m);
       const sunset = d.daily.sunset[0].split('T')[1];
       document.getElementById('wLeft').textContent = `${icon} ${temp} °C · ${desc}`;
       document.getElementById('wSunset').textContent = sunset;
       document.getElementById('weatherCard').style.display = 'block';
     }).catch(()=>{});
 
-  const CITY_KEY = 'boren_city';
+  // Předvyplnění jména/města
   const savedName = localStorage.getItem(NAME_KEY);
   const savedCity = localStorage.getItem(CITY_KEY);
   if (savedName) document.getElementById('name').value = savedName;
@@ -92,6 +121,7 @@
   const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
   if (existing && existing.climb_id) showActive(existing);
 
+  // Zrušit výstup
   document.getElementById('cancelBtn').addEventListener('click', () => {
     if (confirm('Opravdu chceš zrušit výstup? Výsledek se nezaznamená do žebříčku.')) {
       localStorage.removeItem(STORAGE_KEY);
@@ -99,6 +129,34 @@
     }
   });
 
+  // Jsem na vrcholu (manuální dokončení)
+  document.getElementById('summitBtn').addEventListener('click', async () => {
+    const ok = confirm(
+      'Opravdu jsi na vrcholu Bořenu?\n\nPotvrzením se výstup ukončí a čas zaznamená.\n\n' +
+      'Doporučujeme spíše naskenovat QR kód na sloupu — je to spolehlivější.'
+    );
+    if (!ok) return;
+
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (!data || !data.climb_id) { alert('Nenalezen aktivní výstup.'); return; }
+
+    const body = new FormData();
+    body.append('climb_id', data.climb_id);
+
+    try {
+      const res = await fetch('/api/finish', { method: 'POST', body });
+      if (res.ok) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.href = '/finish';
+      } else {
+        alert('Nepodařilo se uložit výstup. Zkus naskenovat QR kód.');
+      }
+    } catch {
+      alert('Nepodařilo se spojit. Zkus naskenovat QR kód.');
+    }
+  });
+
+  // Start formulář
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value.trim();
