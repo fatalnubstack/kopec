@@ -94,6 +94,7 @@
       const result = await res.json();
 
       if (!res.ok) {
+        localStorage.removeItem(STORAGE_KEY);
         document.getElementById('errorMsg').textContent = result.detail || 'Chyba serveru.';
         show('errorBox');
         return;

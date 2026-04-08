@@ -159,7 +159,10 @@
       if (res.ok) {
         window.location.href = '/finish';
       } else {
-        alert('Nepodařilo se uložit výstup. Zkus naskenovat QR kód.');
+        const err = await res.json().catch(() => ({}));
+        localStorage.removeItem(STORAGE_KEY);
+        alert(err.detail || 'Nepodařilo se uložit výstup.');
+        location.reload();
       }
     } catch {
       alert('Nepodařilo se spojit. Zkus naskenovat QR kód.');
