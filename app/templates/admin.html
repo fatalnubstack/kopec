@@ -22,6 +22,56 @@
 <body>
   <h1>Admin – Bořen Tracker</h1>
 
+  <!-- Analytika -->
+  <h2>Analytika</h2>
+  <p class="sub">Celkem dokončených výstupů: <strong>{{ analytics.total }}</strong> &nbsp;·&nbsp;
+    Peak den: <strong>{{ analytics.peak_day }}</strong> &nbsp;·&nbsp;
+    Peak hodina: <strong>{{ analytics.peak_hour }}</strong> &nbsp;·&nbsp;
+    Peak kombinace: <strong>{{ analytics.peak_combo }}</strong>
+  </p>
+
+  <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:24px;">
+    <div>
+      <h3 style="font-size:0.9rem; margin-bottom:8px;">Podle dne v týdnu</h3>
+      <table style="width:auto;">
+        <thead><tr><th>Den</th><th>Výstupů</th><th>Graf</th></tr></thead>
+        <tbody>
+          {% for row in analytics.by_day %}
+          <tr>
+            <td>{{ row.day }}</td>
+            <td style="text-align:right;">{{ row.count }}</td>
+            <td style="padding-left:8px;">
+              {% if row.count > 0 %}
+              <div style="background:#4a7a2e; height:14px; width:{{ row.bar }}px; border-radius:3px;"></div>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h3 style="font-size:0.9rem; margin-bottom:8px;">Podle hodiny dne</h3>
+      <table style="width:auto;">
+        <thead><tr><th>Hodina</th><th>Výstupů</th><th>Graf</th></tr></thead>
+        <tbody>
+          {% for row in analytics.by_hour %}
+          {% if row.count > 0 %}
+          <tr>
+            <td>{{ row.hour }}</td>
+            <td style="text-align:right;">{{ row.count }}</td>
+            <td style="padding-left:8px;">
+              <div style="background:#4a7a2e; height:14px; width:{{ row.bar }}px; border-radius:3px;"></div>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- Výstupy -->
   <h2>Záznamy výstupů</h2>
   <p class="sub">Celkem záznamů: <strong>{{ rows|length }}</strong></p>

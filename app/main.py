@@ -212,13 +212,26 @@ async def api_finish(climb_id: int = Form(...), db: Session = Depends(get_db)):
 
 @app.get("/api/stats")
 async def api_stats(db: Session = Depends(get_db)):
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
-    count = (
-        db.query(func.count(Climb.id))
-        .filter(Climb.completed == True, Climb.finish_time >= cutoff)  # noqa: E712
-        .scalar()
-    )
-    return {"last_24h": count}
+    now = datetime.now(timezone.utc)
+
+    def count_since(dt):
+        return (
+            db.query(func.count(Climb.id))
+            .filter(Climb.completed == True, Climb.finish_time >= dt)  # noqa: E712
+            .scalar()
+        )
+
+    today_start   = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start    = now - timedelta(days=now.weekday())
+    week_start    = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+    month_start   = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    return {
+        "last_24h": count_since(now - timedelta(hours=24)),
+        "today":    count_since(today_start),
+        "week":     count_since(week_start),
+        "month":    count_since(month_start),
+    }
 
 
 @app.get("/api/leaderboard")
@@ -360,7 +373,52 @@ async def admin_page(request: Request, db: Session = Depends(get_db), _=Depends(
         for p in wall_posts
     ]
 
-    return templates.TemplateResponse("admin.html", {"request": request, "rows": rows, "posts": posts})
+    # Analytika — dokončené výstupy
+    completed = db.query(Climb).filter(Climb.completed == True).all()  # noqa: E712
+
+    DAY_NAMES = ["Pondělí","Úterý","Středa","Čtvrtek","Pátek","Sobota","Neděle"]
+    by_day   = [0] * 7
+    by_hour  = [0] * 24
+    by_day_hour = {}  # (day, hour) -> count
+
+    for c in completed:
+        ft = c.finish_time
+        if ft is None:
+            continue
+        if ft.tzinfo is None:
+            ft = ft.replace(tzinfo=timezone.utc)
+        # Převod na pražský čas (UTC+1 nebo UTC+2, použijeme jednoduše +1)
+        local = ft + timedelta(hours=1)
+        d = local.weekday()   # 0=Po … 6=Ne
+        h = local.hour
+        by_day[d]  += 1
+        by_hour[h] += 1
+        by_day_hour[(d, h)] = by_day_hour.get((d, h), 0) + 1
+
+    # Peak den a hodina
+    peak_day  = DAY_NAMES[by_day.index(max(by_day))]  if any(by_day)  else "—"
+    peak_hour = f"{by_hour.index(max(by_hour))}:00"   if any(by_hour) else "—"
+    peak_combo = max(by_day_hour, key=by_day_hour.get) if by_day_hour else None
+    peak_combo_str = f"{DAY_NAMES[peak_combo[0]]} {peak_combo[1]}:00" if peak_combo else "—"
+
+    max_day  = max(by_day)  if any(by_day)  else 1
+    max_hour = max(by_hour) if any(by_hour) else 1
+
+    analytics = {
+        "total": len(completed),
+        "by_day":  [{"day": DAY_NAMES[i], "count": by_day[i],  "bar": int(by_day[i]  / max_day  * 120)} for i in range(7)],
+        "by_hour": [{"hour": f"{i}:00",   "count": by_hour[i], "bar": int(by_hour[i] / max_hour * 120)} for i in range(24)],
+        "peak_day": peak_day,
+        "peak_hour": peak_hour,
+        "peak_combo": peak_combo_str,
+    }
+
+    return templates.TemplateResponse("admin.html", {
+        "request": request,
+        "rows": rows,
+        "posts": posts,
+        "analytics": analytics,
+    })
 
 
 @app.post("/admin/delete/{climb_id}")
