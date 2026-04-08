@@ -192,7 +192,7 @@
       <p>Všechny spuštěné výstupy na Bořen.</p>
     </div>
 
-    <div class="section">
+    <div>
       <div class="section-header">
         <h2>Výstupy</h2>
         <span class="count">{{ rows|length }} záznamů</span>
@@ -293,8 +293,6 @@
     document.getElementById('sec-' + name).classList.add('active');
     el.classList.add('active');
   }
-  // Výstupy — přidat .active na vnitřní section
-  document.querySelectorAll('#sec-climbs .section').forEach(s => s.classList.add('active'));
 </script>
 </body>
 </html>
