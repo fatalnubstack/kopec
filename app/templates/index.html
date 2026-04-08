@@ -7,7 +7,16 @@
   <p style="color:#555; font-size:0.95rem; line-height:1.5; margin-bottom:24px;">
     Změř si čas výstupu a porovnej se s ostatními.
   </p>
+  <p id="stats" style="color:#888; font-size:0.85rem; margin-bottom:20px; min-height:1.2em;"></p>
   <a href="/start" class="btn btn-green" style="display:block; text-decoration:none; text-align:center;">▲ Začít výstup</a>
   <a href="/leaderboard" class="btn btn-blue" style="display:block; text-decoration:none; text-align:center; margin-top:10px;">🏆 Zobrazit žebříček</a>
 </div>
+<script>
+  fetch('/api/stats').then(r => r.json()).then(d => {
+    const el = document.getElementById('stats');
+    if (d.last_24h > 0) {
+      el.textContent = `Za posledních 24 hodin zdolalo Bořen ${d.last_24h} ${d.last_24h === 1 ? 'dobrodruh' : d.last_24h < 5 ? 'dobrodruzi' : 'dobrodruhů'}`;
+    }
+  });
+</script>
 {% endblock %}

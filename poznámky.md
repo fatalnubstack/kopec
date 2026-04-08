@@ -26,6 +26,15 @@ Možnosti do budoucna:
 
 ---
 
+## Co rozvíjet (další krok)
+
+### Počasí na start stránce
+Zobrazit aktuální teplotu, oblačnost a čas západu slunce pro Bořen.
+API: Open-Meteo (zdarma, bez registrace, souřadnice Bořenu: 50.556°N, 13.775°E)
+Umístění: diskrétně pod formulářem na `/start`
+
+---
+
 ## Co rozvíjet (později)
 
 ### Nativní sdílení na mobilu

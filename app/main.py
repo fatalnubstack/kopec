@@ -153,6 +153,17 @@ async def api_finish(climb_id: int = Form(...), db: Session = Depends(get_db)):
     }
 
 
+@app.get("/api/stats")
+async def api_stats(db: Session = Depends(get_db)):
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    count = (
+        db.query(func.count(Climb.id))
+        .filter(Climb.completed == True, Climb.finish_time >= cutoff)  # noqa: E712
+        .scalar()
+    )
+    return {"last_24h": count}
+
+
 @app.get("/api/leaderboard")
 async def api_leaderboard(days: Optional[int] = None, db: Session = Depends(get_db)):
     fastest, most = build_leaderboard(db, days)

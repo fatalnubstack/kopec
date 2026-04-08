@@ -5,6 +5,7 @@
 
 <div class="card">
   <h2>🏆 Žebříček</h2>
+  <p id="stats" style="color:#888; font-size:0.85rem; margin-bottom:16px; min-height:1.2em;"></p>
 
   <div class="tabs" id="periodTabs">
     <button class="tab active" data-days="">Všechny časy</button>
@@ -99,5 +100,12 @@
   });
 
   loadLeaderboard(null);
+
+  fetch('/api/stats').then(r => r.json()).then(d => {
+    const el = document.getElementById('stats');
+    if (d.last_24h > 0) {
+      el.textContent = `Za posledních 24 hodin zdolalo Bořen ${d.last_24h} ${d.last_24h === 1 ? 'dobrodruh' : d.last_24h < 5 ? 'dobrodruzi' : 'dobrodruhů'}`;
+    }
+  });
 </script>
 {% endblock %}
