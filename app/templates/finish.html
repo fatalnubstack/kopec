@@ -8,11 +8,55 @@
   <div style="position:relative; height:200px; overflow:hidden; border-radius:0 0 24px 24px;">
     <img src="/static/boren.jpg" alt="Bořen" style="width:100%; height:100%; object-fit:cover; object-position:center 30%; filter:brightness(0.4);">
   </div>
-  <div class="card" style="text-align:center; padding:32px 20px;">
+  <div class="card" style="text-align:center; padding:28px 20px;">
     <div style="font-size:2.5rem; margin-bottom:12px;">🤔</div>
-    <h2 style="margin-bottom:8px;">Nemáš spuštěný výstup</h2>
-    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:24px;">Nejdřív naskenuj QR kód u paty kopce a zadej jméno.</p>
-    <a href="/start" class="btn btn-green">▲ Jít na start</a>
+    <h2 style="margin-bottom:8px;">Skoro to bylo ono!</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:6px;">Výstup jsi nezapnul u paty kopce, takže čas se nezapočítal.</p>
+    <p style="color:var(--muted); font-size:0.82rem; margin-bottom:20px;">Příště naskenuj QR kód <strong>dole u paty</strong> a zadej jméno — pak se čas měří automaticky.</p>
+    <a href="/start" class="btn btn-green" style="margin-bottom:12px;">▲ Zkusit příště</a>
+  </div>
+
+  <!-- Formulář pro zanechání vzkazu bez výstupu -->
+  <div class="card" id="noClimbWallForm">
+    <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:12px;">📋 Nástěnka</p>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:16px;">I tak můžeš zanechat vzkaz nebo fotku z vrcholu.</p>
+
+    <label for="noClimbName">Tvoje jméno</label>
+    <input type="text" id="noClimbName" placeholder="Např. Jan Novák" maxlength="80" autocomplete="off">
+
+    <div style="margin-top:16px;">
+      <p style="font-size:0.85rem; font-weight:600; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.05em;">Jak ses cítil?</p>
+      <div id="noClimbMoodPicker" style="display:flex; gap:8px; justify-content:center;">
+        <button type="button" class="mood-btn" data-mood="1" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😮‍💨</button>
+        <button type="button" class="mood-btn" data-mood="2" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😕</button>
+        <button type="button" class="mood-btn" data-mood="3" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">🙂</button>
+        <button type="button" class="mood-btn" data-mood="4" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😄</button>
+        <button type="button" class="mood-btn" data-mood="5" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">🤩</button>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label for="noClimbMsg">Vzkaz <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
+      <textarea id="noClimbMsg" maxlength="500" placeholder="Co říkáš na výstup?" rows="3"
+        style="width:100%; padding:14px; font-size:0.95rem; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; resize:none; font-family:inherit;"></textarea>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label>Fotka <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
+      <label for="noClimbPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--card2); border:1.5px dashed var(--border); border-radius:12px; padding:14px; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem;">
+        <span style="font-size:1.4rem;">📷</span>
+        <span id="noClimbPhotoLabel">Vyber fotku z galerie</span>
+      </label>
+      <input type="file" id="noClimbPhoto" accept="image/*" style="display:none;">
+    </div>
+
+    <p class="error" id="noClimbError"></p>
+    <button class="btn btn-green" id="noClimbSubmit" style="margin-top:16px;" onclick="submitNoClimbWall()">📋 Přidat na nástěnku</button>
+    <div id="noClimbDone" style="display:none; text-align:center; padding:16px 0;">
+      <div style="font-size:2rem; margin-bottom:8px;">✅</div>
+      <p style="font-weight:700; margin-bottom:4px;">Přidáno na nástěnku!</p>
+      <a href="/nastenka" style="color:var(--green); font-size:0.88rem;">Zobrazit nástěnku →</a>
+    </div>
   </div>
 </div>
 
@@ -46,6 +90,48 @@
     <a href="/leaderboard" class="btn btn-outline" style="flex:1;">🏆 Žebříček</a>
     <a href="/start" class="btn btn-green" style="flex:1;">▲ Znovu</a>
   </div>
+
+  <!-- Nálada + vzkaz -->
+  <div class="card" id="wallFormCard">
+    <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">📋 Nástěnka</p>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:16px;">Zanech vzkaz ostatním dobrodružím.</p>
+
+    <div>
+      <p style="font-size:0.85rem; font-weight:600; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.05em;">Jak ses cítil?</p>
+      <div id="moodPicker" style="display:flex; gap:8px; justify-content:center;">
+        <button type="button" class="mood-btn" data-mood="1" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😮‍💨</button>
+        <button type="button" class="mood-btn" data-mood="2" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😕</button>
+        <button type="button" class="mood-btn" data-mood="3" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">🙂</button>
+        <button type="button" class="mood-btn" data-mood="4" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😄</button>
+        <button type="button" class="mood-btn" data-mood="5" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">🤩</button>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label for="wallMsg">Vzkaz <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
+      <textarea id="wallMsg" maxlength="500" placeholder="Co říkáš na výstup? Tip, motivace, pozdrav…" rows="3"
+        style="width:100%; padding:14px; font-size:0.95rem; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; resize:none; font-family:inherit;"></textarea>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label>Fotka <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
+      <label for="wallPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--card2); border:1.5px dashed var(--border); border-radius:12px; padding:14px; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem;">
+        <span style="font-size:1.4rem;">📷</span>
+        <span id="wallPhotoLabel">Vyber fotku z galerie</span>
+      </label>
+      <input type="file" id="wallPhoto" accept="image/*" style="display:none;">
+    </div>
+
+    <p class="error" id="wallError"></p>
+    <button class="btn btn-green" id="wallSubmit" style="margin-top:16px;" onclick="submitWall()">📋 Přidat na nástěnku</button>
+    <button class="btn btn-outline" id="wallSkip" style="margin-top:8px;" onclick="skipWall()">Přeskočit</button>
+
+    <div id="wallDone" style="display:none; text-align:center; padding:16px 0;">
+      <div style="font-size:2rem; margin-bottom:8px;">✅</div>
+      <p style="font-weight:700; margin-bottom:4px;">Přidáno na nástěnku!</p>
+      <a href="/nastenka" style="color:var(--green); font-size:0.88rem;">Zobrazit nástěnku →</a>
+    </div>
+  </div>
 </div>
 
 <!-- Chyba -->
@@ -59,6 +145,12 @@
 
 <script>
   const STORAGE_KEY = 'boren_climb';
+  const NAME_KEY    = 'boren_name';
+
+  // Sdílené proměnné výsledku
+  let climbResult = null;
+  let selectedMood = null;
+  let noClimbMood  = null;
 
   function show(id) {
     ['noClimb','loading','result','errorBox'].forEach(s => {
@@ -68,7 +160,7 @@
 
   async function finish() {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-    if (!data || !data.climb_id) { show('noClimb'); return; }
+    if (!data || !data.climb_id) { show('noClimb'); prefillNoClimbName(); return; }
 
     // Kontrola příliš krátkého času (pod 10 minut)
     if (data.start_time) {
@@ -95,7 +187,6 @@
 
       if (!res.ok) {
         if (result.detail && result.detail.includes('příliš krátký')) {
-          // Timer běží dál — vrátit zpět na start
           alert(result.detail);
           window.location.href = '/start';
           return;
@@ -107,6 +198,7 @@
       }
 
       localStorage.removeItem(STORAGE_KEY);
+      climbResult = result;
       document.getElementById('resultName').textContent = result.name;
       document.getElementById('resultTime').textContent = result.duration_fmt;
       if (result.rank) {
@@ -116,6 +208,123 @@
     } catch {
       document.getElementById('errorMsg').textContent = 'Nepodařilo se spojit se serverem.';
       show('errorBox');
+    }
+  }
+
+  // Mood picker — výsledek
+  document.querySelectorAll('#moodPicker .mood-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedMood = parseInt(btn.dataset.mood);
+      document.querySelectorAll('#moodPicker .mood-btn').forEach(b => {
+        b.style.borderColor = b === btn ? 'var(--green)' : 'var(--border)';
+        b.style.background  = b === btn ? 'rgba(90,138,58,0.2)' : 'none';
+      });
+    });
+  });
+
+  // Mood picker — bez výstupu
+  document.querySelectorAll('#noClimbMoodPicker .mood-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      noClimbMood = parseInt(btn.dataset.mood);
+      document.querySelectorAll('#noClimbMoodPicker .mood-btn').forEach(b => {
+        b.style.borderColor = b === btn ? 'var(--green)' : 'var(--border)';
+        b.style.background  = b === btn ? 'rgba(90,138,58,0.2)' : 'none';
+      });
+    });
+  });
+
+  // Fotka label
+  document.getElementById('wallPhoto').addEventListener('change', function() {
+    document.getElementById('wallPhotoLabel').textContent = this.files[0]?.name || 'Vyber fotku z galerie';
+  });
+  document.getElementById('noClimbPhoto').addEventListener('change', function() {
+    document.getElementById('noClimbPhotoLabel').textContent = this.files[0]?.name || 'Vyber fotku z galerie';
+  });
+
+  async function submitWall() {
+    const btn = document.getElementById('wallSubmit');
+    const err = document.getElementById('wallError');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Ukládám…';
+    err.style.display = 'none';
+
+    const fd = new FormData();
+    fd.append('name', climbResult?.name || localStorage.getItem(NAME_KEY) || 'Anonym');
+    if (climbResult?.duration_fmt) fd.append('duration_fmt', climbResult.duration_fmt);
+    if (selectedMood) fd.append('mood', selectedMood);
+    const msg = document.getElementById('wallMsg').value.trim();
+    if (msg) fd.append('message', msg);
+    const photo = document.getElementById('wallPhoto').files[0];
+    if (photo) fd.append('photo', photo);
+
+    try {
+      const res = await fetch('/api/wall', { method: 'POST', body: fd });
+      if (res.ok) {
+        document.getElementById('wallSubmit').style.display = 'none';
+        document.getElementById('wallSkip').style.display = 'none';
+        document.getElementById('wallDone').style.display = 'block';
+      } else {
+        const d = await res.json();
+        err.textContent = d.detail || 'Chyba při ukládání.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '📋 Přidat na nástěnku';
+      }
+    } catch {
+      err.textContent = 'Nepodařilo se spojit se serverem.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '📋 Přidat na nástěnku';
+    }
+  }
+
+  function skipWall() {
+    document.getElementById('wallFormCard').style.display = 'none';
+  }
+
+  function prefillNoClimbName() {
+    const saved = localStorage.getItem(NAME_KEY);
+    if (saved) document.getElementById('noClimbName').value = saved;
+  }
+
+  async function submitNoClimbWall() {
+    const btn = document.getElementById('noClimbSubmit');
+    const err = document.getElementById('noClimbError');
+    const name = document.getElementById('noClimbName').value.trim();
+    if (!name) {
+      err.textContent = 'Zadej prosím jméno.';
+      err.style.display = 'block';
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Ukládám…';
+    err.style.display = 'none';
+
+    const fd = new FormData();
+    fd.append('name', name);
+    if (noClimbMood) fd.append('mood', noClimbMood);
+    const msg = document.getElementById('noClimbMsg').value.trim();
+    if (msg) fd.append('message', msg);
+    const photo = document.getElementById('noClimbPhoto').files[0];
+    if (photo) fd.append('photo', photo);
+
+    try {
+      const res = await fetch('/api/wall', { method: 'POST', body: fd });
+      if (res.ok) {
+        document.getElementById('noClimbSubmit').style.display = 'none';
+        document.getElementById('noClimbDone').style.display = 'block';
+      } else {
+        const d = await res.json();
+        err.textContent = d.detail || 'Chyba při ukládání.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '📋 Přidat na nástěnku';
+      }
+    } catch {
+      err.textContent = 'Nepodařilo se spojit se serverem.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '📋 Přidat na nástěnku';
     }
   }
 

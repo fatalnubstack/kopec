@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% set active = 'nastenka' %}
+{% block title %}Bořen – Nástěnka{% endblock %}
+{% block content %}
+
+<div style="margin: 16px 16px 8px;">
+  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">📋 NÁSTĚNKA</p>
+  <h2 style="font-size:1.4rem; font-weight:800;">Vzkazy z vrcholu</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-top:4px;">Co píší dobrodruzi po výstupu na Bořen.</p>
+</div>
+
+<!-- Načítám -->
+<div id="loading" style="text-align:center; padding:60px 20px;">
+  <span class="spinner" style="width:28px;height:28px;border-width:3px; border-color:rgba(90,138,58,.3); border-top-color:var(--green);"></span>
+</div>
+
+<!-- Prázdno -->
+<div id="empty" style="display:none; text-align:center; padding:60px 20px;">
+  <div style="font-size:2.5rem; margin-bottom:12px;">📭</div>
+  <p style="color:var(--muted);">Zatím tu nic není.</p>
+  <p style="color:var(--muted); font-size:0.85rem; margin-top:4px;">Buď první kdo zanechá vzkaz!</p>
+</div>
+
+<!-- Příspěvky -->
+<div id="posts" style="display:none; margin: 0 16px;"></div>
+
+<script>
+  const MOOD_LABEL = {1:'Dřina',2:'Šlo to',3:'Pohodička',4:'Super výstup',5:'Perfektní!'};
+
+  async function loadWall() {
+    try {
+      const res = await fetch('/api/wall');
+      const posts = await res.json();
+
+      document.getElementById('loading').style.display = 'none';
+
+      if (!posts.length) {
+        document.getElementById('empty').style.display = 'block';
+        return;
+      }
+
+      const container = document.getElementById('posts');
+      container.style.display = 'block';
+
+      container.innerHTML = posts.map(p => `
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px;">
+
+          ${p.photo_url ? `
+          <div style="margin:-16px -16px 14px; border-radius:16px 16px 0 0; overflow:hidden; height:200px;">
+            <img src="${p.photo_url}" alt="Fotka" style="width:100%; height:100%; object-fit:cover;">
+          </div>` : ''}
+
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+            <div>
+              <p style="font-weight:700; font-size:1rem;">${escHtml(p.name)}</p>
+              <p style="font-size:0.78rem; color:var(--muted); margin-top:2px;">
+                ${p.duration_fmt ? `🥾 ${escHtml(p.duration_fmt)} · ` : ''}${p.date}
+              </p>
+            </div>
+            ${p.mood_emoji ? `
+            <div style="text-align:center; flex-shrink:0;">
+              <span style="font-size:1.6rem;">${p.mood_emoji}</span>
+              <p style="font-size:0.7rem; color:var(--muted); margin-top:2px;">${MOOD_LABEL[p.mood]||''}</p>
+            </div>` : ''}
+          </div>
+
+          ${p.message ? `
+          <p style="font-size:0.9rem; color:var(--text); margin-top:10px; line-height:1.5; border-top:1px solid var(--border); padding-top:10px;">"${escHtml(p.message)}"</p>
+          ` : ''}
+        </div>
+      `).join('');
+    } catch {
+      document.getElementById('loading').innerHTML = '<p style="color:var(--muted); text-align:center;">Nepodařilo se načíst příspěvky.</p>';
+    }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  loadWall();
+</script>
+{% endblock %}
