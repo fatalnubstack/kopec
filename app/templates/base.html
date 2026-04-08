@@ -177,6 +177,11 @@
     {% block content %}{% endblock %}
   </main>
 
+  <div style="text-align:center; padding: 12px 20px 80px; font-size:0.72rem; color:var(--muted); line-height:1.5;">
+    🚧 Pilotní verze · Chybu nebo připomínku pošli na
+    <a href="mailto:vaclav.nap@gmail.com" style="color:var(--muted); text-decoration:underline;">vaclav.nap@gmail.com</a>
+  </div>
+
   {% block nav %}
   <nav class="bottom-nav">
     <a href="/" {% if active == 'home' %}class="active"{% endif %}>
