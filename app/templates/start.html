@@ -15,11 +15,15 @@
 <div class="card" id="startCard">
   <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:8px;">▲ STARTOVNÍ ČÁRA</p>
   <h2 style="font-size:1.4rem; font-weight:800; margin-bottom:6px;">Připrav se!</h2>
-  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Zadej jméno a spusť časomíru. Čas poběží na serveru.</p>
+  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Zadej jméno a spusť časomíru.</p>
 
   <form id="startForm">
-    <label for="name">Tvoje jméno</label>
-    <input type="text" id="name" name="name" placeholder="Např. Jan Novák" maxlength="80" autocomplete="off" autofocus>
+    <label for="name">Tvoje jméno / přezdívka</label>
+    <input type="text" id="name" name="name" placeholder="Např. Jan Novák nebo Rychlonožka" maxlength="80" autocomplete="off" autofocus>
+
+    <label for="city" style="margin-top:14px;">Město <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinné)</span></label>
+    <input type="text" id="city" name="city" placeholder="Např. Bílina, Praha…" maxlength="60" autocomplete="off">
+
     <p class="error" id="error"></p>
     <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:16px;">▲ Začít výstup</button>
   </form>
@@ -60,8 +64,14 @@
       document.getElementById('weatherCard').style.display = 'block';
     }).catch(()=>{});
 
+  const CITY_KEY = 'boren_city';
   const savedName = localStorage.getItem(NAME_KEY);
+  const savedCity = localStorage.getItem(CITY_KEY);
   if (savedName) document.getElementById('name').value = savedName;
+  if (savedCity) document.getElementById('city').value = savedCity;
+
+  const BANNED = ['pica','picus','píca','píčus','zmrd','kokot','kunda','pizda','negr','cigan','cigán','retard','debil','kurva','hovno','bastard'];
+  function hasBanned(str) { const s = str.toLowerCase(); return BANNED.some(w => s.includes(w)); }
 
   function showActive(data) {
     document.getElementById('startCard').style.display = 'none';
@@ -80,11 +90,17 @@
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value.trim();
+    const city = document.getElementById('city').value.trim();
     const err  = document.getElementById('error');
     const btn  = document.getElementById('submitBtn');
 
     if (!name) {
       err.textContent = 'Zadej prosím své jméno.';
+      err.style.display = 'block';
+      return;
+    }
+    if (hasBanned(name) || hasBanned(city)) {
+      err.textContent = 'Jméno obsahuje nevhodné slovo.';
       err.style.display = 'block';
       return;
     }
@@ -95,6 +111,7 @@
 
     const body = new FormData();
     body.append('name', name);
+    body.append('city', city);
 
     try {
       const res = await fetch('/api/start', { method: 'POST', body });
@@ -109,6 +126,7 @@
       const data = await res.json();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       localStorage.setItem(NAME_KEY, name);
+      if (city) localStorage.setItem(CITY_KEY, city);
       showActive(data);
     } catch {
       err.textContent = 'Nepodařilo se spojit se serverem.';

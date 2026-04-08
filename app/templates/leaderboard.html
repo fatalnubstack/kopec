@@ -63,7 +63,8 @@
     rows.forEach(r => {
       const tr = document.createElement('tr');
       const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank;
-      tr.innerHTML = `<td class="rank">${medal}</td><td>${esc(r.name)}</td><td><strong>${esc(r.duration_fmt)}</strong></td><td style="color:var(--muted)">${esc(r.date)}</td>`;
+      const nameCell = r.city ? `${esc(r.name)} <span style="color:var(--muted);font-size:0.8rem;">${esc(r.city)}</span>` : esc(r.name);
+      tr.innerHTML = `<td class="rank">${medal}</td><td>${nameCell}</td><td><strong>${esc(r.duration_fmt)}</strong></td><td style="color:var(--muted)">${esc(r.date)}</td>`;
       tbody.appendChild(tr);
     });
   }

@@ -8,7 +8,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, text
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
@@ -16,12 +16,33 @@ from .models import Climb
 
 Base.metadata.create_all(bind=engine)
 
+# Jednoduchá migrace — přidá sloupec city pokud ještě neexistuje
+try:
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE climbs ADD COLUMN city VARCHAR"))
+        conn.commit()
+except Exception:
+    pass  # sloupec už existuje
+
 app = FastAPI(title="Bořen Tracker")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 security = HTTPBasic()
 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "boren2024")
+
+BLACKLIST = {
+    "pica","picus","píca","píčus","zmrd","kokot","kunda","pizda",
+    "negr","cigan","cigán","nigger","retard","debil","idiot","píča",
+    "kurva","courat","curat","hovno","srac","srač","zkurvysyn","bastard",
+}
+
+def contains_banned(text_: str) -> bool:
+    normalized = text_.lower()
+    for word in BLACKLIST:
+        if word in normalized:
+            return True
+    return False
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -98,19 +119,25 @@ async def leaderboard_page(request: Request):
 # ── API ───────────────────────────────────────────────────────────────────────
 
 @app.post("/api/start")
-async def api_start(name: str = Form(...), db: Session = Depends(get_db)):
+async def api_start(name: str = Form(...), city: str = Form(""), db: Session = Depends(get_db)):
     name = name.strip()
+    city = city.strip()
+
     if not name:
         raise HTTPException(status_code=400, detail="Jméno nesmí být prázdné")
     if len(name) > 80:
         raise HTTPException(status_code=400, detail="Jméno je příliš dlouhé")
+    if len(city) > 60:
+        raise HTTPException(status_code=400, detail="Název města je příliš dlouhý")
+    if contains_banned(name) or contains_banned(city):
+        raise HTTPException(status_code=400, detail="Jméno obsahuje nevhodné slovo")
 
-    climb = Climb(name=name, start_time=datetime.now(timezone.utc))
+    climb = Climb(name=name, city=city or None, start_time=datetime.now(timezone.utc))
     db.add(climb)
     db.commit()
     db.refresh(climb)
 
-    return {"climb_id": climb.id, "name": climb.name, "start_time": climb.start_time.isoformat()}
+    return {"climb_id": climb.id, "name": climb.name, "city": climb.city, "start_time": climb.start_time.isoformat()}
 
 
 @app.post("/api/finish")
@@ -175,6 +202,7 @@ async def api_leaderboard(days: Optional[int] = None, db: Session = Depends(get_
             {
                 "rank": i + 1,
                 "name": c.name,
+                "city": c.city or "",
                 "duration_seconds": c.duration_seconds,
                 "duration_fmt": fmt_duration(c.duration_seconds),
                 "date": c.finish_time.strftime("%d.%m.%Y") if c.finish_time else "",

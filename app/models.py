@@ -8,6 +8,7 @@ class Climb(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    city = Column(String, nullable=True)
     start_time = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     finish_time = Column(DateTime, nullable=True)
     duration_seconds = Column(Integer, nullable=True)
