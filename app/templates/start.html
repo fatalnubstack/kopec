@@ -160,9 +160,7 @@
         window.location.href = '/finish';
       } else {
         const err = await res.json().catch(() => ({}));
-        localStorage.removeItem(STORAGE_KEY);
         alert(err.detail || 'Nepodařilo se uložit výstup.');
-        location.reload();
       }
     } catch {
       alert('Nepodařilo se spojit. Zkus naskenovat QR kód.');

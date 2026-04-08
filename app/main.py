@@ -172,9 +172,7 @@ async def api_finish(climb_id: int = Form(...), db: Session = Depends(get_db)):
     duration = int((now - start).total_seconds())
 
     if duration < 300:
-        db.delete(climb)
-        db.commit()
-        raise HTTPException(status_code=400, detail="Čas je příliš krátký. Na Bořen se chodí průměrně 30 minut — výstup byl zrušen.")
+        raise HTTPException(status_code=400, detail="Čas je příliš krátký. Na Bořen se chodí průměrně 30 minut.")
 
     climb.finish_time = now
     climb.duration_seconds = duration

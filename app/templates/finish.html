@@ -94,6 +94,12 @@
       const result = await res.json();
 
       if (!res.ok) {
+        if (result.detail && result.detail.includes('příliš krátký')) {
+          // Timer běží dál — vrátit zpět na start
+          alert(result.detail);
+          window.location.href = '/start';
+          return;
+        }
         localStorage.removeItem(STORAGE_KEY);
         document.getElementById('errorMsg').textContent = result.detail || 'Chyba serveru.';
         show('errorBox');
