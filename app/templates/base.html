@@ -7,127 +7,134 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg:        #111a11;
+      --card:      #1e2d1e;
+      --card2:     #253225;
+      --green:     #5a8a3a;
+      --green-btn: #4a7a2e;
+      --gold:      #c49a3a;
+      --sky:       #87b8d4;
+      --text:      #f0ede8;
+      --muted:     #8a9e85;
+      --border:    rgba(255,255,255,0.07);
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f5;
-      color: #1a1a1a;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
 
-    header {
-      background: #2d6a2d;
-      color: #fff;
-      padding: 14px 20px;
-      text-align: center;
-    }
-    header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.02em; }
-    header p  { font-size: 0.8rem; opacity: 0.8; margin-top: 2px; }
-
-    nav {
-      display: flex;
-      background: #235523;
-    }
-    nav a {
-      flex: 1;
-      text-align: center;
-      color: rgba(255,255,255,0.75);
-      text-decoration: none;
-      padding: 10px 4px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      border-bottom: 3px solid transparent;
-    }
-    nav a.active, nav a:hover { color: #fff; border-bottom-color: #7bc67b; }
-
     main {
       flex: 1;
-      padding: 24px 20px;
-      max-width: 520px;
+      max-width: 480px;
       margin: 0 auto;
       width: 100%;
+      padding-bottom: 24px;
     }
 
+    /* Cards */
     .card {
-      background: #fff;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 12px 16px;
+      border: 1px solid var(--border);
+    }
+    .card-sm {
+      background: var(--card2);
       border-radius: 12px;
-      padding: 24px 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
-      margin-bottom: 16px;
-    }
-
-    h2 { font-size: 1.2rem; margin-bottom: 16px; }
-    h3 { font-size: 1rem; margin-bottom: 10px; color: #444; }
-
-    label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
-
-    input[type="text"] {
-      width: 100%;
       padding: 14px 16px;
-      font-size: 1.1rem;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      outline: none;
-      transition: border-color .2s;
+      border: 1px solid var(--border);
     }
-    input[type="text"]:focus { border-color: #2d6a2d; }
 
+    /* Buttons */
     .btn {
       display: block;
       width: 100%;
-      padding: 16px;
-      font-size: 1.1rem;
+      padding: 18px;
+      font-size: 1.05rem;
       font-weight: 700;
       border: none;
-      border-radius: 8px;
+      border-radius: 14px;
       cursor: pointer;
-      margin-top: 14px;
-      transition: opacity .15s;
-    }
-    .btn:active { opacity: .8; }
-    .btn-green  { background: #2d6a2d; color: #fff; }
-    .btn-blue   { background: #1a6ea8; color: #fff; }
-
-    .big-time {
-      font-size: 3rem;
-      font-weight: 800;
       text-align: center;
-      color: #2d6a2d;
-      letter-spacing: -0.02em;
-      margin: 10px 0;
+      text-decoration: none;
+      transition: opacity .15s, transform .1s;
+      letter-spacing: 0.01em;
+    }
+    .btn:active { opacity: .85; transform: scale(.98); }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
     }
 
-    .info { font-size: 0.9rem; color: #666; text-align: center; margin-top: 6px; }
+    /* Inputs */
+    label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+    input[type="text"] {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.1rem;
+      background: var(--card2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus { border-color: var(--green); }
+    input[type="text"]::placeholder { color: var(--muted); }
 
-    .error { color: #c0392b; font-size: 0.9rem; margin-top: 8px; display: none; }
-    .success { color: #2d6a2d; font-size: 0.9rem; margin-top: 8px; text-align: center; }
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
 
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    th { text-align: left; padding: 8px 6px; border-bottom: 2px solid #e0e0e0; color: #555; font-size: 0.78rem; text-transform: uppercase; }
-    td { padding: 10px 6px; border-bottom: 1px solid #f0f0f0; }
-    tr:last-child td { border-bottom: none; }
-    .rank { font-weight: 700; color: #2d6a2d; }
-
+    /* Tabs */
     .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
     .tab {
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 20px;
-      border: 1.5px solid #2d6a2d;
+      border: 1.5px solid var(--border);
       background: transparent;
-      color: #2d6a2d;
+      color: var(--muted);
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
     }
-    .tab.active { background: #2d6a2d; color: #fff; }
+    .tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 11px 6px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    .rank { font-weight: 800; color: var(--gold); }
+
+    /* Misc */
+    .big-time { font-size: 3.5rem; font-weight: 800; text-align: center; color: var(--text); letter-spacing: -0.03em; }
+    .info { font-size: 0.88rem; color: var(--muted); text-align: center; }
+    .gold { color: var(--gold); }
+    .green { color: var(--green); }
+
+    .error { color: #e05a5a; font-size: 0.88rem; margin-top: 8px; display: none; }
 
     .spinner {
       display: inline-block;
-      width: 20px; height: 20px;
-      border: 3px solid rgba(255,255,255,.4);
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin .7s linear infinite;
@@ -136,22 +143,52 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    footer { text-align: center; padding: 12px; font-size: 0.75rem; color: #aaa; }
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(17,26,17,0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .bottom-nav a {
+      flex: 1;
+      text-align: center;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 4px 0;
+    }
+    .bottom-nav a .nav-icon { display: block; font-size: 1.3rem; margin-bottom: 2px; }
+    .bottom-nav a.active { color: var(--green); }
+
+    .has-nav main { padding-bottom: 80px; }
   </style>
 </head>
-<body>
-  <header>
-    <h1>Kopec Bořen</h1>
-    <p>u Bíliny · Výškový rekordník</p>
-  </header>
-  <nav>
-    <a href="/start" {% if active == 'start' %}class="active"{% endif %}>▲ Start</a>
-    <a href="/finish" {% if active == 'finish' %}class="active"{% endif %}>🏁 Cíl</a>
-    <a href="/leaderboard" {% if active == 'leaderboard' %}class="active"{% endif %}>🏆 Žebříček</a>
-  </nav>
+<body class="{% block body_class %}has-nav{% endblock %}">
   <main>
     {% block content %}{% endblock %}
   </main>
-  <footer>Bořen Tracker</footer>
+
+  {% block nav %}
+  <nav class="bottom-nav">
+    <a href="/" {% if active == 'home' %}class="active"{% endif %}>
+      <span class="nav-icon">⛰️</span>Bořen
+    </a>
+    <a href="/start" {% if active == 'start' %}class="active"{% endif %}>
+      <span class="nav-icon">▲</span>Start
+    </a>
+    <a href="/leaderboard" {% if active == 'leaderboard' %}class="active"{% endif %}>
+      <span class="nav-icon">🏆</span>Žebříček
+    </a>
+  </nav>
+  {% endblock %}
 </body>
 </html>

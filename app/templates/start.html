@@ -2,93 +2,80 @@
 {% set active = 'start' %}
 {% block title %}Bořen – Start{% endblock %}
 {% block content %}
-<div id="weatherCard" class="card" style="display:none; padding: 14px 20px;">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-    <div>
-      <span id="weatherIcon" style="font-size:1.4rem; vertical-align:middle; margin-right:6px;"></span>
-      <span id="weatherTemp" style="font-size:1.1rem; font-weight:700;"></span>
-      <span id="weatherDesc" style="font-size:0.85rem; color:#666; margin-left:6px;"></span>
-    </div>
-    <div style="font-size:0.85rem; color:#666;">
-      🌅 Západ slunce: <strong id="weatherSunset"></strong>
-    </div>
+
+<!-- Počasí -->
+<div id="weatherCard" style="margin:16px 16px 0; display:none;">
+  <div class="card-sm" style="display:flex; justify-content:space-between; align-items:center;">
+    <span id="wLeft" style="font-size:0.9rem;"></span>
+    <span style="font-size:0.82rem; color:var(--muted);">🌅 <span id="wSunset"></span></span>
   </div>
 </div>
 
-<div class="card">
-  <h2>▲ Startovní čára</h2>
-  <p style="color:#555; font-size:0.9rem; margin-bottom:20px;">
-    Zadej své jméno a stiskni tlačítko. Časomíra se spustí okamžitě.
-  </p>
+<!-- Start formulář -->
+<div class="card" id="startCard">
+  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:8px;">▲ STARTOVNÍ ČÁRA</p>
+  <h2 style="font-size:1.4rem; font-weight:800; margin-bottom:6px;">Připrav se!</h2>
+  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Zadej jméno a spusť časomíru. Čas poběží na serveru.</p>
+
   <form id="startForm">
     <label for="name">Tvoje jméno</label>
     <input type="text" id="name" name="name" placeholder="Např. Jan Novák" maxlength="80" autocomplete="off" autofocus>
     <p class="error" id="error"></p>
-    <button type="submit" class="btn btn-green" id="submitBtn">▲ Začít výstup</button>
+    <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:16px;">▲ Začít výstup</button>
   </form>
 </div>
 
-<div class="card" id="activeClimb" style="display:none; text-align:center;">
-  <p style="font-size:0.9rem; color:#555; margin-bottom:4px;">Výstup probíhá pro</p>
-  <p id="activeName" style="font-size:1.3rem; font-weight:700; color:#2d6a2d;"></p>
-  <p style="font-size:0.85rem; color:#888; margin-top:8px;">Naskenuj QR kód na vrcholu až dorazíš! 🏁</p>
-  <button class="btn" id="cancelBtn" style="background:#e0e0e0; color:#333; margin-top:16px; font-size:0.9rem;">Zrušit výstup</button>
+<!-- Aktivní výstup -->
+<div class="card" id="activeClimb" style="display:none; text-align:center; padding:32px 20px;">
+  <div style="font-size:2.5rem; margin-bottom:12px;">🧗</div>
+  <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Výstup probíhá</p>
+  <p id="activeName" style="font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:16px;"></p>
+  <div style="background:var(--card2); border-radius:12px; padding:14px; margin-bottom:20px;">
+    <p style="font-size:0.85rem; color:var(--muted);">Naskenuj QR kód na vrcholu až dorazíš</p>
+    <p style="font-size:1.3rem; margin-top:4px;">🏁</p>
+  </div>
+  <button class="btn btn-outline" id="cancelBtn" style="font-size:0.88rem; padding:14px;">Zrušit výstup</button>
 </div>
 
 <script>
   const STORAGE_KEY = 'boren_climb';
   const NAME_KEY = 'boren_name';
 
-  // Předvyplnit jméno z minulého výstupu
+  const WMO = {
+    0:['☀️','Jasno'],1:['🌤️','Převážně jasno'],2:['⛅','Polojasno'],3:['☁️','Zataženo'],
+    45:['🌫️','Mlha'],48:['🌫️','Mlha'],51:['🌦️','Mrholení'],53:['🌦️','Mrholení'],55:['🌧️','Mrholení'],
+    61:['🌧️','Déšť'],63:['🌧️','Déšť'],65:['🌧️','Silný déšť'],
+    71:['🌨️','Sněžení'],73:['🌨️','Sněžení'],75:['❄️','Silné sněžení'],
+    80:['🌦️','Přeháňky'],81:['🌧️','Přeháňky'],82:['⛈️','Bouřkové přeháňky'],
+    95:['⛈️','Bouřka'],96:['⛈️','Bouřka'],99:['⛈️','Bouřka'],
+  };
+
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=50.556&longitude=13.775&current=temperature_2m,weathercode&daily=sunset&timezone=Europe%2FPrague&forecast_days=1')
+    .then(r=>r.json()).then(d=>{
+      const [icon,desc] = WMO[d.current.weathercode]||['🌡️','Počasí'];
+      const temp = Math.round(d.current.temperature_2m);
+      const sunset = d.daily.sunset[0].split('T')[1];
+      document.getElementById('wLeft').textContent = `${icon} ${temp} °C · ${desc}`;
+      document.getElementById('wSunset').textContent = sunset;
+      document.getElementById('weatherCard').style.display = 'block';
+    }).catch(()=>{});
+
   const savedName = localStorage.getItem(NAME_KEY);
-  if (savedName) {
-    document.getElementById('name').value = savedName;
-  }
+  if (savedName) document.getElementById('name').value = savedName;
 
   function showActive(data) {
-    document.getElementById('startForm').parentElement.style.display = 'none';
-    const box = document.getElementById('activeClimb');
-    box.style.display = 'block';
+    document.getElementById('startCard').style.display = 'none';
+    document.getElementById('activeClimb').style.display = 'block';
     document.getElementById('activeName').textContent = data.name;
   }
 
-  // Check if climb already in progress
   const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-  if (existing && existing.climb_id) {
-    showActive(existing);
-  }
+  if (existing && existing.climb_id) showActive(existing);
 
   document.getElementById('cancelBtn').addEventListener('click', () => {
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   });
-
-  // Počasí pro Bořen (50.556°N, 13.775°E)
-  const WMO = {
-    0: ['☀️', 'Jasno'], 1: ['🌤️', 'Převážně jasno'], 2: ['⛅', 'Polojasno'], 3: ['☁️', 'Zataženo'],
-    45: ['🌫️', 'Mlha'], 48: ['🌫️', 'Mlha s námrazou'],
-    51: ['🌦️', 'Slabé mrholení'], 53: ['🌦️', 'Mrholení'], 55: ['🌧️', 'Silné mrholení'],
-    61: ['🌧️', 'Slabý déšť'], 63: ['🌧️', 'Déšť'], 65: ['🌧️', 'Silný déšť'],
-    71: ['🌨️', 'Slabé sněžení'], 73: ['🌨️', 'Sněžení'], 75: ['❄️', 'Silné sněžení'],
-    80: ['🌦️', 'Přeháňky'], 81: ['🌧️', 'Silné přeháňky'], 82: ['⛈️', 'Bouřkové přeháňky'],
-    95: ['⛈️', 'Bouřka'], 96: ['⛈️', 'Bouřka s krupobitím'], 99: ['⛈️', 'Bouřka s krupobitím'],
-  };
-
-  fetch('https://api.open-meteo.com/v1/forecast?latitude=50.556&longitude=13.775&current=temperature_2m,weathercode&daily=sunset&timezone=Europe%2FPrague&forecast_days=1')
-    .then(r => r.json())
-    .then(d => {
-      const code = d.current.weathercode;
-      const temp = Math.round(d.current.temperature_2m);
-      const sunset = d.daily.sunset[0].split('T')[1];
-      const [icon, desc] = WMO[code] || ['🌡️', 'Počasí'];
-
-      document.getElementById('weatherIcon').textContent = icon;
-      document.getElementById('weatherTemp').textContent = `${temp} °C`;
-      document.getElementById('weatherDesc').textContent = desc;
-      document.getElementById('weatherSunset').textContent = sunset;
-      document.getElementById('weatherCard').style.display = 'block';
-    })
-    .catch(() => {}); // tiché selhání — počasí není kritické
 
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();

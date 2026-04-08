@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import FastAPI, Depends, Request, Form, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
@@ -16,6 +17,7 @@ from .models import Climb
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bořen Tracker")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 security = HTTPBasic()
 

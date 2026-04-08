@@ -1,24 +1,103 @@
 {% extends "base.html" %}
-{% block title %}Bořen – Úvod{% endblock %}
+{% set active = 'home' %}
+{% block title %}Bořen{% endblock %}
 {% block content %}
-<div class="card" style="text-align:center; padding: 36px 20px;">
-  <div style="font-size:3rem; margin-bottom:12px;">⛰️</div>
-  <h2 style="margin-bottom:8px;">Vítej na Bořeni!</h2>
-  <p style="color:#555; font-size:0.95rem; line-height:1.5; margin-bottom:24px;">
-    Změř si čas výstupu a porovnej se s ostatními.
-  </p>
-  <p id="stats" style="color:#888; font-size:0.85rem; margin-bottom:20px; min-height:1.2em;"></p>
-  <a href="/start" class="btn btn-green" style="display:block; text-decoration:none; text-align:center;">▲ Začít výstup</a>
-  <a href="/leaderboard" class="btn btn-blue" style="display:block; text-decoration:none; text-align:center; margin-top:10px;">🏆 Zobrazit žebříček</a>
+
+<!-- Hero -->
+<div style="position:relative; height: 280px; overflow:hidden; border-radius: 0 0 24px 24px;">
+  <img src="/static/boren.jpg" alt="Kopec Bořen"
+       style="width:100%; height:100%; object-fit:cover; object-position: center 30%;">
+  <div style="position:absolute; inset:0; background: linear-gradient(to bottom, rgba(17,26,17,0.2) 0%, rgba(17,26,17,0.85) 100%);"></div>
+
+  <!-- Počasí nahoře -->
+  <div id="weatherStrip" style="position:absolute; top:16px; left:16px; right:16px; display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.35); backdrop-filter:blur(8px); border-radius:10px; padding:8px 14px;">
+      <span id="wLeft" style="font-size:0.88rem; color:#fff;"></span>
+      <span id="wRight" style="font-size:0.82rem; color:rgba(255,255,255,0.7);">🌅 <span id="wSunset"></span></span>
+    </div>
+  </div>
+
+  <!-- Název -->
+  <div style="position:absolute; bottom:20px; left:20px;">
+    <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">⛰ BOŘEN</p>
+    <h1 style="font-size:2.6rem; font-weight:800; line-height:1; color:#fff;">Bořen</h1>
+    <p style="font-size:0.9rem; color:rgba(255,255,255,0.65); margin-top:4px;">u Bíliny</p>
+  </div>
 </div>
+
+<!-- Stat: dobrodruzi -->
+<div style="margin: 12px 16px;">
+  <div class="card-sm" style="display:flex; align-items:center; gap:14px;">
+    <div style="width:40px; height:40px; background:rgba(90,138,58,0.2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🧗</div>
+    <div>
+      <p id="statsText" style="font-weight:700; font-size:0.95rem;">Načítám…</p>
+      <p id="statsSubtext" style="font-size:0.8rem; color:var(--muted); margin-top:2px;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Info karty -->
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin: 0 16px;">
+  <div class="card-sm" style="text-align:center; padding:16px 12px;">
+    <p style="font-size:1.5rem; font-weight:800; color:var(--gold);">539 m</p>
+    <p style="font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Nadmořská výška</p>
+  </div>
+  <div class="card-sm" style="text-align:center; padding:16px 12px;">
+    <p style="font-size:1.5rem; font-weight:800; color:var(--gold);">~2 km</p>
+    <p style="font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Délka trasy</p>
+  </div>
+</div>
+
+<!-- Tagy -->
+<div style="margin: 10px 16px; display:flex; gap:8px; flex-wrap:wrap;">
+  <span class="tag">Lesní</span>
+  <span class="tag">Skalnatý</span>
+  <span class="tag">Výhled</span>
+  <span class="tag">Středně obtížný</span>
+</div>
+
+<!-- CTA -->
+<div style="margin: 20px 16px 12px;">
+  <a href="/start" class="btn btn-green">⛰ Začít výstup</a>
+  <a href="/leaderboard" class="btn btn-outline" style="margin-top:10px;">🏆 Žebříček</a>
+</div>
+
 <script>
-  fetch('/api/stats').then(r => r.json()).then(d => {
-    const el = document.getElementById('stats');
-    if (d.last_24h === 0) {
-      el.textContent = 'Dnes tu ještě nikdo nebyl — budeš první dobrodruh!';
+  // Počasí
+  const WMO = {
+    0:['☀️','Jasno'],1:['🌤️','Převážně jasno'],2:['⛅','Polojasno'],3:['☁️','Zataženo'],
+    45:['🌫️','Mlha'],48:['🌫️','Mlha'],51:['🌦️','Mrholení'],53:['🌦️','Mrholení'],55:['🌧️','Mrholení'],
+    61:['🌧️','Déšť'],63:['🌧️','Déšť'],65:['🌧️','Silný déšť'],
+    71:['🌨️','Sněžení'],73:['🌨️','Sněžení'],75:['❄️','Silné sněžení'],
+    80:['🌦️','Přeháňky'],81:['🌧️','Přeháňky'],82:['⛈️','Bouřkové přeháňky'],
+    95:['⛈️','Bouřka'],96:['⛈️','Bouřka'],99:['⛈️','Bouřka'],
+  };
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=50.556&longitude=13.775&current=temperature_2m,weathercode&daily=sunset&timezone=Europe%2FPrague&forecast_days=1')
+    .then(r=>r.json()).then(d=>{
+      const [icon,desc] = WMO[d.current.weathercode]||['🌡️','Počasí'];
+      const temp = Math.round(d.current.temperature_2m);
+      const sunset = d.daily.sunset[0].split('T')[1];
+      document.getElementById('wLeft').textContent = `${icon} ${temp} °C  ${desc}`;
+      document.getElementById('wSunset').textContent = sunset;
+      document.getElementById('weatherStrip').style.display = 'block';
+    }).catch(()=>{});
+
+  // Statistiky
+  fetch('/api/stats').then(r=>r.json()).then(d=>{
+    const n = d.last_24h;
+    const t = document.getElementById('statsText');
+    const s = document.getElementById('statsSubtext');
+    if (n === 0) {
+      t.textContent = 'Dnes tu ještě nikdo nebyl';
+      t.style.color = 'var(--gold)';
+      s.textContent = 'Budeš první dobrodruh!';
     } else {
-      el.textContent = `Za posledních 24 hodin zdolalo Bořen ${d.last_24h} ${d.last_24h === 1 ? 'dobrodruh' : d.last_24h < 5 ? 'dobrodruzi' : 'dobrodruhů'}`;
+      const slovo = n===1?'dobrodruh':n<5?'dobrodruzi':'dobrodruhů';
+      t.textContent = `${n} ${slovo} za posledních 24h`;
+      s.textContent = 'Přidej se k nim!';
     }
+  }).catch(()=>{
+    document.getElementById('statsText').textContent = 'Výstupy na Bořen';
   });
 </script>
 {% endblock %}

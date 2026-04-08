@@ -3,59 +3,55 @@
 {% block title %}Bořen – Žebříček{% endblock %}
 {% block content %}
 
-<div class="card">
-  <h2>🏆 Žebříček</h2>
-  <p id="stats" style="color:#888; font-size:0.85rem; margin-bottom:16px; min-height:1.2em;"></p>
+<div style="padding: 20px 16px 8px;">
+  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">🏆 ŽEBŘÍČEK</p>
+  <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:4px;">Bořen</h2>
+  <p id="stats" style="font-size:0.85rem; color:var(--muted); min-height:1.2em;"></p>
+</div>
 
+<div style="margin: 0 16px 12px;">
   <div class="tabs" id="periodTabs">
-    <button class="tab active" data-days="">Všechny časy</button>
+    <button class="tab active" data-days="">Vše</button>
     <button class="tab" data-days="30">30 dní</button>
     <button class="tab" data-days="90">90 dní</button>
     <button class="tab" data-days="180">180 dní</button>
     <button class="tab" data-days="365">1 rok</button>
   </div>
+</div>
 
-  <!-- Nejrychlejší -->
-  <h3>⚡ Nejrychlejší výstup</h3>
-  <div id="fastestWrap">
-    <table>
-      <thead>
-        <tr><th>#</th><th>Jméno</th><th>Čas</th><th>Datum</th></tr>
-      </thead>
-      <tbody id="fastestBody"></tbody>
-    </table>
-    <p id="fastestEmpty" class="info" style="display:none; margin:12px 0;">Žádné záznamy.</p>
-  </div>
+<!-- Nejrychlejší -->
+<div class="card">
+  <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;">⚡ Nejrychlejší výstup</p>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Jméno</th><th>Čas</th><th>Datum</th></tr>
+    </thead>
+    <tbody id="fastestBody"></tbody>
+  </table>
+  <p id="fastestEmpty" class="info" style="display:none; padding:16px 0;">Žádné záznamy.</p>
+</div>
 
-  <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
-
-  <!-- Nejvíce výstupů -->
-  <h3>🔁 Nejvíce výstupů</h3>
-  <div id="mostWrap">
-    <table>
-      <thead>
-        <tr><th>#</th><th>Jméno</th><th>Výstupů</th><th>Nejlepší čas</th></tr>
-      </thead>
-      <tbody id="mostBody"></tbody>
-    </table>
-    <p id="mostEmpty" class="info" style="display:none; margin:12px 0;">Žádné záznamy.</p>
-  </div>
+<!-- Nejvíce výstupů -->
+<div class="card">
+  <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;">🔁 Nejvíce výstupů</p>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Jméno</th><th>Výstupů</th><th>Nejlepší</th></tr>
+    </thead>
+    <tbody id="mostBody"></tbody>
+  </table>
+  <p id="mostEmpty" class="info" style="display:none; padding:16px 0;">Žádné záznamy.</p>
 </div>
 
 <script>
-  let currentDays = null;
-
   async function loadLeaderboard(days) {
-    currentDays = days;
     const url = days ? `/api/leaderboard?days=${days}` : '/api/leaderboard';
     try {
       const res  = await fetch(url);
       const data = await res.json();
       renderFastest(data.fastest);
       renderMost(data.most);
-    } catch {
-      // silent fail
-    }
+    } catch {}
   }
 
   function renderFastest(rows) {
@@ -66,7 +62,8 @@
     empty.style.display = 'none';
     rows.forEach(r => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td class="rank">${r.rank}</td><td>${esc(r.name)}</td><td><strong>${esc(r.duration_fmt)}</strong></td><td>${esc(r.date)}</td>`;
+      const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank;
+      tr.innerHTML = `<td class="rank">${medal}</td><td>${esc(r.name)}</td><td><strong>${esc(r.duration_fmt)}</strong></td><td style="color:var(--muted)">${esc(r.date)}</td>`;
       tbody.appendChild(tr);
     });
   }
@@ -79,7 +76,8 @@
     empty.style.display = 'none';
     rows.forEach(r => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td class="rank">${r.rank}</td><td>${esc(r.name)}</td><td><strong>${r.total}×</strong></td><td>${esc(r.best_fmt)}</td>`;
+      const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank;
+      tr.innerHTML = `<td class="rank">${medal}</td><td>${esc(r.name)}</td><td><strong style="color:var(--gold)">${r.total}×</strong></td><td style="color:var(--muted)">${esc(r.best_fmt)}</td>`;
       tbody.appendChild(tr);
     });
   }
@@ -95,19 +93,20 @@
     if (!btn) return;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    const days = btn.dataset.days ? parseInt(btn.dataset.days) : null;
-    loadLeaderboard(days);
+    loadLeaderboard(btn.dataset.days ? parseInt(btn.dataset.days) : null);
   });
 
   loadLeaderboard(null);
 
-  fetch('/api/stats').then(r => r.json()).then(d => {
+  fetch('/api/stats').then(r=>r.json()).then(d=>{
     const el = document.getElementById('stats');
-    if (d.last_24h === 0) {
+    const n = d.last_24h;
+    if (n === 0) {
       el.textContent = 'Dnes tu ještě nikdo nebyl — budeš první dobrodruh!';
     } else {
-      el.textContent = `Za posledních 24 hodin zdolalo Bořen ${d.last_24h} ${d.last_24h === 1 ? 'dobrodruh' : d.last_24h < 5 ? 'dobrodruzi' : 'dobrodruhů'}`;
+      const slovo = n===1?'dobrodruh':n<5?'dobrodruzi':'dobrodruhů';
+      el.textContent = `Za posledních 24 hodin zdolalo Bořen ${n} ${slovo}`;
     }
-  });
+  }).catch(()=>{});
 </script>
 {% endblock %}

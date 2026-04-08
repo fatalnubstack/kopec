@@ -3,40 +3,55 @@
 {% block title %}Bořen – Cíl{% endblock %}
 {% block content %}
 
-<!-- Stav: žádný aktivní výstup -->
-<div id="noClimb" class="card" style="text-align:center; display:none;">
-  <div style="font-size:2.5rem; margin-bottom:12px;">🤔</div>
-  <h2>Nemáš spuštěný výstup</h2>
-  <p style="color:#555; font-size:0.9rem; margin:12px 0 20px;">
-    Nejdřív naskenuj QR kód u paty kopce a zadej jméno.
-  </p>
-  <a href="/start" class="btn btn-green" style="text-decoration:none; text-align:center; display:block;">▲ Jít na start</a>
-</div>
-
-<!-- Stav: nahrávám výsledek -->
-<div id="loading" class="card" style="text-align:center; display:none;">
-  <div style="font-size:2rem; margin-bottom:12px;"><span class="spinner" style="border-color:rgba(45,106,45,.3); border-top-color:#2d6a2d;"></span></div>
-  <p style="color:#555;">Ukládám výsledek…</p>
-</div>
-
-<!-- Stav: výsledek -->
-<div id="result" class="card" style="text-align:center; display:none;">
-  <div style="font-size:2rem; margin-bottom:4px;">🏁</div>
-  <p style="font-size:0.9rem; color:#555;">Výstup dokončen!</p>
-  <p id="resultName" style="font-size:1.4rem; font-weight:700; margin: 6px 0;"></p>
-  <div class="big-time" id="resultTime"></div>
-  <p id="resultRank" class="info"></p>
-  <div style="margin-top:20px; display:flex; gap:10px;">
-    <a href="/leaderboard" class="btn btn-blue" style="text-decoration:none; text-align:center; flex:1;">🏆 Žebříček</a>
-    <a href="/start" class="btn btn-green" style="text-decoration:none; text-align:center; flex:1;">▲ Znovu</a>
+<!-- Žádný aktivní výstup -->
+<div id="noClimb" style="display:none;">
+  <div style="position:relative; height:200px; overflow:hidden; border-radius:0 0 24px 24px;">
+    <img src="/static/boren.jpg" alt="Bořen" style="width:100%; height:100%; object-fit:cover; object-position:center 30%; filter:brightness(0.4);">
+  </div>
+  <div class="card" style="text-align:center; padding:32px 20px;">
+    <div style="font-size:2.5rem; margin-bottom:12px;">🤔</div>
+    <h2 style="margin-bottom:8px;">Nemáš spuštěný výstup</h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:24px;">Nejdřív naskenuj QR kód u paty kopce a zadej jméno.</p>
+    <a href="/start" class="btn btn-green">▲ Jít na start</a>
   </div>
 </div>
 
-<!-- Stav: chyba -->
-<div id="errorBox" class="card" style="text-align:center; display:none;">
-  <div style="font-size:2rem; margin-bottom:8px;">⚠️</div>
-  <p id="errorMsg" style="color:#c0392b;"></p>
-  <a href="/start" class="btn btn-green" style="text-decoration:none; text-align:center; display:block; margin-top:14px;">▲ Zkusit znovu</a>
+<!-- Načítám -->
+<div id="loading" style="display:none; text-align:center; padding:80px 20px;">
+  <div style="font-size:2rem; margin-bottom:12px;"><span class="spinner" style="width:32px;height:32px;border-width:3px; border-color:rgba(90,138,58,.3); border-top-color:var(--green);"></span></div>
+  <p style="color:var(--muted);">Ukládám výsledek…</p>
+</div>
+
+<!-- Výsledek -->
+<div id="result" style="display:none;">
+  <div style="position:relative; height:220px; overflow:hidden; border-radius:0 0 24px 24px;">
+    <img src="/static/boren.jpg" alt="Bořen" style="width:100%; height:100%; object-fit:cover; object-position:center 30%;">
+    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(17,26,17,0.3), rgba(17,26,17,0.9));"></div>
+    <div style="position:absolute; bottom:20px; left:0; right:0; text-align:center;">
+      <p style="font-size:0.8rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.1em;">Vrchol zdolán!</p>
+      <p id="resultName" style="font-size:1.5rem; font-weight:800; color:#fff; margin-top:4px;"></p>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center; padding:28px 20px;">
+    <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Čas výstupu</p>
+    <div class="big-time" id="resultTime"></div>
+    <p id="resultRank" class="info gold" style="margin-top:10px; font-weight:600;"></p>
+  </div>
+
+  <div style="margin: 0 16px; display:flex; gap:10px;">
+    <a href="/leaderboard" class="btn btn-outline" style="flex:1;">🏆 Žebříček</a>
+    <a href="/start" class="btn btn-green" style="flex:1;">▲ Znovu</a>
+  </div>
+</div>
+
+<!-- Chyba -->
+<div id="errorBox" style="display:none;">
+  <div class="card" style="text-align:center; padding:32px 20px; margin-top:40px;">
+    <div style="font-size:2.5rem; margin-bottom:12px;">⚠️</div>
+    <p id="errorMsg" style="color:#e05a5a; margin-bottom:20px;"></p>
+    <a href="/start" class="btn btn-green">▲ Zkusit znovu</a>
+  </div>
 </div>
 
 <script>
@@ -50,13 +65,9 @@
 
   async function finish() {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-    if (!data || !data.climb_id) {
-      show('noClimb');
-      return;
-    }
+    if (!data || !data.climb_id) { show('noClimb'); return; }
 
     show('loading');
-
     const body = new FormData();
     body.append('climb_id', data.climb_id);
 
@@ -71,16 +82,14 @@
       }
 
       localStorage.removeItem(STORAGE_KEY);
-
       document.getElementById('resultName').textContent = result.name;
       document.getElementById('resultTime').textContent = result.duration_fmt;
       if (result.rank) {
-        document.getElementById('resultRank').textContent = `Tvoje pořadí (all-time): ${result.rank}. místo`;
+        document.getElementById('resultRank').textContent = `🏆 ${result.rank}. místo v celkovém pořadí`;
       }
       show('result');
-
     } catch {
-      document.getElementById('errorMsg').textContent = 'Nepodařilo se spojit se serverem. Zkus to znovu.';
+      document.getElementById('errorMsg').textContent = 'Nepodařilo se spojit se serverem.';
       show('errorBox');
     }
   }
