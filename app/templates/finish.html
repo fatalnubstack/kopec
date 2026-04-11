@@ -293,9 +293,7 @@
     try {
       const res = await fetch('/api/wall', { method: 'POST', body: fd });
       if (res.ok) {
-        document.getElementById('wallSubmit').style.display = 'none';
-        document.getElementById('wallSkip').style.display = 'none';
-        document.getElementById('wallDone').style.display = 'block';
+        window.location.href = '/podpora';
       } else {
         const d = await res.json();
         err.textContent = d.detail || 'Chyba při ukládání.';
@@ -312,7 +310,7 @@
   }
 
   function skipWall() {
-    document.getElementById('wallFormCard').style.display = 'none';
+    window.location.href = '/podpora';
   }
 
   function prefillNoClimbName() {
@@ -344,8 +342,7 @@
     try {
       const res = await fetch('/api/wall', { method: 'POST', body: fd });
       if (res.ok) {
-        document.getElementById('noClimbSubmit').style.display = 'none';
-        document.getElementById('noClimbDone').style.display = 'block';
+        window.location.href = '/podpora';
       } else {
         const d = await res.json();
         err.textContent = d.detail || 'Chyba při ukládání.';
