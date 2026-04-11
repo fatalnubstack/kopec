@@ -140,6 +140,7 @@
 
   // Skupinový výstup
   let groupSize = 1;
+  let bigGroupWarned = false;
 
   function setGroup(isGroup) {
     document.getElementById('groupWrap').style.display = isGroup ? 'block' : 'none';
@@ -154,9 +155,10 @@
 
   function changeGroup(d) {
     const next = Math.max(2, Math.min(99, groupSize + d));
-    if (next > 30 && d > 0) {
+    if (next > 30 && d > 0 && !bigGroupWarned) {
       const ok = confirm(`To vás jde ${next}? To se ani nevejdete na vrchol 😄\n\nOpravdu vás jde tolik?`);
       if (!ok) return;
+      bigGroupWarned = true;
     }
     groupSize = next;
     document.getElementById('groupCount').textContent = groupSize;
