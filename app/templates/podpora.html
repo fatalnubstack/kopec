@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set active = '' %}
+{% block title %}Bořen – Podpora projektu{% endblock %}
+{% block content %}
+
+<div style="margin: 16px 16px 0;">
+  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">💚 PODPORA</p>
+  <h2 style="font-size:1.4rem; font-weight:800;">Podpoř Bořen Tracker</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-top:4px; line-height:1.5;">Aplikace je zdarma a bez reklam. Pokud se ti líbí, můžeš přispět na provoz — a za 200 Kč dostaneš domů vytištěnou fotku z výstupu.</p>
+</div>
+
+<div style="margin: 12px 16px 24px;">
+  {% include "support_card.html" %}
+</div>
+
+{% endblock %}

@@ -157,6 +157,11 @@ async def leaderboard_page(request: Request):
     return templates.TemplateResponse("leaderboard.html", {"request": request})
 
 
+@app.get("/podpora", response_class=HTMLResponse)
+async def podpora_page(request: Request):
+    return templates.TemplateResponse("podpora.html", {"request": request})
+
+
 @app.get("/nastenka", response_class=HTMLResponse)
 async def nastenka_page(request: Request):
     return templates.TemplateResponse("nastenka.html", {"request": request})
