@@ -26,4 +26,5 @@ class WallPost(Base):
     mood = Column(Integer, nullable=True)   # 1–5
     message = Column(String, nullable=True)
     photo_filename = Column(String, nullable=True)
+    likes = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))

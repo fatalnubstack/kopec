@@ -20,6 +20,7 @@ Base.metadata.create_all(bind=engine)
 for stmt in [
     "ALTER TABLE climbs ADD COLUMN city VARCHAR",
     "ALTER TABLE climbs ADD COLUMN group_size INTEGER NOT NULL DEFAULT 1",
+    "ALTER TABLE wall_posts ADD COLUMN likes INTEGER NOT NULL DEFAULT 0",
 ]:
     try:
         with engine.connect() as conn:
@@ -344,7 +345,7 @@ async def api_wall_post(
 
 @app.get("/api/wall")
 async def api_wall_list(db: Session = Depends(get_db)):
-    posts = db.query(WallPost).order_by(desc(WallPost.created_at)).limit(50).all()
+    posts = db.query(WallPost).order_by(desc(WallPost.created_at)).limit(100).all()
     MOOD_EMOJI = {1: "😮‍💨", 2: "😕", 3: "🙂", 4: "😄", 5: "🤩"}
     return [
         {
@@ -355,10 +356,21 @@ async def api_wall_list(db: Session = Depends(get_db)):
             "mood_emoji": MOOD_EMOJI.get(p.mood, "") if p.mood else "",
             "message": p.message or "",
             "photo_url": f"/uploads/{p.photo_filename}" if p.photo_filename else None,
-            "date": p.created_at.strftime("%d.%m.%Y"),
+            "likes": p.likes or 0,
+            "created_at": p.created_at.isoformat(),
         }
         for p in posts
     ]
+
+
+@app.post("/api/wall/{post_id}/like")
+async def api_wall_like(post_id: int, db: Session = Depends(get_db)):
+    post = db.get(WallPost, post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Příspěvek nenalezen")
+    post.likes = (post.likes or 0) + 1
+    db.commit()
+    return {"likes": post.likes}
 
 
 # ── admin ─────────────────────────────────────────────────────────────────────

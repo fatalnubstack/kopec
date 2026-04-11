@@ -3,14 +3,15 @@
 {% block title %}Bořen – Nástěnka{% endblock %}
 {% block content %}
 
-<div style="margin: 16px 16px 8px;">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">📋 NÁSTĚNKA</p>
+<!-- Hlavička -->
+<div style="margin: 16px 16px 0;">
+  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">🪧 NÁSTĚNKA</p>
   <h2 style="font-size:1.4rem; font-weight:800;">Vzkazy z vrcholu</h2>
-  <p style="font-size:0.85rem; color:var(--muted); margin-top:4px;">Co píší dobrodruzi po výstupu na Bořen.</p>
+  <p id="counterText" style="font-size:0.85rem; color:var(--muted); margin-top:4px;">Co píší dobrodruzi po výstupu na Bořen.</p>
 </div>
 
 <!-- Tlačítko přidat -->
-<div style="margin: 8px 16px 0;">
+<div style="margin: 12px 16px 0;">
   <button class="btn btn-green" onclick="toggleForm()" id="addBtn">✏️ Přidat příspěvek</button>
 </div>
 
@@ -70,10 +71,104 @@
 </div>
 
 <!-- Příspěvky -->
-<div id="posts" style="display:none; margin: 0 16px;"></div>
+<div id="posts" style="display:none; margin: 0 16px 24px;"></div>
 
 <script>
   const MOOD_LABEL = {1:'Dřina',2:'Šlo to',3:'Pohodička',4:'Super výstup',5:'Perfektní!'};
+  const LIKES_KEY = 'boren_likes'; // localStorage: comma-separated liked post IDs
+
+  function getLiked() {
+    const raw = localStorage.getItem(LIKES_KEY);
+    return raw ? new Set(raw.split(',').filter(Boolean)) : new Set();
+  }
+  function setLiked(set) {
+    localStorage.setItem(LIKES_KEY, [...set].join(','));
+  }
+
+  function dateGroup(isoStr) {
+    const now = new Date();
+    const d = new Date(isoStr);
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterdayStart = new Date(todayStart - 86400000);
+    const weekStart = new Date(todayStart - (now.getDay() === 0 ? 6 : now.getDay() - 1) * 86400000);
+
+    if (d >= todayStart) return 'Dnes';
+    if (d >= yesterdayStart) return 'Včera';
+    if (d >= weekStart) return 'Tento týden';
+    return 'Starší';
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function fmtDate(isoStr) {
+    const d = new Date(isoStr);
+    return d.toLocaleDateString('cs-CZ', { day:'numeric', month:'numeric', year:'numeric' });
+  }
+
+  async function toggleLike(postId, btn) {
+    const liked = getLiked();
+    const id = String(postId);
+    if (liked.has(id)) return; // už lajknuto
+
+    liked.add(id);
+    setLiked(liked);
+
+    // Okamžitě aktualizuj UI
+    const countEl = btn.querySelector('.like-count');
+    countEl.textContent = parseInt(countEl.textContent) + 1;
+    btn.classList.add('liked');
+    btn.style.color = '#e05a5a';
+    btn.style.borderColor = 'rgba(200,60,60,0.5)';
+
+    try {
+      await fetch(`/api/wall/${postId}/like`, { method: 'POST' });
+    } catch {}
+  }
+
+  function renderCard(p, liked) {
+    const isLiked = liked.has(String(p.id));
+    const likedStyle = isLiked ? 'color:#e05a5a; border-color:rgba(200,60,60,0.5);' : 'color:var(--muted); border-color:var(--border);';
+
+    return `
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:12px;">
+
+        ${p.photo_url ? `
+        <div style="height:190px; cursor:pointer; overflow:hidden;" onclick="openPhoto('${escHtml(p.photo_url)}')">
+          <img src="${escHtml(p.photo_url)}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </div>` : ''}
+
+        <div style="padding:14px 16px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+            <div>
+              <p style="font-weight:700; font-size:1rem;">${escHtml(p.name)}</p>
+              <p style="font-size:0.78rem; color:var(--muted); margin-top:2px;">
+                ${p.duration_fmt ? `🥾 ${escHtml(p.duration_fmt)} · ` : ''}${fmtDate(p.created_at)}
+              </p>
+            </div>
+            ${p.mood_emoji ? `
+            <div style="text-align:center; flex-shrink:0;">
+              <span style="font-size:1.6rem;">${p.mood_emoji}</span>
+              <p style="font-size:0.7rem; color:var(--muted); margin-top:2px;">${MOOD_LABEL[p.mood]||''}</p>
+            </div>` : ''}
+          </div>
+
+          ${p.message ? `
+          <p style="font-size:0.9rem; color:var(--text); margin-top:10px; line-height:1.5; border-top:1px solid var(--border); padding-top:10px;">"${escHtml(p.message)}"</p>
+          ` : ''}
+
+          <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+            <button onclick="toggleLike(${p.id}, this)"
+              style="display:flex; align-items:center; gap:5px; background:none; border:1.5px solid; border-radius:20px; padding:5px 12px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all .15s; ${likedStyle}"
+              ${isLiked ? 'disabled' : ''}>
+              ❤️ <span class="like-count">${p.likes}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
   async function loadWall() {
     try {
@@ -87,43 +182,46 @@
         return;
       }
 
+      // Počítadlo
+      document.getElementById('counterText').textContent = `${posts.length} dobrodruhů zanechalo vzkaz`;
+
+      const liked = getLiked();
       const container = document.getElementById('posts');
       container.style.display = 'block';
 
-      container.innerHTML = posts.map(p => `
-        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px;">
+      // Seskupení podle data
+      const groups = [
+        { label: 'Dnes', posts: [] },
+        { label: 'Včera', posts: [] },
+        { label: 'Tento týden', posts: [] },
+        { label: 'Starší', posts: [] },
+      ];
+      const groupIndex = { 'Dnes': 0, 'Včera': 1, 'Tento týden': 2, 'Starší': 3 };
 
-          ${p.photo_url ? `
-          <div style="margin:-16px -16px 14px; border-radius:16px 16px 0 0; overflow:hidden; height:180px; cursor:pointer;" onclick="openPhoto('${p.photo_url}')">
-            <img src="${p.photo_url}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block;">
-          </div>` : ''}
+      posts.forEach(p => {
+        const g = dateGroup(p.created_at);
+        groups[groupIndex[g]].posts.push(p);
+      });
 
-          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
-            <div>
-              <p style="font-weight:700; font-size:1rem;">${escHtml(p.name)}</p>
-              <p style="font-size:0.78rem; color:var(--muted); margin-top:2px;">
-                ${p.duration_fmt ? `🥾 ${escHtml(p.duration_fmt)} · ` : ''}${p.date}
-              </p>
-            </div>
-            ${p.mood_emoji ? `
-            <div style="text-align:center; flex-shrink:0;">
-              <span style="font-size:1.6rem;">${p.mood_emoji}</span>
-              <p style="font-size:0.7rem; color:var(--muted); margin-top:2px;">${MOOD_LABEL[p.mood]||''}</p>
-            </div>` : ''}
-          </div>
+      let html = '';
+      groups.forEach(g => {
+        if (!g.posts.length) return;
+        html += `<p style="font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin: 20px 0 10px;">${g.label}</p>`;
+        html += g.posts.map(p => renderCard(p, liked)).join('');
+      });
 
-          ${p.message ? `
-          <p style="font-size:0.9rem; color:var(--text); margin-top:10px; line-height:1.5; border-top:1px solid var(--border); padding-top:10px;">"${escHtml(p.message)}"</p>
-          ` : ''}
-        </div>
-      `).join('');
+      container.innerHTML = html;
     } catch {
       document.getElementById('loading').innerHTML = '<p style="color:var(--muted); text-align:center;">Nepodařilo se načíst příspěvky.</p>';
     }
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function openPhoto(url) {
+    document.getElementById('lightbox').style.display = 'flex';
+    document.getElementById('lightboxImg').src = url;
+  }
+  function closePhoto() {
+    document.getElementById('lightbox').style.display = 'none';
   }
 
   let formMood = null;
@@ -134,7 +232,6 @@
     f.style.display = open ? 'block' : 'none';
     document.getElementById('addBtn').textContent = open ? '✕ Zavřít' : '✏️ Přidat příspěvek';
     if (open) {
-      // Předvyplnit jméno z localStorage
       const saved = localStorage.getItem('boren_name');
       if (saved) document.getElementById('formName').value = saved;
       f.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -178,8 +275,12 @@
       if (res.ok) {
         document.getElementById('formDone').style.display = 'block';
         document.getElementById('addBtn').style.display = 'none';
-        // Načíst příspěvky znovu
-        setTimeout(() => { loadWall(); toggleForm(); document.getElementById('addBtn').style.display = 'block'; }, 1500);
+        setTimeout(() => {
+          loadWall();
+          toggleForm();
+          document.getElementById('addBtn').style.display = 'block';
+          document.getElementById('formDone').style.display = 'none';
+        }, 1500);
       } else {
         const d = await res.json();
         err.textContent = d.detail || 'Chyba při ukládání.';
@@ -189,14 +290,6 @@
       err.textContent = 'Nepodařilo se spojit se serverem.';
       err.style.display = 'block';
     }
-  }
-
-  function openPhoto(url) {
-    document.getElementById('lightbox').style.display = 'flex';
-    document.getElementById('lightboxImg').src = url;
-  }
-  function closePhoto() {
-    document.getElementById('lightbox').style.display = 'none';
   }
 
   loadWall();
@@ -210,4 +303,5 @@
     style="max-width:100%; max-height:100%; border-radius:12px; object-fit:contain;">
   <div style="position:absolute; top:16px; right:20px; font-size:1.8rem; color:#fff; cursor:pointer; line-height:1;">✕</div>
 </div>
+
 {% endblock %}
