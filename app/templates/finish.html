@@ -154,6 +154,11 @@
   </div>
 </div>
 
+<!-- Karta podpory (pod výsledkem i pod noClimb) -->
+<div id="supportCard" style="display:none;">
+  {% include "support_card.html" %}
+</div>
+
 <!-- Chyba -->
 <div id="errorBox" style="display:none;">
   <div class="card" style="text-align:center; padding:32px 20px; margin-top:40px;">
@@ -176,6 +181,9 @@
     ['noClimb','loading','result','errorBox'].forEach(s => {
       document.getElementById(s).style.display = s === id ? 'block' : 'none';
     });
+    // Zobraz support kartu vždy (kromě načítání a chyby)
+    const showSupport = id === 'result' || id === 'noClimb';
+    document.getElementById('supportCard').style.display = showSupport ? 'block' : 'none';
   }
 
   async function finish() {

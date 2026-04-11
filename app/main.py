@@ -12,7 +12,7 @@ from sqlalchemy import func, desc, text
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
-from .models import Climb, WallPost
+from .models import Climb, WallPost, PrintOrder
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,6 +21,7 @@ for stmt in [
     "ALTER TABLE climbs ADD COLUMN city VARCHAR",
     "ALTER TABLE climbs ADD COLUMN group_size INTEGER NOT NULL DEFAULT 1",
     "ALTER TABLE wall_posts ADD COLUMN likes INTEGER NOT NULL DEFAULT 0",
+    # print_orders se vytvoří přes create_all, migrace jen pro jistotu
 ]:
     try:
         with engine.connect() as conn:
@@ -373,6 +374,42 @@ async def api_wall_like(post_id: int, db: Session = Depends(get_db)):
     return {"likes": post.likes}
 
 
+@app.post("/api/support")
+async def api_support(
+    name: str = Form(...),
+    address: str = Form(...),
+    email: Optional[str] = Form(None),
+    photo: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+):
+    name = name.strip()[:80]
+    address = address.strip()[:300]
+    if not name:
+        raise HTTPException(status_code=400, detail="Jméno nesmí být prázdné")
+    if not address:
+        raise HTTPException(status_code=400, detail="Adresa nesmí být prázdná")
+    if email:
+        email = email.strip()[:120]
+
+    photo_filename = None
+    if photo and photo.filename:
+        ext = os.path.splitext(photo.filename)[1].lower()
+        if ext not in ALLOWED_EXT:
+            raise HTTPException(status_code=400, detail="Nepodporovaný formát fotky (použij JPG nebo PNG)")
+        content = await photo.read()
+        if len(content) > MAX_PHOTO_BYTES:
+            raise HTTPException(status_code=400, detail="Fotka je příliš velká (max 8 MB)")
+        photo_filename = f"print_{secrets.token_hex(16)}{ext}"
+        with open(os.path.join(UPLOAD_DIR, photo_filename), "wb") as f:
+            f.write(content)
+
+    order = PrintOrder(name=name, address=address, email=email or None, photo_filename=photo_filename)
+    db.add(order)
+    db.commit()
+    db.refresh(order)
+    return {"ok": True, "order_id": order.id}
+
+
 # ── admin ─────────────────────────────────────────────────────────────────────
 
 def check_admin(credentials: HTTPBasicCredentials = Depends(security)):
@@ -456,12 +493,66 @@ async def admin_page(request: Request, db: Session = Depends(get_db), _=Depends(
         "peak_combo": peak_combo_str,
     }
 
+    print_orders_raw = db.query(PrintOrder).order_by(desc(PrintOrder.created_at)).all()
+    def fmt_dt(dt):
+        if not dt:
+            return None
+        return dt.strftime("%d.%m.%Y %H:%M")
+
+    print_orders = [
+        {
+            "id": o.id,
+            "name": o.name,
+            "address": o.address,
+            "email": o.email or "",
+            "photo_filename": o.photo_filename or "",
+            "created_at": fmt_dt(o.created_at),
+            "printed_at": fmt_dt(o.printed_at),
+            "packed_at": fmt_dt(o.packed_at),
+            "sent_at": fmt_dt(o.sent_at),
+            "done": bool(o.printed_at and o.packed_at and o.sent_at),
+        }
+        for o in print_orders_raw
+    ]
+
     return templates.TemplateResponse("admin.html", {
         "request": request,
         "rows": rows,
         "posts": posts,
         "analytics": analytics,
+        "print_orders": print_orders,
     })
+
+
+@app.post("/admin/print-orders/{order_id}/toggle")
+async def admin_print_toggle(order_id: int, field: str = Form(...), db: Session = Depends(get_db), _=Depends(check_admin)):
+    order = db.get(PrintOrder, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Objednávka nenalezena")
+    now = datetime.now(timezone.utc)
+    if field == "printed":
+        order.printed_at = None if order.printed_at else now
+    elif field == "packed":
+        order.packed_at = None if order.packed_at else now
+    elif field == "sent":
+        order.sent_at = None if order.sent_at else now
+    db.commit()
+    return {"ok": True}
+
+
+@app.post("/admin/print-orders/{order_id}/delete")
+async def admin_print_delete(order_id: int, db: Session = Depends(get_db), _=Depends(check_admin)):
+    order = db.get(PrintOrder, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Objednávka nenalezena")
+    if order.photo_filename:
+        try:
+            os.remove(os.path.join(UPLOAD_DIR, order.photo_filename))
+        except FileNotFoundError:
+            pass
+    db.delete(order)
+    db.commit()
+    return RedirectResponse("/admin#print", status_code=303)
 
 
 @app.post("/admin/delete/{climb_id}")

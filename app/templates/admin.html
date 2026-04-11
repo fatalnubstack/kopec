@@ -101,6 +101,40 @@
     /* Section toggle */
     .section { display: none; }
     .section.active { display: block; }
+
+    /* Print orders */
+    .order-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px; margin-bottom: 14px;
+    }
+    .order-card.done { opacity: 0.6; }
+    .order-top { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+    .order-thumb {
+      width: 72px; height: 72px; border-radius: 10px; object-fit: cover;
+      background: var(--surface2); flex-shrink: 0; display: flex;
+      align-items: center; justify-content: center; font-size: 1.6rem; color: var(--muted);
+    }
+    .order-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    .order-meta { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+    .order-name { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+    .checklist { display: flex; flex-direction: column; gap: 6px; }
+    .check-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      border-radius: 10px; border: 1.5px solid var(--border); cursor: pointer;
+      font-size: 0.85rem; transition: all .15s; user-select: none;
+      background: var(--surface2);
+    }
+    .check-item.done { border-color: rgba(90,138,58,0.35); background: rgba(90,138,58,0.1); }
+    .check-box {
+      width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 0.75rem; transition: all .15s;
+    }
+    .check-item.done .check-box { background: var(--green); border-color: var(--green); color: #fff; }
+    .check-date { margin-left: auto; font-size: 0.72rem; color: var(--muted); }
+    .order-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; margin-top: 6px; }
+    .badge-wait { background: rgba(200,160,50,0.15); color: #c8a84b; }
+    .badge-sent { background: rgba(90,138,58,0.2); color: var(--green); }
   </style>
 </head>
 <body>
@@ -115,6 +149,11 @@
   </a>
   <a class="nav-item" onclick="showSection('wall', this)">
     <span class="icon">🪧</span> Nástěnka
+  </a>
+  <a class="nav-item" onclick="showSection('print', this)" id="nav-print">
+    <span class="icon">🖨️</span> Objednávky fotek
+    {% set waiting = print_orders|rejectattr('done')|list|length %}
+    {% if waiting > 0 %}<span style="margin-left:auto; background:rgba(200,60,60,0.3); color:#e05a5a; font-size:0.72rem; font-weight:800; padding:2px 7px; border-radius:10px;">{{ waiting }}</span>{% endif %}
   </a>
   <div style="flex:1;"></div>
   <a href="/" target="_blank" class="nav-item">
@@ -284,9 +323,102 @@
     </div>
   </div>
 
+  <!-- OBJEDNÁVKY FOTEK -->
+  <div id="sec-print" class="section">
+    <div class="page-header">
+      <h1>Objednávky fotek k tisku</h1>
+      <p>Fotky k vytisknutí a odeslání poštou domů.</p>
+    </div>
+
+    {% if print_orders %}
+    {% for o in print_orders %}
+    <div class="order-card {{ 'done' if o.done else '' }}" id="order-{{ o.id }}">
+      <div class="order-top">
+        <div class="order-thumb">
+          {% if o.photo_filename %}
+          <img src="/uploads/{{ o.photo_filename }}" alt="foto">
+          {% else %}📷{% endif %}
+        </div>
+        <div>
+          <div class="order-name">{{ o.name }}</div>
+          <div class="order-meta">
+            Přijato: {{ o.created_at }}<br>
+            Adresa: {{ o.address }}<br>
+            {% if o.email %}E-mail: {{ o.email }}<br>{% endif %}
+          </div>
+          <span class="order-badge {{ 'badge-sent' if o.done else 'badge-wait' }}">
+            {{ '✅ Odesláno' if o.done else '⏳ Čeká na odeslání' }}
+          </span>
+        </div>
+        {% if o.photo_filename %}
+        <a href="/uploads/{{ o.photo_filename }}" target="_blank"
+           style="margin-left:auto; font-size:0.78rem; color:var(--green);">Zobrazit fotku</a>
+        {% endif %}
+      </div>
+
+      <div class="checklist">
+        <div class="check-item {{ 'done' if o.printed_at else '' }}"
+             onclick="toggleCheck({{ o.id }}, 'printed', this)">
+          <div class="check-box">{{ '✓' if o.printed_at else '' }}</div>
+          <span>Vytisknuto</span>
+          <span class="check-date">{{ o.printed_at or '' }}</span>
+        </div>
+        <div class="check-item {{ 'done' if o.packed_at else '' }}"
+             onclick="toggleCheck({{ o.id }}, 'packed', this)">
+          <div class="check-box">{{ '✓' if o.packed_at else '' }}</div>
+          <span>Zabaleno</span>
+          <span class="check-date">{{ o.packed_at or '' }}</span>
+        </div>
+        <div class="check-item {{ 'done' if o.sent_at else '' }}"
+             onclick="toggleCheck({{ o.id }}, 'sent', this)">
+          <div class="check-box">{{ '✓' if o.sent_at else '' }}</div>
+          <span>Odesláno na poštu</span>
+          <span class="check-date">{{ o.sent_at or '' }}</span>
+        </div>
+      </div>
+
+      <form method="post" action="/admin/print-orders/{{ o.id }}/delete" style="margin-top:12px;"
+            onsubmit="return confirm('Smazat objednávku #{{ o.id }}?')">
+        <button class="del" type="submit">Smazat objednávku</button>
+      </form>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="order-card" style="text-align:center; color:var(--muted); padding:40px;">
+      Zatím žádné objednávky fotek.
+    </div>
+    {% endif %}
+  </div>
+
 </div>
 
 <script>
+  async function toggleCheck(orderId, field, el) {
+    const fd = new FormData();
+    fd.append('field', field);
+    const res = await fetch(`/admin/print-orders/${orderId}/toggle`, { method: 'POST', body: fd });
+    if (!res.ok) return;
+
+    const isDone = el.classList.toggle('done');
+    const box = el.querySelector('.check-box');
+    const dateEl = el.querySelector('.check-date');
+    box.textContent = isDone ? '✓' : '';
+    if (isDone) {
+      const now = new Date();
+      dateEl.textContent = now.toLocaleDateString('cs-CZ', {day:'numeric',month:'numeric',year:'numeric'}) + ' ' + now.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'});
+    } else {
+      dateEl.textContent = '';
+    }
+
+    // Aktualizuj badge
+    const card = el.closest('.order-card');
+    const allDone = [...card.querySelectorAll('.check-item')].every(c => c.classList.contains('done'));
+    const badge = card.querySelector('.order-badge');
+    badge.className = 'order-badge ' + (allDone ? 'badge-sent' : 'badge-wait');
+    badge.textContent = allDone ? '✅ Odesláno' : '⏳ Čeká na odeslání';
+    card.classList.toggle('done', allDone);
+  }
+
   function showSection(name, el) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));

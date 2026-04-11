@@ -16,6 +16,20 @@ class Climb(Base):
     group_size = Column(Integer, default=1, nullable=False)
 
 
+class PrintOrder(Base):
+    __tablename__ = "print_orders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    address = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    photo_filename = Column(String, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    printed_at = Column(DateTime, nullable=True)
+    packed_at = Column(DateTime, nullable=True)
+    sent_at = Column(DateTime, nullable=True)
+
+
 class WallPost(Base):
     __tablename__ = "wall_posts"
 
