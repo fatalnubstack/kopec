@@ -13,6 +13,7 @@ class Climb(Base):
     finish_time = Column(DateTime, nullable=True)
     duration_seconds = Column(Integer, nullable=True)
     completed = Column(Boolean, default=False)
+    group_size = Column(Integer, default=1, nullable=False)
 
 
 class WallPost(Base):

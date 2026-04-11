@@ -19,6 +19,7 @@ Base.metadata.create_all(bind=engine)
 # Migrace — přidá sloupce pokud neexistují
 for stmt in [
     "ALTER TABLE climbs ADD COLUMN city VARCHAR",
+    "ALTER TABLE climbs ADD COLUMN group_size INTEGER NOT NULL DEFAULT 1",
 ]:
     try:
         with engine.connect() as conn:
@@ -124,6 +125,11 @@ async def preview_ikony(request: Request):
     return templates.TemplateResponse("preview_ikony.html", {"request": request})
 
 
+@app.get("/preview-skupina", response_class=HTMLResponse)
+async def preview_skupina(request: Request):
+    return templates.TemplateResponse("preview_skupina.html", {"request": request})
+
+
 @app.get("/preview-siluety", response_class=HTMLResponse)
 async def preview_siluety(request: Request):
     return templates.TemplateResponse("preview_siluety.html", {"request": request})
@@ -166,7 +172,7 @@ def cleanup_expired_climbs(db: Session):
 
 
 @app.post("/api/start")
-async def api_start(name: str = Form(...), city: str = Form(""), db: Session = Depends(get_db)):
+async def api_start(name: str = Form(...), city: str = Form(""), group_size: int = Form(1), db: Session = Depends(get_db)):
     cleanup_expired_climbs(db)
 
     name = name.strip()
@@ -180,13 +186,14 @@ async def api_start(name: str = Form(...), city: str = Form(""), db: Session = D
         raise HTTPException(status_code=400, detail="Název města je příliš dlouhý")
     if contains_banned(name) or contains_banned(city):
         raise HTTPException(status_code=400, detail="Jméno obsahuje nevhodné slovo")
+    group_size = max(1, min(99, group_size))
 
-    climb = Climb(name=name, city=city or None, start_time=datetime.now(timezone.utc))
+    climb = Climb(name=name, city=city or None, start_time=datetime.now(timezone.utc), group_size=group_size)
     db.add(climb)
     db.commit()
     db.refresh(climb)
 
-    return {"climb_id": climb.id, "name": climb.name, "city": climb.city, "start_time": climb.start_time.isoformat()}
+    return {"climb_id": climb.id, "name": climb.name, "city": climb.city, "start_time": climb.start_time.isoformat(), "group_size": climb.group_size}
 
 
 @app.post("/api/finish")
@@ -199,6 +206,7 @@ async def api_finish(climb_id: int = Form(...), db: Session = Depends(get_db)):
             "name": climb.name,
             "duration_seconds": climb.duration_seconds,
             "duration_fmt": fmt_duration(climb.duration_seconds),
+            "group_size": climb.group_size,
             "already_finished": True,
         }
 
@@ -227,6 +235,7 @@ async def api_finish(climb_id: int = Form(...), db: Session = Depends(get_db)):
         "name": climb.name,
         "duration_seconds": duration,
         "duration_fmt": fmt_duration(duration),
+        "group_size": climb.group_size,
         "rank": rank,
         "already_finished": False,
     }
@@ -238,7 +247,7 @@ async def api_stats(db: Session = Depends(get_db)):
 
     def count_since(dt):
         return (
-            db.query(func.count(Climb.id))
+            db.query(func.coalesce(func.sum(Climb.group_size), 0))
             .filter(Climb.completed == True, Climb.finish_time >= dt)  # noqa: E712
             .scalar()
         )

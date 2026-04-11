@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Výběr ikon navigace</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111a11; color: #f0ede8; font-family: -apple-system, sans-serif; padding: 20px 16px 40px; }
+    h1 { font-size: 1.2rem; margin-bottom: 4px; }
+    p.sub { color: #8a9e85; font-size: 0.85rem; margin-bottom: 28px; }
+
+    .section { margin-bottom: 36px; }
+    .section h2 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5a8a3a; margin-bottom: 14px; }
+
+    .options { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .opt {
+      display: flex; flex-direction: column; align-items: center;
+      background: #1e2d1e; border: 2px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 10px 14px; cursor: pointer;
+      min-width: 64px; transition: border-color .15s, background .15s;
+    }
+    .opt:hover { border-color: #5a8a3a; background: #253225; }
+    .opt.selected { border-color: #5a8a3a; background: rgba(90,138,58,0.2); }
+    .opt .icon { font-size: 1.5rem; margin-bottom: 4px; }
+    .opt .label { font-size: 0.65rem; color: #8a9e85; }
+
+    /* Živý náhled navigace */
+    .preview-wrap {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(17,26,17,0.97);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(10px);
+      padding: 8px 0 20px;
+    }
+    .preview-nav {
+      display: flex; max-width: 480px; margin: 0 auto;
+    }
+    .preview-nav .tab {
+      flex: 1; text-align: center; color: #8a9e85;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; padding: 4px 0;
+    }
+    .preview-nav .tab.active { color: #5a8a3a; }
+    .preview-nav .tab .ni { display: block; font-size: 1.3rem; margin-bottom: 2px; }
+
+    .result-box {
+      background: #1e2d1e; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 16px; margin-top: 16px;
+      font-size: 0.85rem; color: #8a9e85; line-height: 1.6;
+    }
+    .result-box strong { color: #f0ede8; }
+    .copy-btn {
+      margin-top: 12px; background: #5a8a3a; color: #fff; border: none;
+      border-radius: 10px; padding: 10px 18px; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Výběr ikon navigace</h1>
+  <p class="sub">Klikni na ikonu — náhled se aktualizuje dole v liště. Pak mi řekni čísla.</p>
+
+  <!-- START -->
+  <div class="section">
+    <h2>▲ Start — vyber ikonu</h2>
+    <div class="options" id="opts-start">
+      <div class="opt selected" data-tab="start" data-icon="🥾" onclick="pick('start',this)"><span class="icon">🥾</span><span class="label">1</span></div>
+      <div class="opt" data-tab="start" data-icon="⛰️" onclick="pick('start',this)"><span class="icon">⛰️</span><span class="label">2</span></div>
+      <div class="opt" data-tab="start" data-icon="🏔️" onclick="pick('start',this)"><span class="icon">🏔️</span><span class="label">3</span></div>
+      <div class="opt" data-tab="start" data-icon="🧗" onclick="pick('start',this)"><span class="icon">🧗</span><span class="label">4</span></div>
+      <div class="opt" data-tab="start" data-icon="🚩" onclick="pick('start',this)"><span class="icon">🚩</span><span class="label">5</span></div>
+      <div class="opt" data-tab="start" data-icon="🏁" onclick="pick('start',this)"><span class="icon">🏁</span><span class="label">6</span></div>
+      <div class="opt" data-tab="start" data-icon="🎯" onclick="pick('start',this)"><span class="icon">🎯</span><span class="label">7</span></div>
+      <div class="opt" data-tab="start" data-icon="🌄" onclick="pick('start',this)"><span class="icon">🌄</span><span class="label">8</span></div>
+      <div class="opt" data-tab="start" data-icon="🗻" onclick="pick('start',this)"><span class="icon">🗻</span><span class="label">9</span></div>
+      <div class="opt" data-tab="start" data-icon="▶️" onclick="pick('start',this)"><span class="icon">▶️</span><span class="label">10</span></div>
+    </div>
+  </div>
+
+  <!-- ŽEBŘÍČEK -->
+  <div class="section">
+    <h2>🏆 Žebříček — vyber ikonu</h2>
+    <div class="options" id="opts-leaderboard">
+      <div class="opt" data-tab="leaderboard" data-icon="🏆" onclick="pick('leaderboard',this)"><span class="icon">🏆</span><span class="label">1</span></div>
+      <div class="opt selected" data-tab="leaderboard" data-icon="🥇" onclick="pick('leaderboard',this)"><span class="icon">🥇</span><span class="label">2</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="🏅" onclick="pick('leaderboard',this)"><span class="icon">🏅</span><span class="label">3</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="👑" onclick="pick('leaderboard',this)"><span class="icon">👑</span><span class="label">4</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="⭐" onclick="pick('leaderboard',this)"><span class="icon">⭐</span><span class="label">5</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="🌟" onclick="pick('leaderboard',this)"><span class="icon">🌟</span><span class="label">6</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="📊" onclick="pick('leaderboard',this)"><span class="icon">📊</span><span class="label">7</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="📈" onclick="pick('leaderboard',this)"><span class="icon">📈</span><span class="label">8</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="🎖️" onclick="pick('leaderboard',this)"><span class="icon">🎖️</span><span class="label">9</span></div>
+      <div class="opt" data-tab="leaderboard" data-icon="🔢" onclick="pick('leaderboard',this)"><span class="icon">🔢</span><span class="label">10</span></div>
+    </div>
+  </div>
+
+  <!-- NÁSTĚNKA -->
+  <div class="section">
+    <h2>📋 Nástěnka — vyber ikonu</h2>
+    <div class="options" id="opts-nastenka">
+      <div class="opt" data-tab="nastenka" data-icon="🪧" onclick="pick('nastenka',this)"><span class="icon">🪧</span><span class="label">1 cedule</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="🗺️" onclick="pick('nastenka',this)"><span class="icon">🗺️</span><span class="label">2 mapa</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="🏕️" onclick="pick('nastenka',this)"><span class="icon">🏕️</span><span class="label">3 tábor</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="📜" onclick="pick('nastenka',this)"><span class="icon">📜</span><span class="label">4 svitek</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="🌲" onclick="pick('nastenka',this)"><span class="icon">🌲</span><span class="label">5 strom</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="🪵" onclick="pick('nastenka',this)"><span class="icon">🪵</span><span class="label">6 dřevo</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="📍" onclick="pick('nastenka',this)"><span class="icon">📍</span><span class="label">7 špendlík</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="🔖" onclick="pick('nastenka',this)"><span class="icon">🔖</span><span class="label">8 záložka</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="💬" onclick="pick('nastenka',this)"><span class="icon">💬</span><span class="label">9 vzkaz</span></div>
+      <div class="opt" data-tab="nastenka" data-icon="📸" onclick="pick('nastenka',this)"><span class="icon">📸</span><span class="label">10 fotka</span></div>
+    </div>
+  </div>
+
+  <!-- Výsledek -->
+  <div class="result-box" id="resultBox">
+    Aktuální výběr: <strong id="resultText">Start 🥾 · Žebříček 🥇 · Nástěnka 🪧</strong>
+  </div>
+
+  <!-- Živý náhled -->
+  <div style="height:100px;"></div>
+  <div class="preview-wrap">
+    <div class="preview-nav">
+      <div class="tab active">
+        <span class="ni" id="prev-home">⛰️</span>Bořen
+      </div>
+      <div class="tab">
+        <span class="ni" id="prev-start">🥾</span>Start
+      </div>
+      <div class="tab">
+        <span class="ni" id="prev-leaderboard">🥇</span>Žebříček
+      </div>
+      <div class="tab">
+        <span class="ni" id="prev-nastenka">🪧</span>Nástěnka
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const selected = { start: '🥾', leaderboard: '🥇', nastenka: '🪧' };
+
+    function pick(tab, el) {
+      document.querySelectorAll(`[data-tab="${tab}"]`).forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selected[tab] = el.dataset.icon;
+      document.getElementById(`prev-${tab}`).textContent = el.dataset.icon;
+      document.getElementById('resultText').textContent =
+        `Start ${selected.start} · Žebříček ${selected.leaderboard} · Nástěnka ${selected.nastenka}`;
+    }
+  </script>
+</body>
+</html>

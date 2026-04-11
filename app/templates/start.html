@@ -29,6 +29,32 @@
     <label for="city" style="margin-top:14px;">Město <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinné)</span></label>
     <input type="text" id="city" name="city" placeholder="Např. Bílina, Praha…" maxlength="60" autocomplete="off">
 
+    <!-- Skupinový výstup -->
+    <div style="margin-top:14px;">
+      <label>Výstup</label>
+      <div style="display:flex; gap:8px;">
+        <button type="button" id="btnSolo" onclick="setGroup(false)"
+          style="flex:1; padding:14px; background:rgba(90,138,58,0.2); border:2px solid var(--green); border-radius:12px; color:var(--green); font-size:0.9rem; font-weight:700; cursor:pointer;">
+          🧍 Jdu sám
+        </button>
+        <button type="button" id="btnGroup" onclick="setGroup(true)"
+          style="flex:1; padding:14px; background:var(--card2); border:2px solid var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; font-weight:700; cursor:pointer;">
+          👥 Jdeme skupina
+        </button>
+      </div>
+    </div>
+
+    <div id="groupWrap" style="display:none; margin-top:12px;">
+      <label>Počet lidí (včetně tebe)</label>
+      <div style="display:flex; align-items:center; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; overflow:hidden;">
+        <button type="button" onclick="changeGroup(-1)"
+          style="width:52px; height:52px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">−</button>
+        <span id="groupCount" style="flex:1; text-align:center; font-size:1.4rem; font-weight:800;">2</span>
+        <button type="button" onclick="changeGroup(1)"
+          style="width:52px; height:52px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">+</button>
+      </div>
+    </div>
+
     <p class="error" id="error"></p>
     <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:16px;">▲ Začít výstup</button>
   </form>
@@ -112,6 +138,30 @@
   const BANNED = ['pica','picus','píca','píčus','zmrd','kokot','kunda','pizda','negr','cigan','cigán','retard','debil','kurva','hovno','bastard'];
   function hasBanned(str) { const s = str.toLowerCase(); return BANNED.some(w => s.includes(w)); }
 
+  // Skupinový výstup
+  let groupSize = 1;
+
+  function setGroup(isGroup) {
+    document.getElementById('groupWrap').style.display = isGroup ? 'block' : 'none';
+    document.getElementById('btnSolo').style.background  = isGroup ? 'var(--card2)' : 'rgba(90,138,58,0.2)';
+    document.getElementById('btnSolo').style.borderColor = isGroup ? 'var(--border)' : 'var(--green)';
+    document.getElementById('btnSolo').style.color       = isGroup ? 'var(--muted)'  : 'var(--green)';
+    document.getElementById('btnGroup').style.background  = isGroup ? 'rgba(90,138,58,0.2)' : 'var(--card2)';
+    document.getElementById('btnGroup').style.borderColor = isGroup ? 'var(--green)'  : 'var(--border)';
+    document.getElementById('btnGroup').style.color       = isGroup ? 'var(--green)'  : 'var(--muted)';
+    groupSize = isGroup ? parseInt(document.getElementById('groupCount').textContent) : 1;
+  }
+
+  function changeGroup(d) {
+    const next = Math.max(2, Math.min(99, groupSize + d));
+    if (next > 30 && d > 0) {
+      const ok = confirm(`To vás jde ${next}? To se ani nevejdete na vrchol 😄\n\nOpravdu vás jde tolik?`);
+      if (!ok) return;
+    }
+    groupSize = next;
+    document.getElementById('groupCount').textContent = groupSize;
+  }
+
   function showActive(data) {
     document.getElementById('startCard').style.display = 'none';
     document.getElementById('activeClimb').style.display = 'block';
@@ -193,6 +243,7 @@
     const body = new FormData();
     body.append('name', name);
     body.append('city', city);
+    body.append('group_size', groupSize);
 
     try {
       const res = await fetch('/api/start', { method: 'POST', body });

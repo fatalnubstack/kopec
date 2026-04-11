@@ -84,6 +84,7 @@
     <p style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Čas výstupu</p>
     <div class="big-time" id="resultTime"></div>
     <p id="resultRank" class="info" style="margin-top:10px; font-weight:600; color:var(--gold);"></p>
+    <p id="resultGroup" class="info" style="display:none; margin-top:6px; color:var(--muted);"></p>
   </div>
 
   <div style="margin: 0 16px; display:flex; gap:10px;">
@@ -222,6 +223,10 @@
       document.getElementById('resultTime').textContent = result.duration_fmt;
       if (result.rank) {
         document.getElementById('resultRank').textContent = `🏆 ${result.rank}. místo v celkovém pořadí`;
+      }
+      if (result.group_size > 1) {
+        document.getElementById('resultGroup').textContent = `👥 Šli jste ve skupině ${result.group_size} lidí`;
+        document.getElementById('resultGroup').style.display = 'block';
       }
       show('result');
       loadStats();

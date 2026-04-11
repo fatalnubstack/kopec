@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Preview – skupinový výstup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #111a11; --card: #1e2d1e; --card2: #253225;
+      --green: #5a8a3a; --green-btn: #4a7a2e; --text: #f0ede8;
+      --muted: #8a9e85; --border: rgba(255,255,255,0.07);
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); padding: 20px 16px 60px; }
+
+    h1 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+    .sub { color: var(--muted); font-size: 0.83rem; margin-bottom: 28px; }
+
+    /* Tab přepínač variant */
+    .variant-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    .vtab {
+      padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted); font-size: 0.82rem;
+      font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .vtab.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+    .variant { display: none; }
+    .variant.active { display: block; }
+
+    /* Card simulace start stránky */
+    .card {
+      background: var(--card); border-radius: 16px; padding: 20px;
+      border: 1px solid var(--border); max-width: 400px;
+    }
+    .card-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+    }
+    .card h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 16px; }
+
+    label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+    input[type="text"] {
+      width: 100%; padding: 14px; font-size: 1rem;
+      background: var(--card2); border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text); outline: none; margin-bottom: 16px;
+    }
+    input[type="text"]:focus { border-color: var(--green); }
+
+    .btn {
+      display: block; width: 100%; padding: 16px; font-size: 1rem;
+      font-weight: 700; border: none; border-radius: 14px; cursor: pointer;
+      text-align: center; text-decoration: none; margin-top: 16px;
+    }
+    .btn-green { background: var(--green); color: #fff; }
+
+    /* Varianta A — číselník */
+    .counter-wrap {
+      display: flex; align-items: center; gap: 0;
+      background: var(--card2); border: 1.5px solid var(--border);
+      border-radius: 12px; overflow: hidden; margin-bottom: 4px;
+    }
+    .counter-btn {
+      width: 52px; height: 52px; background: none; border: none;
+      color: var(--text); font-size: 1.4rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .counter-btn:hover { background: rgba(255,255,255,0.06); }
+    .counter-val {
+      flex: 1; text-align: center; font-size: 1.4rem; font-weight: 800;
+      color: var(--text);
+    }
+    .counter-hint { font-size: 0.78rem; color: var(--muted); margin-bottom: 16px; margin-top: 4px; }
+
+    /* Varianta B — tlačítka */
+    .size-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .size-btn {
+      flex: 1; min-width: 70px; padding: 14px 8px; background: var(--card2);
+      border: 2px solid var(--border); border-radius: 12px; color: var(--text);
+      font-size: 0.9rem; font-weight: 700; cursor: pointer; text-align: center;
+      transition: all .15s;
+    }
+    .size-btn.active { border-color: var(--green); background: rgba(90,138,58,0.18); color: var(--green); }
+    .size-btn .num { font-size: 1.3rem; display: block; margin-bottom: 2px; }
+    #bMoreWrap { margin-top: 10px; display: none; }
+
+    /* Varianta C — přepínač */
+    .toggle-wrap { display: flex; gap: 8px; margin-bottom: 16px; }
+    .toggle-btn {
+      flex: 1; padding: 14px; background: var(--card2);
+      border: 2px solid var(--border); border-radius: 12px;
+      color: var(--muted); font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; text-align: center; transition: all .15s;
+    }
+    .toggle-btn.active { border-color: var(--green); background: rgba(90,138,58,0.18); color: var(--green); }
+    #cGroupWrap { display: none; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    .desc-box {
+      background: rgba(90,138,58,0.1); border: 1px solid rgba(90,138,58,0.2);
+      border-radius: 10px; padding: 10px 14px; margin-top: 16px;
+      font-size: 0.82rem; color: var(--muted); line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Preview — skupinový výstup</h1>
+  <p class="sub">Tři varianty jak zadat počet lidí ve skupině. Klikni na variantu.</p>
+
+  <div class="variant-tabs">
+    <button class="vtab active" onclick="showVariant('a', this)">Varianta A</button>
+    <button class="vtab" onclick="showVariant('b', this)">Varianta B</button>
+    <button class="vtab" onclick="showVariant('c', this)">Varianta C</button>
+  </div>
+
+  <!-- VARIANTA A: číselník +/- -->
+  <div class="variant active" id="var-a">
+    <div class="card">
+      <p class="card-label">▲ Startovní čára</p>
+      <h2>Připrav se!</h2>
+
+      <label>Tvoje jméno / přezdívka</label>
+      <input type="text" placeholder="Např. Jan Novák">
+
+      <label>Kolik vás jde?</label>
+      <div class="counter-wrap">
+        <button class="counter-btn" onclick="changeCount('a', -1)">−</button>
+        <span class="counter-val" id="a-count">1</span>
+        <button class="counter-btn" onclick="changeCount('a', 1)">+</button>
+      </div>
+      <p class="counter-hint" id="a-hint">Jdeš sám</p>
+
+      <button class="btn btn-green">▲ Začít výstup</button>
+    </div>
+    <div class="desc-box">
+      <strong>Varianta A:</strong> Jednoduchý +/− číselník. Číslo se mění od 1 výše, hint pod tím říká "Jdeš sám" nebo "Jdete X lidí". Přímočaré, žádné extra kroky.
+    </div>
+  </div>
+
+  <!-- VARIANTA B: tlačítka 1/2/3/4+ -->
+  <div class="variant" id="var-b">
+    <div class="card">
+      <p class="card-label">▲ Startovní čára</p>
+      <h2>Připrav se!</h2>
+
+      <label>Tvoje jméno / přezdívka</label>
+      <input type="text" placeholder="Např. Jan Novák">
+
+      <label>Kolik vás jde?</label>
+      <div class="size-btns">
+        <button class="size-btn active" onclick="pickSize('b1', this)"><span class="num">1</span>Sám</button>
+        <button class="size-btn" onclick="pickSize('b2', this)"><span class="num">2</span>Dva</button>
+        <button class="size-btn" onclick="pickSize('b3', this)"><span class="num">3</span>Tři</button>
+        <button class="size-btn" onclick="pickSize('b4', this)"><span class="num">4+</span>Více</button>
+      </div>
+      <div id="bMoreWrap">
+        <label style="margin-top:8px;">Celkový počet</label>
+        <div class="counter-wrap">
+          <button class="counter-btn" onclick="changeCount('b', -1)">−</button>
+          <span class="counter-val" id="b-count">4</span>
+          <button class="counter-btn" onclick="changeCount('b', 1)">+</button>
+        </div>
+      </div>
+
+      <button class="btn btn-green">▲ Začít výstup</button>
+    </div>
+    <div class="desc-box">
+      <strong>Varianta B:</strong> Rychlá volba kartičkami — 1/2/3/4+. Většina skupin jsou 2–3 lidi, takže to trefí jedním kliknutím. Při "4+" se zobrazí číselník.
+    </div>
+  </div>
+
+  <!-- VARIANTA C: přepínač sam/skupina -->
+  <div class="variant" id="var-c">
+    <div class="card">
+      <p class="card-label">▲ Startovní čára</p>
+      <h2>Připrav se!</h2>
+
+      <label>Tvoje jméno / přezdívka</label>
+      <input type="text" placeholder="Např. Jan Novák">
+
+      <label>Výstup</label>
+      <div class="toggle-wrap">
+        <button class="toggle-btn active" onclick="toggleGroup(false, this)">🧍 Jdu sám</button>
+        <button class="toggle-btn" onclick="toggleGroup(true, this)">👥 Jdeme skupina</button>
+      </div>
+
+      <div id="cGroupWrap">
+        <hr class="divider">
+        <label>Počet lidí ve skupině</label>
+        <div class="counter-wrap">
+          <button class="counter-btn" onclick="changeCount('c', -1)">−</button>
+          <span class="counter-val" id="c-count">2</span>
+          <button class="counter-btn" onclick="changeCount('c', 1)">+</button>
+        </div>
+        <p class="counter-hint">Včetně tebe</p>
+      </div>
+
+      <button class="btn btn-green">▲ Začít výstup</button>
+    </div>
+    <div class="desc-box">
+      <strong>Varianta C:</strong> Nejprve volíš "Jdu sám" nebo "Skupina" — skupina odkryje číselník. Nejčistší UX, žádný chaos. Sólokaři neklikají nic navíc.
+    </div>
+  </div>
+
+  <script>
+    function showVariant(v, el) {
+      document.querySelectorAll('.variant').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.vtab').forEach(x => x.classList.remove('active'));
+      document.getElementById('var-' + v).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // Číselník
+    const counts = { a: 1, b: 4, c: 2 };
+    function changeCount(v, d) {
+      const min = v === 'b' ? 4 : (v === 'c' ? 2 : 1);
+      counts[v] = Math.max(min, Math.min(99, counts[v] + d));
+      document.getElementById(v + '-count').textContent = counts[v];
+      if (v === 'a') {
+        document.getElementById('a-hint').textContent = counts[v] === 1 ? 'Jdeš sám' : `Jdete ${counts[v]} lidí`;
+      }
+    }
+
+    // Varianta B — kartičky
+    function pickSize(key, el) {
+      document.querySelectorAll('#var-b .size-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('bMoreWrap').style.display = key === 'b4' ? 'block' : 'none';
+    }
+
+    // Varianta C — přepínač
+    function toggleGroup(isGroup, el) {
+      document.querySelectorAll('#var-c .toggle-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('cGroupWrap').style.display = isGroup ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
