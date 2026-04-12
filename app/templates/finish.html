@@ -83,8 +83,9 @@
   <div class="card" style="text-align:center; padding:28px 20px;">
     <p style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Čas výstupu</p>
     <div class="big-time" id="resultTime"></div>
-    <p id="resultRank" class="info" style="margin-top:10px; font-weight:600; color:var(--gold);"></p>
+    <p id="resultTimeMsg" class="info" style="margin-top:10px; font-weight:600; color:var(--gold);"></p>
     <p id="resultGroup" class="info" style="display:none; margin-top:6px; color:var(--muted);"></p>
+    <p id="resultCountMsg" class="info" style="margin-top:6px; color:var(--muted);"></p>
   </div>
 
   <div style="margin: 0 16px; display:flex; gap:10px;">
@@ -229,9 +230,7 @@
       climbResult = result;
       document.getElementById('resultName').textContent = result.name;
       document.getElementById('resultTime').textContent = result.duration_fmt;
-      if (result.rank) {
-        document.getElementById('resultRank').textContent = `🏆 ${result.rank}. místo v celkovém pořadí`;
-      }
+      document.getElementById('resultTimeMsg').textContent = timeMessage(result.duration_seconds);
       if (result.group_size > 1) {
         document.getElementById('resultGroup').textContent = `👥 Šli jste ve skupině ${result.group_size} lidí`;
         document.getElementById('resultGroup').style.display = 'block';
@@ -358,6 +357,26 @@
     }
   }
 
+  function timeMessage(seconds) {
+    if (seconds < 1200) return 'To jsi letěl! Přes Bořen jako vítr. 🚀';
+    if (seconds < 1500) return 'Výborný čas — pořádně trénovaný dobrodruh. 💪';
+    if (seconds < 2100) return 'Solidní výkon — na Bořen jako z vody. 👍';
+    if (seconds < 2700) return 'Hezký výstup, správný rytmus. 🙂';
+    if (seconds < 3600) return 'Šel jsi svým tempem — a to je přesně jak to má být.';
+    if (seconds < 4500) return 'Bořen si vzal svůj čas... nebo ty jeho. 😄';
+    if (seconds < 5400) return 'Loudale, ale nahoře jsi — a to se počítá! 🐢';
+    return 'Výstup jako nedělní procházka. Pomalu, ale s výhledem. 😄';
+  }
+
+  function countMessage(today) {
+    if (today <= 1)  return 'Dnes tu budeš první! 🌅';
+    if (today <= 5)  return `Zatím tu dnes bylo jen pár odvážlivců před tebou.`;
+    if (today === 100) return 'Jubilejní! Jsi dnes přesně 100. návštěvník Bořenu! 🎉';
+    if (today <= 30) return `Dobrá společnost — dnes tu bylo ${today - 1} lidí před tebou.`;
+    if (today <= 99) return `Dnes je Bořen oblíbený — ${today - 1} dobrodruhů před tebou!`;
+    return `Dnes je tu opravdu rušno — ${today - 1} dobrodruhů před tebou.`;
+  }
+
   async function loadStats() {
     try {
       const res = await fetch('/api/stats');
@@ -366,6 +385,7 @@
       document.getElementById('statWeek').textContent  = s.week;
       document.getElementById('statMonth').textContent = s.month;
       document.getElementById('statsCard').style.display = 'block';
+      document.getElementById('resultCountMsg').textContent = countMessage(s.today);
     } catch {}
   }
 
