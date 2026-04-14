@@ -3,45 +3,69 @@
 {% block title %}Bořen – Nástěnka{% endblock %}
 {% block content %}
 
+<style>
+  textarea {
+    width: 100%;
+    padding: 14px;
+    font-size: 0.95rem;
+    font-family: 'Barlow', sans-serif;
+    background: var(--surface2);
+    border: 1.5px solid var(--border2);
+    border-radius: 10px;
+    color: var(--text);
+    outline: none;
+    resize: none;
+  }
+  textarea:focus { border-color: var(--accent); }
+  .mood-btn {
+    font-size: 1.8rem;
+    background: none;
+    border: 2px solid var(--border2);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+</style>
+
 <!-- Hlavička -->
-<div style="margin: 16px 16px 0;">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">🪧 NÁSTĚNKA</p>
-  <h2 style="font-size:1.4rem; font-weight:800;">Vzkazy z vrcholu</h2>
-  <p id="counterText" style="font-size:0.85rem; color:var(--muted); margin-top:4px;">Co píší dobrodruzi po výstupu na Bořen.</p>
+<div style="padding: 20px 16px 12px;">
+  <div class="card-label">🪧 Nástěnka</div>
+  <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.01em; margin-bottom:4px;">Vzkazy z vrcholu</h2>
+  <p id="counterText" style="font-size:0.85rem; color:var(--muted);">Co píší dobrodruzi po výstupu na Bořen.</p>
 </div>
 
 <!-- Tlačítko přidat -->
-<div style="margin: 12px 16px 0;">
+<div style="margin: 0 16px 4px;">
   <button class="btn btn-green" onclick="toggleForm()" id="addBtn">✏️ Přidat příspěvek</button>
 </div>
 
 <!-- Formulář -->
 <div id="addForm" style="display:none;" class="card">
-  <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:12px;">✏️ Nový příspěvek</p>
+  <div class="card-label">✏️ Nový příspěvek</div>
 
   <label for="formName">Tvoje jméno</label>
   <input type="text" id="formName" placeholder="Např. Jan Novák" maxlength="80" autocomplete="off">
 
   <div style="margin-top:16px;">
-    <p style="font-size:0.85rem; font-weight:600; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.05em;">Jak ses cítil během výšlapu?</p>
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Jak ses cítil během výšlapu?</p>
     <div id="formMoodPicker" style="display:flex; gap:8px; justify-content:center;">
-      <button type="button" class="mood-btn" data-mood="1" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😮‍💨</button>
-      <button type="button" class="mood-btn" data-mood="2" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😕</button>
-      <button type="button" class="mood-btn" data-mood="3" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">🙂</button>
-      <button type="button" class="mood-btn" data-mood="4" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">😄</button>
-      <button type="button" class="mood-btn" data-mood="5" style="font-size:1.8rem; background:none; border:2px solid var(--border); border-radius:12px; padding:8px 12px; cursor:pointer;">🤩</button>
+      <button type="button" class="mood-btn" data-mood="1">😮‍💨</button>
+      <button type="button" class="mood-btn" data-mood="2">😕</button>
+      <button type="button" class="mood-btn" data-mood="3">🙂</button>
+      <button type="button" class="mood-btn" data-mood="4">😄</button>
+      <button type="button" class="mood-btn" data-mood="5">🤩</button>
     </div>
   </div>
 
   <div style="margin-top:14px;">
-    <label for="formMsg">Vzkaz <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
-    <textarea id="formMsg" maxlength="500" placeholder="Co říkáš na výstup? Tip, pozdrav…" rows="3"
-      style="width:100%; padding:14px; font-size:0.95rem; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; resize:none; font-family:inherit;"></textarea>
+    <label for="formMsg">Vzkaz <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
+    <textarea id="formMsg" maxlength="500" placeholder="Co říkáš na výstup? Tip, pozdrav…" rows="3"></textarea>
   </div>
 
   <div style="margin-top:14px;">
-    <label>Fotka <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
-    <label for="formPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--card2); border:1.5px dashed var(--border); border-radius:12px; padding:14px; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem;">
+    <label>Fotka <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
+    <label for="formPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--surface2); border:1.5px dashed rgba(255,255,255,0.1); border-radius:10px; padding:14px; font-family:'Barlow',sans-serif; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem;">
       <span style="font-size:1.4rem;">📷</span>
       <span id="formPhotoLabel">Vyber fotku z galerie</span>
     </label>
@@ -60,7 +84,7 @@
 
 <!-- Načítám -->
 <div id="loading" style="text-align:center; padding:60px 20px;">
-  <span class="spinner" style="width:28px;height:28px;border-width:3px; border-color:rgba(90,138,58,.3); border-top-color:var(--green);"></span>
+  <span class="spinner" style="width:28px;height:28px;border-width:3px;"></span>
 </div>
 
 <!-- Prázdno -->
@@ -75,7 +99,7 @@
 
 <script>
   const MOOD_LABEL = {1:'Dřina',2:'Šlo to',3:'Pohodička',4:'Super výstup',5:'Perfektní!'};
-  const LIKES_KEY = 'boren_likes'; // localStorage: comma-separated liked post IDs
+  const LIKES_KEY = 'boren_likes';
 
   function getLiked() {
     const raw = localStorage.getItem(LIKES_KEY);
@@ -110,17 +134,16 @@
   async function toggleLike(postId, btn) {
     const liked = getLiked();
     const id = String(postId);
-    if (liked.has(id)) return; // už lajknuto
+    if (liked.has(id)) return;
 
     liked.add(id);
     setLiked(liked);
 
-    // Okamžitě aktualizuj UI
     const countEl = btn.querySelector('.like-count');
     countEl.textContent = parseInt(countEl.textContent) + 1;
     btn.classList.add('liked');
     btn.style.color = '#e05a5a';
-    btn.style.borderColor = 'rgba(200,60,60,0.5)';
+    btn.style.borderColor = 'rgba(200,60,60,0.4)';
 
     try {
       await fetch(`/api/wall/${postId}/like`, { method: 'POST' });
@@ -129,38 +152,40 @@
 
   function renderCard(p, liked) {
     const isLiked = liked.has(String(p.id));
-    const likedStyle = isLiked ? 'color:#e05a5a; border-color:rgba(200,60,60,0.5);' : 'color:var(--muted); border-color:var(--border);';
+    const likedStyle = isLiked
+      ? 'color:#e05a5a; border-color:rgba(200,60,60,0.4);'
+      : 'color:var(--muted); border-color:var(--border2);';
 
     return `
-      <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:12px;">
+      <div style="background:var(--surface); border:1px solid var(--border2); border-radius:14px; overflow:hidden; margin-bottom:12px;">
 
         ${p.photo_url ? `
         <div style="height:190px; cursor:pointer; overflow:hidden;" onclick="openPhoto('${escHtml(p.photo_url)}')">
-          <img src="${escHtml(p.photo_url)}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block;">
+          <img src="${escHtml(p.photo_url)}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
         </div>` : ''}
 
         <div style="padding:14px 16px;">
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
             <div>
-              <p style="font-weight:700; font-size:1rem;">${escHtml(p.name)}</p>
-              <p style="font-size:0.78rem; color:var(--muted); margin-top:2px;">
+              <p style="font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:800; text-transform:uppercase; letter-spacing:0.02em;">${escHtml(p.name)}</p>
+              <p style="font-size:0.75rem; color:var(--muted); margin-top:2px;">
                 ${p.duration_fmt ? `🥾 ${escHtml(p.duration_fmt)} · ` : ''}${fmtDate(p.created_at)}
               </p>
             </div>
             ${p.mood_emoji ? `
             <div style="text-align:center; flex-shrink:0;">
               <span style="font-size:1.6rem;">${p.mood_emoji}</span>
-              <p style="font-size:0.7rem; color:var(--muted); margin-top:2px;">${MOOD_LABEL[p.mood]||''}</p>
+              <p style="font-size:0.65rem; color:var(--muted); margin-top:2px; font-family:'Barlow Condensed',sans-serif; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">${MOOD_LABEL[p.mood]||''}</p>
             </div>` : ''}
           </div>
 
           ${p.message ? `
-          <p style="font-size:0.9rem; color:var(--text); margin-top:10px; line-height:1.5; border-top:1px solid var(--border); padding-top:10px;">"${escHtml(p.message)}"</p>
+          <p style="font-size:0.88rem; color:var(--text); opacity:0.8; margin-top:10px; line-height:1.5; border-top:1px solid var(--border2); padding-top:10px;">"${escHtml(p.message)}"</p>
           ` : ''}
 
           <div style="margin-top:12px; display:flex; justify-content:flex-end;">
             <button onclick="toggleLike(${p.id}, this)"
-              style="display:flex; align-items:center; gap:5px; background:none; border:1.5px solid; border-radius:20px; padding:5px 12px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all .15s; ${likedStyle}"
+              style="display:flex; align-items:center; gap:5px; background:none; border:1.5px solid; border-radius:20px; padding:5px 12px; font-family:'Barlow',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all .15s; ${likedStyle}"
               ${isLiked ? 'disabled' : ''}>
               ❤️ <span class="like-count">${p.likes}</span>
             </button>
@@ -182,14 +207,12 @@
         return;
       }
 
-      // Počítadlo
       document.getElementById('counterText').textContent = `${posts.length} dobrodruhů zanechalo vzkaz`;
 
       const liked = getLiked();
       const container = document.getElementById('posts');
       container.style.display = 'block';
 
-      // Seskupení podle data
       const groups = [
         { label: 'Dnes', posts: [] },
         { label: 'Včera', posts: [] },
@@ -206,7 +229,7 @@
       let html = '';
       groups.forEach(g => {
         if (!g.posts.length) return;
-        html += `<p style="font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin: 20px 0 10px;">${g.label}</p>`;
+        html += `<p style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin: 20px 0 10px;">${g.label}</p>`;
         html += g.posts.map(p => renderCard(p, liked)).join('');
       });
 
@@ -242,8 +265,8 @@
     btn.addEventListener('click', () => {
       formMood = parseInt(btn.dataset.mood);
       document.querySelectorAll('#formMoodPicker .mood-btn').forEach(b => {
-        b.style.borderColor = b === btn ? 'var(--green)' : 'var(--border)';
-        b.style.background  = b === btn ? 'rgba(90,138,58,0.2)' : 'none';
+        b.style.borderColor = b === btn ? 'var(--accent)' : 'var(--border2)';
+        b.style.background  = b === btn ? 'var(--accent-dim)' : 'none';
       });
     });
   });
@@ -297,7 +320,7 @@
 
 <!-- Lightbox -->
 <div id="lightbox" onclick="closePhoto()"
-  style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000;
+  style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.94); z-index:1000;
          align-items:center; justify-content:center; padding:16px;">
   <img id="lightboxImg" src="" alt="Fotka"
     style="max-width:100%; max-height:100%; border-radius:12px; object-fit:contain;">

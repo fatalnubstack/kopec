@@ -5,28 +5,28 @@
 
 <!-- Počasí + datum/čas -->
 <div id="weatherCard" style="margin:16px 16px 0; display:none;">
-  <div class="card-sm" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+  <div style="background:var(--surface); border-radius:10px; padding:12px 16px; border:1px solid var(--border2); display:flex; justify-content:space-between; align-items:center; gap:8px;">
     <span id="wLeft" style="font-size:0.88rem;"></span>
-    <span style="font-size:0.82rem; color:var(--muted);">Západ slunce: <span id="wSunset"></span></span>
+    <span style="font-size:0.8rem; color:var(--muted);">Západ: <span id="wSunset"></span></span>
   </div>
 </div>
 
 <!-- Datum a čas -->
 <div style="margin:10px 16px 0; text-align:right;">
-  <span id="liveClock" style="font-size:0.8rem; color:var(--muted);"></span>
+  <span id="liveClock" style="font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.05em; color:var(--muted);"></span>
 </div>
 
 <!-- Start formulář -->
 <div class="card" id="startCard">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:8px;">▲ STARTOVNÍ ČÁRA</p>
-  <h2 style="font-size:1.4rem; font-weight:800; margin-bottom:6px;">Připrav se!</h2>
-  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Zadej jméno a spusť časomíru.</p>
+  <div class="card-label">▲ Startovní čára</div>
+  <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800; text-transform:uppercase; letter-spacing:0.02em; margin-bottom:4px;">Připrav se!</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:20px; line-height:1.5;">Zadej jméno a spusť časomíru.</p>
 
   <form id="startForm">
     <label for="name">Tvoje jméno / přezdívka</label>
     <input type="text" id="name" name="name" placeholder="Např. Jan Novák nebo Rychlonožka" maxlength="80" autocomplete="off" autofocus>
 
-    <label for="city" style="margin-top:14px;">Město <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinné)</span></label>
+    <label for="city" style="margin-top:14px;">Město <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted); font-size:0.8rem;">(nepovinné)</span></label>
     <input type="text" id="city" name="city" placeholder="Např. Bílina, Praha…" maxlength="60" autocomplete="off">
 
     <!-- Skupinový výstup -->
@@ -34,11 +34,11 @@
       <label>Výstup</label>
       <div style="display:flex; gap:8px;">
         <button type="button" id="btnSolo" onclick="setGroup(false)"
-          style="flex:1; padding:14px; background:rgba(90,138,58,0.2); border:2px solid var(--green); border-radius:12px; color:var(--green); font-size:0.9rem; font-weight:700; cursor:pointer;">
+          style="flex:1; padding:13px; background:var(--accent-dim); border:1.5px solid var(--accent); border-radius:10px; color:var(--accent); font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.05em; cursor:pointer;">
           🧍 Jdu sám
         </button>
         <button type="button" id="btnGroup" onclick="setGroup(true)"
-          style="flex:1; padding:14px; background:var(--card2); border:2px solid var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; font-weight:700; cursor:pointer;">
+          style="flex:1; padding:13px; background:transparent; border:1.5px solid var(--border2); border-radius:10px; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.05em; cursor:pointer;">
           👥 Jdeme skupina
         </button>
       </div>
@@ -46,47 +46,47 @@
 
     <div id="groupWrap" style="display:none; margin-top:12px;">
       <label>Počet lidí (včetně tebe)</label>
-      <div style="display:flex; align-items:center; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; overflow:hidden;">
+      <div style="display:flex; align-items:center; background:var(--surface2); border:1.5px solid var(--border2); border-radius:10px; overflow:hidden;">
         <button type="button" onclick="changeGroup(-1)"
           style="width:52px; height:52px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">−</button>
-        <span id="groupCount" style="flex:1; text-align:center; font-size:1.4rem; font-weight:800;">2</span>
+        <span id="groupCount" style="flex:1; text-align:center; font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:800;">2</span>
         <button type="button" onclick="changeGroup(1)"
           style="width:52px; height:52px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">+</button>
       </div>
     </div>
 
     <p class="error" id="error"></p>
-    <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:16px;">▲ Začít výstup</button>
+    <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:20px;">▲ Začít výstup</button>
   </form>
 </div>
 
 <!-- Aktivní výstup -->
 <div class="card" id="activeClimb" style="display:none; text-align:center; padding:28px 20px;">
   <div style="font-size:2.5rem; margin-bottom:12px;">🥾</div>
-  <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Výstup probíhá</p>
-  <p id="activeName" style="font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:16px;"></p>
+  <div class="card-label" style="justify-content:center;">Výstup probíhá</div>
+  <p id="activeName" style="font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800; text-transform:uppercase; color:var(--text); margin-bottom:20px;"></p>
 
   <!-- Info: jak dokončit -->
-  <div style="background:var(--card2); border-radius:12px; padding:16px; margin-bottom:8px; text-align:left;">
-    <p style="font-size:0.9rem; font-weight:700; color:var(--text); margin-bottom:4px;">🏁 Jak dokončit výstup?</p>
+  <div style="background:var(--surface2); border-radius:10px; padding:16px; margin-bottom:10px; text-align:left;">
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; color:var(--text); margin-bottom:4px; letter-spacing:0.05em;">🏁 Jak dokončit výstup?</p>
     <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">Na vrcholu naskenuj QR kód na sloupu — výstup se automaticky uloží.</p>
   </div>
 
   <!-- Tip: zamknout mobil -->
-  <div style="background:rgba(90,138,58,0.12); border:1px solid rgba(90,138,58,0.25); border-radius:12px; padding:14px; margin-bottom:16px; text-align:left;">
+  <div style="background:var(--accent-dim); border:1px solid rgba(57,255,110,0.2); border-radius:10px; padding:14px; margin-bottom:20px; text-align:left;">
     <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">📵 Mobil můžeš zamknout a aplikaci zavřít. Stačí nahoře naskenovat QR kód a záznam se uloží.</p>
   </div>
 
-  <!-- Jsem na vrcholu (záložní možnost) -->
+  <!-- Jsem na vrcholu -->
   <button class="btn" id="summitBtn"
-    style="background:rgba(90,138,58,0.15); border:1.5px solid rgba(90,138,58,0.35); color:var(--green); font-size:0.88rem; padding:14px; margin-bottom:8px;">
+    style="background:var(--accent-dim); border:1.5px solid rgba(57,255,110,0.3); color:var(--accent); font-size:0.9rem; padding:14px; margin-bottom:8px;">
     ⛰ Jsem na vrcholu
   </button>
-  <p style="font-size:0.72rem; color:var(--muted); margin-bottom:16px; line-height:1.4;">Záložní možnost pokud nejde naskenovat QR kód.<br>Doporučujeme použít QR kód na sloupu.</p>
+  <p style="font-size:0.72rem; color:var(--muted); margin-bottom:20px; line-height:1.4;">Záložní možnost pokud nejde naskenovat QR kód.<br>Doporučujeme použít QR kód na sloupu.</p>
 
   <!-- Zrušit výstup -->
   <button class="btn" id="cancelBtn"
-    style="background:rgba(200,60,60,0.12); border:1.5px solid rgba(200,60,60,0.35); color:#e05a5a; font-size:0.85rem; padding:14px;">
+    style="background:rgba(200,60,60,0.1); border:1.5px solid rgba(200,60,60,0.3); color:#e05a5a; font-size:0.85rem; padding:14px;">
     ✕ Zrušit výstup
   </button>
   <p style="font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.4;">Čas se nezapočítá a výstup se neuloží do žebříčku.</p>
@@ -97,7 +97,6 @@
   const NAME_KEY    = 'boren_name';
   const CITY_KEY    = 'boren_city';
 
-  // Živé hodiny + datum
   function updateClock() {
     const now = new Date();
     const days = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
@@ -109,7 +108,6 @@
   updateClock();
   setInterval(updateClock, 10000);
 
-  // Počasí
   const WMO = {
     0:['☀️','Jasno'],1:['🌤️','Převážně jasno'],2:['⛅','Polojasno'],3:['☁️','Zataženo'],
     45:['🌫️','Mlha'],48:['🌫️','Mlha'],51:['🌦️','Mrholení'],53:['🌦️','Mrholení'],55:['🌧️','Mrholení'],
@@ -129,7 +127,6 @@
       document.getElementById('weatherCard').style.display = 'block';
     }).catch(()=>{});
 
-  // Předvyplnění jména/města
   const savedName = localStorage.getItem(NAME_KEY);
   const savedCity = localStorage.getItem(CITY_KEY);
   if (savedName) document.getElementById('name').value = savedName;
@@ -138,18 +135,17 @@
   const BANNED = ['pica','picus','píca','píčus','zmrd','kokot','kunda','pizda','negr','cigan','cigán','retard','debil','kurva','hovno','bastard'];
   function hasBanned(str) { const s = str.toLowerCase(); return BANNED.some(w => s.includes(w)); }
 
-  // Skupinový výstup
   let groupSize = 1;
   let bigGroupWarned = false;
 
   function setGroup(isGroup) {
     document.getElementById('groupWrap').style.display = isGroup ? 'block' : 'none';
-    document.getElementById('btnSolo').style.background  = isGroup ? 'var(--card2)' : 'rgba(90,138,58,0.2)';
-    document.getElementById('btnSolo').style.borderColor = isGroup ? 'var(--border)' : 'var(--green)';
-    document.getElementById('btnSolo').style.color       = isGroup ? 'var(--muted)'  : 'var(--green)';
-    document.getElementById('btnGroup').style.background  = isGroup ? 'rgba(90,138,58,0.2)' : 'var(--card2)';
-    document.getElementById('btnGroup').style.borderColor = isGroup ? 'var(--green)'  : 'var(--border)';
-    document.getElementById('btnGroup').style.color       = isGroup ? 'var(--green)'  : 'var(--muted)';
+    document.getElementById('btnSolo').style.background   = isGroup ? 'transparent' : 'var(--accent-dim)';
+    document.getElementById('btnSolo').style.borderColor  = isGroup ? 'var(--border2)' : 'var(--accent)';
+    document.getElementById('btnSolo').style.color        = isGroup ? 'var(--muted)'   : 'var(--accent)';
+    document.getElementById('btnGroup').style.background  = isGroup ? 'var(--accent-dim)' : 'transparent';
+    document.getElementById('btnGroup').style.borderColor = isGroup ? 'var(--accent)'  : 'var(--border2)';
+    document.getElementById('btnGroup').style.color       = isGroup ? 'var(--accent)'  : 'var(--muted)';
     groupSize = isGroup ? parseInt(document.getElementById('groupCount').textContent) : 1;
   }
 
@@ -173,7 +169,6 @@
   const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
   if (existing && existing.climb_id) showActive(existing);
 
-  // Zrušit výstup
   document.getElementById('cancelBtn').addEventListener('click', () => {
     if (confirm('Opravdu chceš zrušit výstup? Výsledek se nezaznamená do žebříčku.')) {
       localStorage.removeItem(STORAGE_KEY);
@@ -181,7 +176,6 @@
     }
   });
 
-  // Jsem na vrcholu (manuální dokončení)
   document.getElementById('summitBtn').addEventListener('click', async () => {
     const ok = confirm(
       'Opravdu jsi na vrcholu Bořenu?\n\nPotvrzením se výstup ukončí a čas zaznamená.\n\n' +
@@ -219,7 +213,6 @@
     }
   });
 
-  // Start formulář
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value.trim();

@@ -29,14 +29,13 @@
   }
 </style>
 
-<!-- Hero — reálná fotka + dynamický CSS overlay -->
-<div style="position:relative; height:280px; overflow:hidden; border-radius:0 0 24px 24px;">
+<!-- Hero -->
+<div style="position:relative; height:280px; overflow:hidden;">
   <img id="heroImg" src="/static/boren.jpg" alt="Kopec Bořen"
        style="width:100%; height:100%; object-fit:cover; object-position:center 30%; transition: filter 1s ease;">
 
-  <!-- Barevný overlay (mění se dle počasí/času) -->
   <div id="colorOverlay" style="position:absolute; inset:0; transition: background 1s ease;
-       background: linear-gradient(to bottom, rgba(135,184,212,0.15) 0%, rgba(17,26,17,0.75) 100%);"></div>
+       background: linear-gradient(to bottom, transparent 30%, var(--bg) 100%);"></div>
 
   <!-- Déšť -->
   <div id="rainLayer" style="position:absolute; inset:0; display:none; pointer-events:none;">
@@ -77,59 +76,61 @@
     <div class="star" style="width:3px;height:3px;top:4%; left:85%; animation-duration:2.5s;animation-delay:1.2s;"></div>
     <div class="star" style="width:2px;height:2px;top:15%;left:18%; animation-duration:2.2s;animation-delay:.2s;"></div>
     <div class="star" style="width:2px;height:2px;top:8%; left:65%; animation-duration:3.6s;animation-delay:.7s;"></div>
-    <!-- Měsíc -->
     <div style="position:absolute;top:8%;right:12%;width:26px;height:26px;border-radius:50%;background:#fffbe8;box-shadow:0 0 18px 8px rgba(255,251,200,0.15);"></div>
   </div>
 
   <!-- Blesk -->
   <div id="lightningLayer" style="position:absolute;inset:0;background:#e8f0ff;opacity:0;pointer-events:none;animation:lightning 3.5s infinite;display:none;"></div>
 
-  <!-- Počasí strip nahoře -->
+  <!-- Počasí strip -->
   <div id="weatherStrip" style="position:absolute; top:16px; left:16px; right:16px; display:none;">
-    <div style="background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); border-radius:10px; padding:8px 14px;">
+    <div style="background:rgba(0,0,0,0.45); backdrop-filter:blur(10px); border-radius:8px; padding:8px 14px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span id="wLeft" style="font-size:0.88rem; color:#fff;"></span>
-        <span style="font-size:0.82rem; color:rgba(255,255,255,0.7);">Západ slunce: <span id="wSunset"></span></span>
+        <span id="wLeft" style="font-size:0.85rem; color:#fff;"></span>
+        <span style="font-size:0.78rem; color:rgba(255,255,255,0.6);">Západ: <span id="wSunset"></span></span>
       </div>
-      <div style="margin-top:4px; text-align:right;">
-        <span id="wClock" style="font-size:0.78rem; color:rgba(255,255,255,0.5);"></span>
+      <div style="margin-top:3px; text-align:right;">
+        <span id="wClock" style="font-size:0.72rem; color:rgba(255,255,255,0.45);"></span>
       </div>
     </div>
   </div>
 
   <!-- Název -->
   <div style="position:absolute; bottom:20px; left:20px;">
-    <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#7bc67b; margin-bottom:4px;">⛰ BOŘEN</p>
-    <h1 style="font-size:2.6rem; font-weight:800; line-height:1; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,0.6);">Bořen</h1>
-    <p style="font-size:0.9rem; color:rgba(255,255,255,0.65); margin-top:4px;">u Bíliny</p>
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+      <span style="display:inline-block; width:20px; height:2px; background:var(--accent);"></span>⛰ BOŘEN
+    </div>
+    <h1 style="font-family:'Barlow Condensed',sans-serif; font-size:3.8rem; font-weight:900; line-height:0.9; color:#fff; letter-spacing:-0.02em; text-transform:uppercase;">Bořen</h1>
+    <p style="font-size:0.85rem; color:rgba(255,255,255,0.5); margin-top:6px; letter-spacing:0.05em;">u Bíliny · 539 m n. m.</p>
   </div>
 </div>
 
 <!-- Stat: dobrodruzi -->
-<div style="margin: 12px 16px;">
-  <div class="card-sm" style="display:flex; align-items:center; gap:14px;">
-    <div style="width:40px; height:40px; background:rgba(90,138,58,0.2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🥾</div>
+<div style="margin: 12px 16px 0;">
+  <div style="background:var(--surface); border-radius:12px; padding:14px 18px; border:1px solid var(--border2); display:flex; align-items:center; gap:14px; position:relative; overflow:hidden;">
+    <div style="position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent);"></div>
+    <div style="font-size:1.3rem; flex-shrink:0;">🥾</div>
     <div>
-      <p id="statsText" style="font-weight:700; font-size:0.95rem;">Načítám…</p>
-      <p id="statsSubtext" style="font-size:0.8rem; color:var(--muted); margin-top:2px;"></p>
+      <p id="statsText" style="font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:700; letter-spacing:0.02em;">Načítám…</p>
+      <p id="statsSubtext" style="font-size:0.75rem; color:var(--muted); margin-top:1px;"></p>
     </div>
   </div>
 </div>
 
 <!-- Info karty -->
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin: 0 16px;">
-  <div class="card-sm" style="text-align:center; padding:16px 12px;">
-    <p style="font-size:1.5rem; font-weight:800; color:var(--gold);">539 m</p>
-    <p style="font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Nadmořská výška</p>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin: 10px 16px 0;">
+  <div style="background:var(--surface); border-radius:12px; padding:16px 12px; border:1px solid var(--border2); text-align:center;">
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800; color:var(--gold); letter-spacing:-0.02em;">539 m</p>
+    <p style="font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; margin-top:4px;">Nadmořská výška</p>
   </div>
-  <div class="card-sm" style="text-align:center; padding:16px 12px;">
-    <p style="font-size:1.5rem; font-weight:800; color:var(--gold);">~2 km</p>
-    <p style="font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Délka trasy</p>
+  <div style="background:var(--surface); border-radius:12px; padding:16px 12px; border:1px solid var(--border2); text-align:center;">
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800; color:var(--gold); letter-spacing:-0.02em;">~2 km</p>
+    <p style="font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; margin-top:4px;">Délka trasy</p>
   </div>
 </div>
 
 <!-- Tagy -->
-<div style="margin: 10px 16px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+<div style="margin: 10px 16px; display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
   <span class="tag">Lesní</span>
   <span class="tag">Skalnatý</span>
   <span class="tag">Výhled</span>
@@ -137,33 +138,33 @@
 </div>
 
 <!-- CTA -->
-<div style="margin: 20px 16px 12px;">
-  <a href="/start" class="btn btn-green">🥾 Začít výstup</a>
-  <a href="/leaderboard" class="btn btn-outline" style="margin-top:10px;">🏆 Žebříček</a>
-  <a href="/podpora" class="btn btn-outline" style="margin-top:10px; border-color:rgba(90,138,58,0.4); color:var(--green);">💚 Podpořit projekt / Fotka z Bořně</a>
+<div style="margin: 16px 16px 0; display:flex; flex-direction:column; gap:10px;">
+  <a href="/start" class="btn btn-green">▲ Začít výstup</a>
+  <a href="/leaderboard" class="btn btn-outline">🏆 Žebříček</a>
+  <a href="/podpora" class="btn btn-outline" style="border-color:rgba(57,255,110,0.25); color:var(--accent);">💚 Podpořit projekt / Fotka z Bořně</a>
 </div>
 
 <!-- O Bořenu -->
-<div style="margin: 4px 16px 4px;">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Bořen</p>
+<div style="margin: 20px 16px 0;">
+  <span class="sec-label" style="margin:0 0 8px;">Bořen</span>
   <p style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Bořen je čedičový vrch tyčící se nad Bílinou do výšky 539 metrů. Jeho skalnatý vrchol patří k nejcharakterističtějším siluetám Českého středohoří a nabízí výhled daleko do kraje.</p>
 </div>
 
 <!-- Jak to funguje -->
-<div style="margin: 4px 16px 24px;">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;">Jak to funguje?</p>
+<div style="margin: 16px 16px 24px;">
+  <span class="sec-label" style="margin:0 0 12px;">Jak to funguje?</span>
   <div style="display:flex; flex-direction:column; gap:10px;">
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div style="width:32px; height:32px; background:rgba(90,138,58,0.18); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">1️⃣</div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:900; color:var(--accent); width:28px; text-align:center; flex-shrink:0;">1</div>
       <p style="font-size:0.85rem; color:var(--muted); line-height:1.4;">U paty kopce naskenuj QR kód a zadej jméno — časomíra startuje.</p>
     </div>
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div style="width:32px; height:32px; background:rgba(90,138,58,0.18); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">2️⃣</div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:900; color:var(--accent); width:28px; text-align:center; flex-shrink:0;">2</div>
       <p style="font-size:0.85rem; color:var(--muted); line-height:1.4;">Vydrž a zdolej kopec — mobil můžeš zamknout.</p>
     </div>
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div style="width:32px; height:32px; background:rgba(90,138,58,0.18); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">3️⃣</div>
-      <p style="font-size:0.85rem; color:var(--muted); line-height:1.4;">Na vrcholu naskenuj QR kód na sloupu — čas se uloží a uvidíš své pořadí.</p>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:900; color:var(--accent); width:28px; text-align:center; flex-shrink:0;">3</div>
+      <p style="font-size:0.85rem; color:var(--muted); line-height:1.4;">Na vrcholu naskenuj QR kód na sloupu — čas se uloží a uvidíš výsledek.</p>
     </div>
   </div>
 </div>
@@ -195,45 +196,43 @@
     const isCloud   = [3].includes(code);
     const isStorm   = [95,96,99].includes(code);
 
-    // CSS filter na fotku
-    let filter = 'brightness(1) saturate(1)';
-    let bg = 'linear-gradient(to bottom, rgba(135,184,212,0.1) 0%, rgba(17,26,17,0.75) 100%)';
+    let filter = 'brightness(0.55) saturate(0.85)';
+    let bg = 'linear-gradient(to bottom, transparent 30%, var(--bg) 100%)';
 
     if (isNight) {
       filter = 'brightness(0.18) saturate(0.3)';
-      bg = 'linear-gradient(to bottom, rgba(5,10,30,0.7) 0%, rgba(5,10,20,0.88) 100%)';
+      bg = 'linear-gradient(to bottom, rgba(5,10,30,0.7) 0%, var(--bg) 100%)';
     } else if (isMorning) {
-      filter = 'brightness(0.75) sepia(0.3) saturate(1.2)';
-      bg = 'linear-gradient(to bottom, rgba(180,80,20,0.35) 0%, rgba(17,26,17,0.75) 100%)';
+      filter = 'brightness(0.55) sepia(0.3) saturate(1.2)';
+      bg = 'linear-gradient(to bottom, rgba(180,80,20,0.25) 0%, var(--bg) 100%)';
     } else if (isEvening) {
-      filter = 'brightness(0.6) sepia(0.45) saturate(0.9)';
-      bg = 'linear-gradient(to bottom, rgba(140,40,20,0.5) 0%, rgba(17,26,17,0.82) 100%)';
+      filter = 'brightness(0.45) sepia(0.45) saturate(0.9)';
+      bg = 'linear-gradient(to bottom, rgba(140,40,20,0.4) 0%, var(--bg) 100%)';
     } else if (isStorm) {
-      filter = 'brightness(0.38) saturate(0.2)';
-      bg = 'linear-gradient(to bottom, rgba(10,15,25,0.7) 0%, rgba(17,26,17,0.88) 100%)';
+      filter = 'brightness(0.3) saturate(0.2)';
+      bg = 'linear-gradient(to bottom, rgba(10,15,25,0.6) 0%, var(--bg) 100%)';
     } else if (isRain) {
-      filter = 'brightness(0.52) saturate(0.3)';
-      bg = 'linear-gradient(to bottom, rgba(30,45,60,0.55) 0%, rgba(17,26,17,0.82) 100%)';
+      filter = 'brightness(0.4) saturate(0.3)';
+      bg = 'linear-gradient(to bottom, rgba(30,45,60,0.45) 0%, var(--bg) 100%)';
     } else if (isSnow) {
-      filter = 'brightness(0.68) saturate(0.2)';
-      bg = 'linear-gradient(to bottom, rgba(180,200,220,0.28) 0%, rgba(17,26,17,0.75) 100%)';
+      filter = 'brightness(0.55) saturate(0.2)';
+      bg = 'linear-gradient(to bottom, rgba(180,200,220,0.2) 0%, var(--bg) 100%)';
     } else if (isFog) {
-      filter = 'brightness(0.7) saturate(0.25) contrast(0.85)';
-      bg = 'linear-gradient(to bottom, rgba(150,165,175,0.45) 0%, rgba(17,26,17,0.8) 100%)';
+      filter = 'brightness(0.55) saturate(0.25) contrast(0.85)';
+      bg = 'linear-gradient(to bottom, rgba(150,165,175,0.35) 0%, var(--bg) 100%)';
     } else if (isCloud) {
-      filter = 'brightness(0.62) saturate(0.4)';
-      bg = 'linear-gradient(to bottom, rgba(60,75,90,0.45) 0%, rgba(17,26,17,0.8) 100%)';
+      filter = 'brightness(0.45) saturate(0.4)';
+      bg = 'linear-gradient(to bottom, rgba(60,75,90,0.35) 0%, var(--bg) 100%)';
     }
 
     img.style.filter = filter;
     overlay.style.background = bg;
-    rain.style.display   = isRain   ? 'block' : 'none';
-    snow.style.display   = isSnow   ? 'block' : 'none';
-    stars.style.display  = isNight  ? 'block' : 'none';
-    light.style.display  = isStorm  ? 'block' : 'none';
+    rain.style.display   = isRain  ? 'block' : 'none';
+    snow.style.display   = isSnow  ? 'block' : 'none';
+    stars.style.display  = isNight ? 'block' : 'none';
+    light.style.display  = isStorm ? 'block' : 'none';
   }
 
-  // Živé hodiny ve weather stripu
   function updateClock() {
     const now = new Date();
     const days = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
@@ -247,7 +246,7 @@
   setInterval(updateClock, 10000);
 
   const hour = new Date().getHours();
-  applyScene(0, hour); // výchozí
+  applyScene(0, hour);
 
   fetch('https://api.open-meteo.com/v1/forecast?latitude=50.556&longitude=13.775&current=temperature_2m,weathercode&daily=sunset&timezone=Europe%2FPrague&forecast_days=1')
     .then(r=>r.json()).then(d=>{

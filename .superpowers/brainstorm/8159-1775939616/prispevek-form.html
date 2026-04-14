@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Příspěvek – varianty formuláře</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #111a11; --card: #1e2d1e; --card2: #253225;
+      --green: #5a8a3a; --text: #f0ede8; --muted: #8a9e85;
+      --border: rgba(255,255,255,0.07); --red: #e05a5a;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0e1a0e; color: var(--text);
+      padding: 20px 16px 60px; min-height: 100vh;
+    }
+
+    h1 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; color: var(--text); }
+    .sub { color: var(--muted); font-size: 0.83rem; margin-bottom: 28px; }
+
+    /* Tab přepínač */
+    .tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+    .tab {
+      padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted); font-size: 0.82rem;
+      font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+    .variant { display: none; max-width: 400px; }
+    .variant.active { display: block; }
+
+    /* App komponenty */
+    .card {
+      background: var(--card); border-radius: 16px; padding: 20px;
+      border: 1px solid var(--border); margin-bottom: 14px;
+    }
+    .label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 6px;
+    }
+    h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+    .desc { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 16px; }
+
+    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--muted);
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    input[type="text"], textarea {
+      width: 100%; padding: 13px; font-size: 0.95rem;
+      background: var(--card2); border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text); outline: none; font-family: inherit;
+    }
+    textarea { resize: none; }
+    input[type="text"]:focus, textarea:focus { border-color: var(--green); }
+
+    .btn {
+      display: block; width: 100%; padding: 15px; font-size: 0.95rem;
+      font-weight: 700; border: none; border-radius: 14px; cursor: pointer;
+      text-align: center; margin-top: 12px;
+    }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-outline {
+      background: none; border: 1.5px solid var(--border); color: var(--muted);
+    }
+
+    /* QR simulace */
+    .qr-box {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px; padding: 20px; background: var(--card2);
+      border-radius: 16px; border: 1px solid var(--border); margin-bottom: 14px;
+    }
+    .qr-mock {
+      width: 160px; height: 160px; background: #fff; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; color: #333; font-weight: 700;
+    }
+    .qr-amount {
+      font-size: 2rem; font-weight: 800; color: var(--green);
+    }
+    .qr-bank { font-size: 0.78rem; color: var(--muted); text-align: center; line-height: 1.6; }
+
+    /* Tier karty */
+    .tier {
+      border: 2px solid var(--border); border-radius: 14px; padding: 16px;
+      margin-bottom: 10px; cursor: pointer; transition: all .15s;
+    }
+    .tier.selected { border-color: var(--green); background: rgba(90,138,58,0.12); }
+    .tier-price { font-size: 1.4rem; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+    .tier-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.4; }
+
+    /* Steps */
+    .step-indicator {
+      display: flex; gap: 6px; margin-bottom: 20px; align-items: center;
+    }
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border);
+    }
+    .step-dot.active { background: var(--green); width: 24px; border-radius: 4px; }
+    .step-dot.done { background: var(--green); opacity: 0.5; }
+
+    .photo-upload {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      background: var(--card2); border: 1.5px dashed var(--border);
+      border-radius: 12px; padding: 14px; color: var(--muted); font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+
+    .info-box {
+      background: rgba(90,138,58,0.1); border: 1px solid rgba(90,138,58,0.2);
+      border-radius: 10px; padding: 12px 14px; font-size: 0.82rem;
+      color: var(--muted); line-height: 1.5; margin-bottom: 14px;
+    }
+    .info-box strong { color: var(--text); }
+
+    .sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    /* Desc box pod variantou */
+    .variant-note {
+      background: rgba(90,138,58,0.08); border: 1px solid rgba(90,138,58,0.15);
+      border-radius: 10px; padding: 10px 14px; margin-top: 16px;
+      font-size: 0.81rem; color: var(--muted); line-height: 1.5; max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Příspěvek — varianty formuláře</h1>
+<p class="sub">Jak prezentovat QR kód a formulář pro foto+adresu. Klikni na variantu.</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('a', this)">A — Vše na jedné stránce</button>
+  <button class="tab" onclick="show('b', this)">B — Odkryj po zaplacení</button>
+  <button class="tab" onclick="show('c', this)">C — Průvodce krok za krokem</button>
+</div>
+
+<!-- VARIANTA A: QR + formulář vždy viditelný -->
+<div class="variant active" id="var-a">
+  <div class="card">
+    <p class="label">💚 Podpoř projekt</p>
+    <h2>Přispěj na Bořen</h2>
+    <p class="desc">Každá koruna pomáhá udržet aplikaci v chodu. A za 200 Kč dostaneš domů do schránky vytištěnou fotku z výstupu!</p>
+
+    <div class="qr-box">
+      <div class="qr-mock">[ QR KÓD ]</div>
+      <div class="qr-amount">50 Kč</div>
+      <div class="qr-bank">Částku můžeš libovolně změnit<br>v bankovní aplikaci</div>
+    </div>
+
+    <div class="info-box">
+      📬 <strong>Pošleš-li 200 Kč a více</strong> — vytisknu tvoji fotku z Bořně a zašlu ji poštou domů. Náklady na tisk i poštovné hradím já.
+    </div>
+
+    <hr class="sep">
+    <p class="label" style="margin-bottom:12px;">📷 Chci fotku domů (200 Kč+)</p>
+
+    <label>Tvoje fotka z Bořně</label>
+    <div class="photo-upload">📷 Nahrát fotku</div>
+
+    <label>Jméno a adresa</label>
+    <input type="text" placeholder="Jan Novák" style="margin-bottom:10px;">
+    <textarea rows="3" placeholder="Ulice 12&#10;110 00 Praha 1"></textarea>
+
+    <button class="btn btn-green" style="margin-top:14px;">📬 Odeslat žádost o fotku</button>
+    <p style="font-size:0.72rem; color:var(--muted); margin-top:8px; text-align:center; line-height:1.4;">Formulář odesílám po zaplacení přes QR kód výše.</p>
+  </div>
+</div>
+
+<!-- VARIANTA B: QR kód, pak tlačítko "Zaplatil jsem" -->
+<div class="variant" id="var-b">
+  <div class="card">
+    <p class="label">💚 Podpoř projekt</p>
+    <h2>Přispěj na Bořen</h2>
+
+    <div class="tier" id="tier-50" onclick="selectTier(50)">
+      <div class="tier-price">50 Kč</div>
+      <div class="tier-desc">Příspěvek na provoz aplikace. Díky!</div>
+    </div>
+    <div class="tier selected" id="tier-200" onclick="selectTier(200)">
+      <div class="tier-price">200+ Kč</div>
+      <div class="tier-desc">Příspěvek + vytištěná fotka z Bořně poštou domů. Tisk i poštovné za mě.</div>
+    </div>
+
+    <div class="qr-box" style="margin-top:14px;">
+      <div class="qr-mock">[ QR KÓD ]</div>
+      <div class="qr-bank">Zaplaťte v bankovní aplikaci<br>Částku upravte dle výběru výše</div>
+    </div>
+
+    <div id="btn-zaplatil">
+      <button class="btn btn-green" onclick="showPhotoForm()">✅ Zaplatil jsem 200+ Kč — chci fotku</button>
+    </div>
+
+    <div id="photo-form" style="display:none;">
+      <hr class="sep">
+      <p class="label" style="margin-bottom:12px;">📷 Tvoje fotka</p>
+      <div class="photo-upload">📷 Nahrát fotku z Bořně</div>
+      <label>Jméno a adresa</label>
+      <input type="text" placeholder="Jan Novák" style="margin-bottom:10px;">
+      <textarea rows="3" placeholder="Ulice 12&#10;110 00 Praha 1"></textarea>
+      <button class="btn btn-green" style="margin-top:14px;">📬 Odeslat</button>
+    </div>
+  </div>
+</div>
+
+<!-- VARIANTA C: Průvodce 3 kroky -->
+<div class="variant" id="var-c">
+  <div class="card">
+    <p class="label">💚 Podpoř projekt</p>
+    <h2>Přispěj na Bořen</h2>
+
+    <div class="step-indicator">
+      <div class="step-dot done" id="s1"></div>
+      <div class="step-dot active" id="s2"></div>
+      <div class="step-dot" id="s3"></div>
+    </div>
+
+    <!-- Krok 1 -->
+    <div id="step-1" style="display:none;">
+      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:14px;">Chceš jen přispět, nebo také fotku domů?</p>
+      <div class="tier" onclick="goStep(2, false)">
+        <div class="tier-price">50 Kč</div>
+        <div class="tier-desc">Jenom příspěvek na provoz. Díky!</div>
+      </div>
+      <div class="tier" onclick="goStep(2, true)">
+        <div class="tier-price">200+ Kč</div>
+        <div class="tier-desc">Chci vytištěnou fotku z výstupu poštou domů.</div>
+      </div>
+    </div>
+
+    <!-- Krok 2 -->
+    <div id="step-2">
+      <p style="font-size:0.85rem; font-weight:700; margin-bottom:12px;">Zaplaťte přes QR kód:</p>
+      <div class="qr-box" style="margin-bottom:14px;">
+        <div class="qr-mock">[ QR KÓD ]</div>
+        <div class="qr-amount">200 Kč</div>
+        <div class="qr-bank">Upravte částku v bankovní aplikaci</div>
+      </div>
+      <button class="btn btn-green" onclick="goStep(3, true)">Zaplatil jsem →</button>
+      <button class="btn btn-outline" onclick="goStep(1, false)" style="margin-top:8px;">← Zpět</button>
+    </div>
+
+    <!-- Krok 3 -->
+    <div id="step-3" style="display:none;">
+      <div class="info-box">📬 Super! Pošli mi fotku a adresu — vytisknu ji a zašlu poštou. Zdarma.</div>
+      <label>Tvoje fotka z Bořně</label>
+      <div class="photo-upload" style="margin-bottom:12px;">📷 Nahrát fotku</div>
+      <label>Jméno</label>
+      <input type="text" placeholder="Jan Novák" style="margin-bottom:10px;">
+      <label>Adresa</label>
+      <textarea rows="3" placeholder="Ulice 12&#10;110 00 Praha 1"></textarea>
+      <button class="btn btn-green" style="margin-top:14px;">📬 Odeslat</button>
+    </div>
+  </div>
+</div>
+
+<div class="variant-note" id="note-a">
+  <strong>Varianta A:</strong> Vše na jednom místě — QR kód nahoře, formulář hned pod tím. Jednoduché, ale formulář je vždy viditelný i pro ty, kteří platí jen 50 Kč.
+</div>
+<div class="variant-note" id="note-b" style="display:none;">
+  <strong>Varianta B:</strong> Nejprve si vybereš tier (50 / 200+ Kč), pak uvidíš QR. Tlačítko "Zaplatil jsem" odkryje formulář. Čisté — formulář vidí jen ti, kteří ho potřebují.
+</div>
+<div class="variant-note" id="note-c" style="display:none;">
+  <strong>Varianta C:</strong> Průvodce krok za krokem — výběr, platba, formulář. Nejméně prvků najednou, ale víc klikání. Vhodné pokud se chceš vyhnout zmatku.
+</div>
+
+<script>
+  function show(v, el) {
+    document.querySelectorAll('.variant').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.variant-note').forEach(x => x.style.display = 'none');
+    document.getElementById('var-' + v).classList.add('active');
+    document.getElementById('note-' + v).style.display = 'block';
+    el.classList.add('active');
+  }
+
+  function selectTier(amount) {
+    document.getElementById('tier-50').classList.toggle('selected', amount === 50);
+    document.getElementById('tier-200').classList.toggle('selected', amount === 200);
+    document.getElementById('btn-zaplatil').style.display = amount === 200 ? 'block' : 'none';
+    if (amount === 50) document.getElementById('photo-form').style.display = 'none';
+  }
+
+  function showPhotoForm() {
+    document.getElementById('photo-form').style.display = 'block';
+    document.getElementById('btn-zaplatil').style.display = 'none';
+  }
+
+  let wantsPhoto = false;
+  function goStep(step, photo) {
+    if (photo !== undefined) wantsPhoto = photo;
+    document.getElementById('step-1').style.display = 'none';
+    document.getElementById('step-2').style.display = 'none';
+    document.getElementById('step-3').style.display = 'none';
+    document.getElementById('step-' + step).style.display = 'block';
+
+    ['s1','s2','s3'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.classList.remove('active','done');
+      if (i + 1 < step) el.classList.add('done');
+      else if (i + 1 === step) el.classList.add('active');
+    });
+
+    if (step === 3 && !wantsPhoto) {
+      document.getElementById('step-3').innerHTML = `
+        <div class="info-box" style="text-align:center; margin-bottom:0;">
+          <div style="font-size:2rem; margin-bottom:8px;">💚</div>
+          <strong>Díky za příspěvek!</strong><br>Pomáháš udržet Bořen Tracker v chodu.
+        </div>`;
+    }
+  }
+</script>
+</body>
+</html>

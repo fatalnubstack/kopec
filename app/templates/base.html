@@ -4,24 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>{% block title %}Bořen{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #111a11;
-      --card:      #1e2d1e;
-      --card2:     #253225;
-      --green:     #5a8a3a;
-      --green-btn: #4a7a2e;
-      --gold:      #c49a3a;
+      --bg:        #0c140e;
+      --surface:   #111a13;
+      --surface2:  #162019;
+      --accent:    #39ff6e;
+      --accent-dim: rgba(57,255,110,0.12);
+      --gold:      #f5a623;
+      --text:      #e8ede9;
+      --muted:     #5a7060;
+      --border:    rgba(57,255,110,0.08);
+      --border2:   rgba(255,255,255,0.06);
+      /* legacy aliases for compatibility */
+      --card:      #111a13;
+      --card2:     #162019;
+      --green:     #39ff6e;
+      --green-btn: #2be05e;
       --sky:       #87b8d4;
-      --text:      #f0ede8;
-      --muted:     #8a9e85;
-      --border:    rgba(255,255,255,0.07);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: 'Barlow', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100dvh;
@@ -39,102 +48,129 @@
 
     /* Cards */
     .card {
-      background: var(--card);
-      border-radius: 16px;
+      background: var(--surface);
+      border-radius: 14px;
       padding: 20px;
       margin: 12px 16px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
     }
     .card-sm {
-      background: var(--card2);
+      background: var(--surface2);
       border-radius: 12px;
       padding: 14px 16px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
     }
 
     /* Buttons */
     .btn {
       display: block;
       width: 100%;
-      padding: 18px;
+      padding: 17px;
+      font-family: 'Barlow Condensed', sans-serif;
       font-size: 1.05rem;
       font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       border: none;
-      border-radius: 14px;
+      border-radius: 10px;
       cursor: pointer;
       text-align: center;
       text-decoration: none;
       transition: opacity .15s, transform .1s;
-      letter-spacing: 0.01em;
     }
     .btn:active { opacity: .85; transform: scale(.98); }
-    .btn-green { background: var(--green); color: #fff; }
+    .btn-green { background: var(--accent); color: #08100a; }
     .btn-outline {
       background: transparent;
-      color: var(--text);
-      border: 1.5px solid var(--border);
+      color: var(--muted);
+      border: 1.5px solid var(--border2);
     }
 
     /* Inputs */
-    label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+    label {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
     input[type="text"] {
       width: 100%;
-      padding: 16px;
-      font-size: 1.1rem;
-      background: var(--card2);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-family: 'Barlow', sans-serif;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      border-radius: 10px;
       color: var(--text);
       outline: none;
       transition: border-color .2s;
     }
-    input[type="text"]:focus { border-color: var(--green); }
+    input[type="text"]:focus { border-color: var(--accent); }
     input[type="text"]::placeholder { color: var(--muted); }
 
     /* Tags */
     .tag {
       display: inline-block;
-      padding: 5px 12px;
-      border-radius: 20px;
-      border: 1.5px solid var(--green);
-      color: var(--green);
-      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(57,255,110,0.25);
+      color: var(--accent);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
       font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     /* Tabs */
     .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
     .tab {
-      padding: 7px 14px;
-      border-radius: 20px;
-      border: 1.5px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 1px solid var(--border2);
       background: transparent;
       color: var(--muted);
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       cursor: pointer;
+      transition: all .15s;
     }
-    .tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .tab.active { background: var(--accent); color: #08100a; border-color: var(--accent); }
 
     /* Tables */
     table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    td { padding: 11px 6px; border-bottom: 1px solid var(--border); }
+    th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border2); color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
+    td { padding: 11px 6px; border-bottom: 1px solid var(--border2); }
     tr:last-child td { border-bottom: none; }
-    .rank { font-weight: 800; color: var(--gold); }
+    .rank { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--gold); font-size: 1.1rem; }
 
     /* Misc */
-    .big-time { font-size: 3.5rem; font-weight: 800; text-align: center; color: var(--text); letter-spacing: -0.03em; }
+    .big-time {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 5rem;
+      font-weight: 900;
+      text-align: center;
+      color: var(--text);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
     .info { font-size: 0.88rem; color: var(--muted); text-align: center; }
     .gold { color: var(--gold); }
-    .green { color: var(--green); }
+    .green { color: var(--accent); }
 
-    .error { color: #e05a5a; font-size: 0.88rem; margin-top: 8px; display: none; }
+    .error { color: #e05a5a; font-size: 0.85rem; margin-top: 8px; display: none; }
 
     .spinner {
       display: inline-block;
       width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.3);
+      border: 2.5px solid rgba(255,255,255,.2);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin .7s linear infinite;
@@ -143,15 +179,63 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Section label */
+    .sec-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 20px 16px 10px;
+      display: block;
+    }
+
+    /* Card label (green accent line before) */
+    .card-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-label::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Accent card top border */
+    .card-accent {
+      position: relative;
+      overflow: hidden;
+    }
+    .card-accent::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+
     /* Bottom nav */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      background: rgba(17,26,17,0.95);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid var(--border);
+      background: rgba(12,20,14,0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border2);
       display: flex;
-      padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+      padding: 10px 0 max(10px, env(safe-area-inset-bottom));
       max-width: 480px;
       margin: 0 auto;
     }
@@ -160,14 +244,16 @@
       text-align: center;
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 4px 0;
+      transition: color .15s;
     }
-    .bottom-nav a .nav-icon { display: block; font-size: 1.3rem; margin-bottom: 2px; }
-    .bottom-nav a.active { color: var(--green); }
+    .bottom-nav a .nav-icon { display: block; font-size: 1.2rem; margin-bottom: 3px; }
+    .bottom-nav a.active { color: var(--accent); }
 
     .has-nav main { padding-bottom: 80px; }
   </style>

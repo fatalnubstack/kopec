@@ -1,80 +1,76 @@
-<div class="card" style="margin-top:0; border:2px solid rgba(90,138,58,0.3); background:linear-gradient(135deg, #1e2d1e 0%, #253225 100%);">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:6px;">💚 Podpoř projekt</p>
-  <h2 style="font-size:1.3rem; font-weight:800; margin-bottom:8px;">Chceš tenhle výhled doma? 📷</h2>
+<div class="card" style="margin-top:0; border:1.5px solid rgba(57,255,110,0.2); position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent);"></div>
+  <div class="card-label" style="margin-bottom:8px;">💚 Podpoř projekt</div>
+  <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:1.5rem; font-weight:800; text-transform:uppercase; letter-spacing:0.02em; margin-bottom:8px;">Chceš tenhle výhled doma? 📷</h2>
   <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin-bottom:18px;">Za příspěvek <strong style="color:var(--text);">200 Kč a více</strong> vytisknu tvoji fotku z Bořně a pošlu ji poštou domů do schránky. Tisk i poštovné platím já.</p>
 
   <!-- Tier výběr -->
   <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
     <div id="tier50" onclick="supportTier(50)"
-      style="border:2px solid var(--green); border-radius:14px; padding:14px; cursor:pointer; background:rgba(90,138,58,0.15);">
-      <div style="font-size:1.2rem; font-weight:800; color:var(--green);">50 Kč</div>
+      style="border:1.5px solid var(--accent); border-radius:10px; padding:14px; cursor:pointer; background:var(--accent-dim);">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:800; color:var(--accent);">50 Kč</div>
       <div style="font-size:0.82rem; color:var(--muted); margin-top:2px;">Příspěvek na provoz aplikace. Díky!</div>
     </div>
     <div id="tier200" onclick="supportTier(200)"
-      style="border:2px solid var(--border); border-radius:14px; padding:14px; cursor:pointer;">
-      <div style="font-size:1.2rem; font-weight:800; color:var(--green);">200+ Kč</div>
+      style="border:1.5px solid var(--border2); border-radius:10px; padding:14px; cursor:pointer;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:800; color:var(--accent);">200+ Kč</div>
       <div style="font-size:0.82rem; color:var(--muted); margin-top:2px;">Příspěvek + vytištěná fotka z Bořně poštou domů. Tisk i poštovné za mě.</div>
     </div>
   </div>
 
   <!-- QR kód -->
-  <div style="background:var(--card2); border-radius:14px; padding:18px; text-align:center; margin-bottom:14px; border:1px solid var(--border);">
-    <!-- Nahraď /static/qr_platba.png svým reálným QR kódem z banky -->
+  <div style="background:var(--surface2); border-radius:10px; padding:18px; text-align:center; margin-bottom:14px; border:1px solid var(--border2);">
     <img src="/static/qr_platba.png" alt="QR kód platba"
-         onerror="this.style.display='none'; document.getElementById('qrFallback').style.display='block';"
+         onerror="this.style.display='none'; document.getElementById('qrFallback').style.display='flex';"
          style="width:160px; height:160px; border-radius:8px; display:block; margin:0 auto 12px;">
-    <div id="qrFallback" style="display:none; width:160px; height:160px; background:#fff; border-radius:8px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#333; font-weight:700; text-align:center; padding:8px;">
+    <div id="qrFallback" style="display:none; width:160px; height:160px; background:#fff; border-radius:8px; margin:0 auto 12px; align-items:center; justify-content:center; font-size:0.7rem; color:#333; font-weight:700; text-align:center; padding:8px;">
       QR kód<br>brzy zde
     </div>
-    <div id="supportAmount" style="font-size:1.6rem; font-weight:800; color:var(--green);">50 Kč</div>
+    <div id="supportAmount" style="font-family:'Barlow Condensed',sans-serif; font-size:1.8rem; font-weight:900; color:var(--accent);">50 Kč</div>
     <p style="font-size:0.78rem; color:var(--muted); margin-top:4px; line-height:1.5;">Částku můžeš v bance libovolně upravit</p>
   </div>
 
   <!-- Upozornění na poznámku k platbě (jen pro 200+) -->
-  <div id="supportNoteHint" style="display:none; background:rgba(200,160,50,0.1); border:1px solid rgba(200,160,50,0.25); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:0.82rem; color:#c8a84b; line-height:1.5;">
+  <div id="supportNoteHint" style="display:none; background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.25); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:0.82rem; color:var(--gold); line-height:1.5;">
     ⚠️ <strong>Důležité:</strong> Do poznámky k platbě napiš své jméno a příjmení, abych věděl ke komu fotku poslat.
   </div>
 
   <!-- Tlačítko odkryj formulář -->
   <div id="supportFormBtn" style="display:none;">
-    <button onclick="showSupportForm()"
-      style="display:block; width:100%; padding:15px; background:var(--green); color:#fff; border:none; border-radius:14px; font-size:0.95rem; font-weight:700; cursor:pointer; margin-bottom:8px;">
+    <button onclick="showSupportForm()" class="btn btn-green" style="margin-bottom:8px;">
       ✅ Zaplatil jsem 200+ Kč — chci fotku
     </button>
   </div>
 
   <!-- Formulář pro objednávku fotky -->
   <div id="supportForm" style="display:none;">
-    <hr style="border:none; border-top:1px solid var(--border); margin:16px 0;">
-    <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:12px;">📷 Kde ti fotku pošlu?</p>
+    <div style="border-top:1px solid var(--border2); margin:16px 0;"></div>
+    <div class="card-label" style="margin-bottom:12px;">📷 Kde ti fotku pošlu?</div>
 
-    <div style="background:rgba(90,138,58,0.1); border:1px solid rgba(90,138,58,0.2); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:0.82rem; color:var(--muted); line-height:1.5;">
+    <div style="background:var(--accent-dim); border:1px solid rgba(57,255,110,0.15); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:0.82rem; color:var(--muted); line-height:1.5;">
       📬 Pošli fotku a adresu — vytisknu ji a zašlu poštou. Nic ti za to neúčtuji.
     </div>
 
-    <label for="supportPhoto">Tvoje fotka z Bořně <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
-    <label for="supportPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--card2); border:1.5px dashed var(--border); border-radius:12px; padding:14px; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem; margin-bottom:14px;">
+    <label for="supportPhoto">Tvoje fotka z Bořně <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
+    <label for="supportPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--surface2); border:1.5px dashed rgba(255,255,255,0.1); border-radius:10px; padding:14px; font-family:'Barlow',sans-serif; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem; margin-bottom:14px;">
       <span style="font-size:1.4rem;">📷</span>
       <span id="supportPhotoLabel">Vyber fotku z galerie</span>
     </label>
     <input type="file" id="supportPhoto" accept="image/*" style="display:none;">
 
     <label for="supportName">Jméno a příjmení</label>
-    <input type="text" id="supportName" placeholder="Jan Novák" maxlength="80" autocomplete="name"
-      style="width:100%; padding:13px; font-size:0.95rem; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; margin-bottom:12px;">
+    <input type="text" id="supportName" placeholder="Jan Novák" maxlength="80" autocomplete="name" style="margin-bottom:12px;">
 
     <label for="supportAddress">Adresa doručení</label>
     <textarea id="supportAddress" rows="3" maxlength="300" placeholder="Ulice 12&#10;110 00 Praha 1"
-      style="width:100%; padding:13px; font-size:0.95rem; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; resize:none; font-family:inherit; margin-bottom:12px;"></textarea>
+      style="width:100%; padding:13px; font-size:0.95rem; font-family:'Barlow',sans-serif; background:var(--surface2); border:1.5px solid var(--border2); border-radius:10px; color:var(--text); outline:none; resize:none; margin-bottom:12px;"></textarea>
 
-    <label for="supportEmail">E-mail <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
-    <input type="email" id="supportEmail" placeholder="jan@example.cz" maxlength="120" autocomplete="email"
-      style="width:100%; padding:13px; font-size:0.95rem; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; margin-bottom:4px;">
+    <label for="supportEmail">E-mail <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
+    <input type="email" id="supportEmail" placeholder="jan@example.cz" maxlength="120" autocomplete="email" style="margin-bottom:4px;">
     <p style="font-size:0.72rem; color:var(--muted); margin-bottom:14px; line-height:1.4;">E-mail použiji pouze pokud budu potřebovat upřesnit adresu nebo fotku.</p>
 
     <p class="error" id="supportError"></p>
-    <button onclick="submitSupport()"
-      style="display:block; width:100%; padding:15px; background:var(--green); color:#fff; border:none; border-radius:14px; font-size:0.95rem; font-weight:700; cursor:pointer; margin-top:4px;">
+    <button onclick="submitSupport()" class="btn btn-green" style="margin-top:4px;">
       📬 Odeslat žádost o tisk
     </button>
   </div>
@@ -93,10 +89,10 @@
   function supportTier(amount) {
     supportTierSelected = amount;
     const is200 = amount === 200;
-    document.getElementById('tier50').style.borderColor = is200 ? 'var(--border)' : 'var(--green)';
-    document.getElementById('tier50').style.background = is200 ? 'transparent' : 'rgba(90,138,58,0.15)';
-    document.getElementById('tier200').style.borderColor = is200 ? 'var(--green)' : 'var(--border)';
-    document.getElementById('tier200').style.background = is200 ? 'rgba(90,138,58,0.15)' : 'transparent';
+    document.getElementById('tier50').style.borderColor = is200 ? 'var(--border2)' : 'var(--accent)';
+    document.getElementById('tier50').style.background = is200 ? 'transparent' : 'var(--accent-dim)';
+    document.getElementById('tier200').style.borderColor = is200 ? 'var(--accent)' : 'var(--border2)';
+    document.getElementById('tier200').style.background = is200 ? 'var(--accent-dim)' : 'transparent';
     document.getElementById('supportAmount').textContent = is200 ? '200+ Kč' : '50 Kč';
     document.getElementById('supportNoteHint').style.display = is200 ? 'block' : 'none';
     document.getElementById('supportFormBtn').style.display = is200 ? 'block' : 'none';

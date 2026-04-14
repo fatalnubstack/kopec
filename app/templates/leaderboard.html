@@ -3,9 +3,9 @@
 {% block title %}Bořen – Žebříček{% endblock %}
 {% block content %}
 
-<div style="padding: 20px 16px 8px;">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:4px;">🏆 ŽEBŘÍČEK</p>
-  <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:4px;">Bořen</h2>
+<div style="padding: 20px 16px 12px;">
+  <div class="card-label">🏆 Žebříček</div>
+  <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.01em; margin-bottom:4px;">Bořen</h2>
   <p id="stats" style="font-size:0.85rem; color:var(--muted); min-height:1.2em;"></p>
 </div>
 
@@ -21,25 +21,15 @@
 
 <!-- Nejrychlejší -->
 <div class="card">
-  <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;">⚡ Nejrychlejší výstup</p>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Jméno</th><th>Čas</th><th>Datum</th></tr>
-    </thead>
-    <tbody id="fastestBody"></tbody>
-  </table>
+  <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:14px;">⚡ Nejrychlejší výstup</p>
+  <div id="fastestBody"></div>
   <p id="fastestEmpty" class="info" style="display:none; padding:16px 0;">Žádné záznamy.</p>
 </div>
 
 <!-- Nejvíce výstupů -->
 <div class="card">
-  <p style="font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;">🔁 Nejvíce výstupů</p>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Jméno</th><th>Výstupů</th><th>Nejlepší</th></tr>
-    </thead>
-    <tbody id="mostBody"></tbody>
-  </table>
+  <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:14px;">🔁 Nejvíce výstupů</p>
+  <div id="mostBody"></div>
   <p id="mostEmpty" class="info" style="display:none; padding:16px 0;">Žádné záznamy.</p>
 </div>
 
@@ -55,32 +45,63 @@
   }
 
   function renderFastest(rows) {
-    const tbody = document.getElementById('fastestBody');
+    const body  = document.getElementById('fastestBody');
     const empty = document.getElementById('fastestEmpty');
-    tbody.innerHTML = '';
+    body.innerHTML = '';
     if (!rows.length) { empty.style.display = ''; return; }
     empty.style.display = 'none';
     rows.forEach(r => {
-      const tr = document.createElement('tr');
-      const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank;
-      const nameCell = r.city ? `${esc(r.name)} <span style="color:var(--muted);font-size:0.8rem;">${esc(r.city)}</span>` : esc(r.name);
-      tr.innerHTML = `<td class="rank">${medal}</td><td>${nameCell}</td><td><strong>${esc(r.duration_fmt)}</strong></td><td style="color:var(--muted)">${esc(r.date)}</td>`;
-      tbody.appendChild(tr);
+      const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : null;
+      const rankEl = medal
+        ? `<span style="font-size:1.2rem;">${medal}</span>`
+        : `<span style="font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:900; color:var(--muted);">${r.rank}</span>`;
+
+      body.insertAdjacentHTML('beforeend', `
+        <div style="display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border2);">
+          <div style="width:30px; text-align:center; flex-shrink:0;">${rankEl}</div>
+          <div style="flex:1; min-width:0;">
+            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(r.name)}</p>
+            ${r.city ? `<p style="font-size:0.75rem; color:var(--muted); margin-top:1px;">${esc(r.city)}</p>` : ''}
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1.15rem; font-weight:800; color:var(--accent);">${esc(r.duration_fmt)}</p>
+            <p style="font-size:0.72rem; color:var(--muted); margin-top:1px;">${esc(r.date)}</p>
+          </div>
+        </div>
+      `);
     });
+    // remove border from last
+    const last = body.lastElementChild;
+    if (last) last.style.borderBottom = 'none';
   }
 
   function renderMost(rows) {
-    const tbody = document.getElementById('mostBody');
+    const body  = document.getElementById('mostBody');
     const empty = document.getElementById('mostEmpty');
-    tbody.innerHTML = '';
+    body.innerHTML = '';
     if (!rows.length) { empty.style.display = ''; return; }
     empty.style.display = 'none';
     rows.forEach(r => {
-      const tr = document.createElement('tr');
-      const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank;
-      tr.innerHTML = `<td class="rank">${medal}</td><td>${esc(r.name)}</td><td><strong style="color:var(--gold)">${r.total}×</strong></td><td style="color:var(--muted)">${esc(r.best_fmt)}</td>`;
-      tbody.appendChild(tr);
+      const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : null;
+      const rankEl = medal
+        ? `<span style="font-size:1.2rem;">${medal}</span>`
+        : `<span style="font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:900; color:var(--muted);">${r.rank}</span>`;
+
+      body.insertAdjacentHTML('beforeend', `
+        <div style="display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border2);">
+          <div style="width:30px; text-align:center; flex-shrink:0;">${rankEl}</div>
+          <div style="flex:1;">
+            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">${esc(r.name)}</p>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:var(--gold);">${r.total}×</p>
+            <p style="font-size:0.72rem; color:var(--muted); margin-top:1px;">${esc(r.best_fmt)}</p>
+          </div>
+        </div>
+      `);
     });
+    const last = body.lastElementChild;
+    if (last) last.style.borderBottom = 'none';
   }
 
   function esc(str) {
