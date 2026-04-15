@@ -6,31 +6,31 @@
   <title>{% block title %}Bořen{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0c140e;
-      --surface:   #111a13;
-      --surface2:  #162019;
-      --accent:    #39ff6e;
-      --accent-dim: rgba(57,255,110,0.12);
-      --gold:      #f5a623;
-      --text:      #e8ede9;
-      --muted:     #5a7060;
-      --border:    rgba(57,255,110,0.08);
-      --border2:   rgba(255,255,255,0.06);
-      /* legacy aliases for compatibility */
-      --card:      #111a13;
-      --card2:     #162019;
-      --green:     #39ff6e;
-      --green-btn: #2be05e;
-      --sky:       #87b8d4;
+      --bg:          #12141a;
+      --surface:     #1a1d24;
+      --surface2:    #22252e;
+      --accent:      #7a9e8a;
+      --accent-dim:  rgba(122,158,138,0.1);
+      --warm:        #c4956a;
+      --text:        #e8e6e0;
+      --muted:       #7a8898;
+      --border:      rgba(255,255,255,0.07);
+      --border-a:    rgba(122,158,138,0.2);
+      /* legacy aliases */
+      --card:        #1a1d24;
+      --card2:       #22252e;
+      --green:       #7a9e8a;
+      --green-btn:   #6a8e7a;
+      --gold:        #c4956a;
     }
 
     body {
-      font-family: 'Barlow', -apple-system, sans-serif;
+      font-family: 'DM Sans', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100dvh;
@@ -49,80 +49,82 @@
     /* Cards */
     .card {
       background: var(--surface);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 20px;
       margin: 12px 16px;
-      border: 1px solid var(--border2);
+      border: 1px solid var(--border);
     }
     .card-sm {
       background: var(--surface2);
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 14px 16px;
-      border: 1px solid var(--border2);
+      border: 1px solid var(--border);
     }
 
     /* Buttons */
     .btn {
       display: block;
       width: 100%;
-      padding: 17px;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      padding: 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
       text-align: center;
       text-decoration: none;
-      transition: opacity .15s, transform .1s;
+      transition: opacity .2s, transform .15s;
     }
-    .btn:active { opacity: .85; transform: scale(.98); }
-    .btn-green { background: var(--accent); color: #08100a; }
+    .btn:active { opacity: .8; transform: scale(.99); }
+    .btn-green { background: var(--accent); color: #0a100d; }
     .btn-outline {
       background: transparent;
       color: var(--muted);
-      border: 1.5px solid var(--border2);
+      border: 1px solid var(--border);
     }
 
     /* Inputs */
     label {
       display: block;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
       color: var(--muted);
       margin-bottom: 8px;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
-    input[type="text"] {
+    input[type="text"], input[type="email"] {
       width: 100%;
-      padding: 14px 16px;
+      padding: 13px 16px;
       font-size: 1rem;
-      font-family: 'Barlow', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       background: var(--surface2);
-      border: 1.5px solid var(--border2);
-      border-radius: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       color: var(--text);
       outline: none;
       transition: border-color .2s;
     }
-    input[type="text"]:focus { border-color: var(--accent); }
-    input[type="text"]::placeholder { color: var(--muted); }
+    input[type="text"]:focus,
+    input[type="email"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder { color: var(--muted); }
 
     /* Tags */
     .tag {
       display: inline-block;
       padding: 4px 10px;
-      border-radius: 4px;
-      border: 1px solid rgba(57,255,110,0.25);
+      border-radius: 3px;
+      border: 1px solid var(--border-a);
       color: var(--accent);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.7rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem;
       font-weight: 600;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
@@ -131,47 +133,57 @@
     .tab {
       padding: 6px 14px;
       border-radius: 4px;
-      border: 1px solid var(--border2);
+      border: 1px solid var(--border);
       background: transparent;
       color: var(--muted);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all .15s;
     }
-    .tab.active { background: var(--accent); color: #08100a; border-color: var(--accent); }
+    .tab.active { background: var(--accent); color: #0a100d; border-color: var(--accent); }
 
     /* Tables */
     table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border2); color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
-    td { padding: 11px 6px; border-bottom: 1px solid var(--border2); }
+    th {
+      text-align: left;
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+    td { padding: 11px 6px; border-bottom: 1px solid var(--border); }
     tr:last-child td { border-bottom: none; }
-    .rank { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--gold); font-size: 1.1rem; }
+    .rank { font-weight: 700; color: var(--warm); }
 
     /* Misc */
     .big-time {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 5rem;
-      font-weight: 900;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5.5rem;
+      font-weight: 300;
       text-align: center;
       color: var(--text);
-      letter-spacing: -0.04em;
+      letter-spacing: -0.02em;
       line-height: 1;
     }
     .info { font-size: 0.88rem; color: var(--muted); text-align: center; }
-    .gold { color: var(--gold); }
+    .gold { color: var(--warm); }
     .green { color: var(--accent); }
 
-    .error { color: #e05a5a; font-size: 0.85rem; margin-top: 8px; display: none; }
+    .error { color: #c07070; font-size: 0.85rem; margin-top: 8px; display: none; }
 
     .spinner {
       display: inline-block;
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,.2);
-      border-top-color: #fff;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.15);
+      border-top-color: rgba(255,255,255,.7);
       border-radius: 50%;
       animation: spin .7s linear infinite;
       vertical-align: middle;
@@ -181,59 +193,52 @@
 
     /* Section label */
     .sec-label {
-      font-family: 'Barlow Condensed', sans-serif;
+      display: block;
+      font-family: 'DM Sans', sans-serif;
       font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--muted);
       margin: 20px 16px 10px;
-      display: block;
     }
 
-    /* Card label (green accent line before) */
+    /* Card label */
     .card-label {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .card-label::before {
       content: '';
       display: inline-block;
-      width: 14px;
-      height: 2px;
+      width: 18px;
+      height: 1px;
       background: var(--accent);
       flex-shrink: 0;
     }
 
-    /* Accent card top border */
-    .card-accent {
-      position: relative;
-      overflow: hidden;
-    }
-    .card-accent::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--accent);
+    /* Fade in animation for hero */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* Bottom nav */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      background: rgba(12,20,14,0.97);
+      background: rgba(18,20,26,0.96);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border2);
+      border-top: 1px solid var(--border);
       display: flex;
       padding: 10px 0 max(10px, env(safe-area-inset-bottom));
       max-width: 480px;
@@ -244,15 +249,15 @@
       text-align: center;
       color: var(--muted);
       text-decoration: none;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.6rem;
-      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 4px 0;
       transition: color .15s;
     }
-    .bottom-nav a .nav-icon { display: block; font-size: 1.2rem; margin-bottom: 3px; }
+    .bottom-nav a .nav-icon { display: block; font-size: 1.15rem; margin-bottom: 3px; }
     .bottom-nav a.active { color: var(--accent); }
 
     .has-nav main { padding-bottom: 80px; }
@@ -263,7 +268,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <div style="text-align:center; padding: 12px 20px 80px; font-size:0.72rem; color:var(--muted); line-height:1.5;">
+  <div style="text-align:center; padding: 12px 20px 80px; font-size:0.68rem; color:var(--muted); line-height:1.6;">
     🚧 Testovací verze · Chybu nebo připomínku pošli na
     <a href="mailto:vaclav.nap@gmail.com" style="color:var(--muted); text-decoration:underline;">vaclav.nap@gmail.com</a>
   </div>

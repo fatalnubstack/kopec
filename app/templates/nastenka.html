@@ -6,36 +6,35 @@
 <style>
   textarea {
     width: 100%;
-    padding: 14px;
+    padding: 13px 16px;
     font-size: 0.95rem;
-    font-family: 'Barlow', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     background: var(--surface2);
-    border: 1.5px solid var(--border2);
-    border-radius: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     color: var(--text);
     outline: none;
     resize: none;
+    transition: border-color .2s;
   }
   textarea:focus { border-color: var(--accent); }
   .mood-btn {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     background: none;
-    border: 2px solid var(--border2);
-    border-radius: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 8px 12px;
     cursor: pointer;
     transition: all .15s;
   }
 </style>
 
-<!-- Hlavička -->
-<div style="padding: 20px 16px 12px;">
+<div style="padding: 24px 16px 12px;">
   <div class="card-label">🪧 Nástěnka</div>
-  <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.01em; margin-bottom:4px;">Vzkazy z vrcholu</h2>
-  <p id="counterText" style="font-size:0.85rem; color:var(--muted);">Co píší dobrodruzi po výstupu na Bořen.</p>
+  <h2 style="font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; letter-spacing:-0.01em; margin-bottom:4px;">Vzkazy z vrcholu</h2>
+  <p id="counterText" style="font-size:0.85rem; color:var(--muted); line-height:1.6;">Co píší dobrodruzi po výstupu na Bořen.</p>
 </div>
 
-<!-- Tlačítko přidat -->
 <div style="margin: 0 16px 4px;">
   <button class="btn btn-green" onclick="toggleForm()" id="addBtn">✏️ Přidat příspěvek</button>
 </div>
@@ -48,7 +47,7 @@
   <input type="text" id="formName" placeholder="Např. Jan Novák" maxlength="80" autocomplete="off">
 
   <div style="margin-top:16px;">
-    <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Jak ses cítil během výšlapu?</p>
+    <p style="font-size:0.72rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Jak ses cítil?</p>
     <div id="formMoodPicker" style="display:flex; gap:8px; justify-content:center;">
       <button type="button" class="mood-btn" data-mood="1">😮‍💨</button>
       <button type="button" class="mood-btn" data-mood="2">😕</button>
@@ -59,15 +58,14 @@
   </div>
 
   <div style="margin-top:14px;">
-    <label for="formMsg">Vzkaz <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
+    <label for="formMsg">Vzkaz <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinný)</span></label>
     <textarea id="formMsg" maxlength="500" placeholder="Co říkáš na výstup? Tip, pozdrav…" rows="3"></textarea>
   </div>
 
   <div style="margin-top:14px;">
-    <label>Fotka <span style="font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
-    <label for="formPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--surface2); border:1.5px dashed rgba(255,255,255,0.1); border-radius:10px; padding:14px; font-family:'Barlow',sans-serif; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem;">
-      <span style="font-size:1.4rem;">📷</span>
-      <span id="formPhotoLabel">Vyber fotku z galerie</span>
+    <label>Fotka <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted);">(nepovinná)</span></label>
+    <label for="formPhoto" style="display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--surface2); border:1px dashed rgba(255,255,255,0.1); border-radius:8px; padding:13px; font-family:'DM Sans',sans-serif; text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted); font-size:0.88rem;">
+      <span style="font-size:1.3rem;">📷</span><span id="formPhotoLabel">Vyber fotku z galerie</span>
     </label>
     <input type="file" id="formPhoto" accept="image/*" style="display:none;">
   </div>
@@ -78,23 +76,20 @@
 
   <div id="formDone" style="display:none; text-align:center; padding:16px 0;">
     <div style="font-size:2rem; margin-bottom:8px;">✅</div>
-    <p style="font-weight:700;">Příspěvek přidán!</p>
+    <p style="font-weight:600;">Příspěvek přidán!</p>
   </div>
 </div>
 
-<!-- Načítám -->
 <div id="loading" style="text-align:center; padding:60px 20px;">
-  <span class="spinner" style="width:28px;height:28px;border-width:3px;"></span>
+  <span class="spinner" style="width:24px;height:24px;border-width:2px;"></span>
 </div>
 
-<!-- Prázdno -->
 <div id="empty" style="display:none; text-align:center; padding:60px 20px;">
   <div style="font-size:2.5rem; margin-bottom:12px;">📭</div>
   <p style="color:var(--muted);">Zatím tu nic není.</p>
   <p style="color:var(--muted); font-size:0.85rem; margin-top:4px;">Buď první kdo zanechá vzkaz!</p>
 </div>
 
-<!-- Příspěvky -->
 <div id="posts" style="display:none; margin: 0 16px 24px;"></div>
 
 <script>
@@ -105,9 +100,7 @@
     const raw = localStorage.getItem(LIKES_KEY);
     return raw ? new Set(raw.split(',').filter(Boolean)) : new Set();
   }
-  function setLiked(set) {
-    localStorage.setItem(LIKES_KEY, [...set].join(','));
-  }
+  function setLiked(set) { localStorage.setItem(LIKES_KEY, [...set].join(',')); }
 
   function dateGroup(isoStr) {
     const now = new Date();
@@ -115,7 +108,6 @@
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterdayStart = new Date(todayStart - 86400000);
     const weekStart = new Date(todayStart - (now.getDay() === 0 ? 6 : now.getDay() - 1) * 86400000);
-
     if (d >= todayStart) return 'Dnes';
     if (d >= yesterdayStart) return 'Včera';
     if (d >= weekStart) return 'Tento týden';
@@ -127,65 +119,54 @@
   }
 
   function fmtDate(isoStr) {
-    const d = new Date(isoStr);
-    return d.toLocaleDateString('cs-CZ', { day:'numeric', month:'numeric', year:'numeric' });
+    return new Date(isoStr).toLocaleDateString('cs-CZ', { day:'numeric', month:'numeric', year:'numeric' });
   }
 
   async function toggleLike(postId, btn) {
     const liked = getLiked();
     const id = String(postId);
     if (liked.has(id)) return;
-
     liked.add(id);
     setLiked(liked);
-
     const countEl = btn.querySelector('.like-count');
     countEl.textContent = parseInt(countEl.textContent) + 1;
-    btn.classList.add('liked');
-    btn.style.color = '#e05a5a';
-    btn.style.borderColor = 'rgba(200,60,60,0.4)';
-
-    try {
-      await fetch(`/api/wall/${postId}/like`, { method: 'POST' });
-    } catch {}
+    btn.style.color = '#c07070';
+    btn.style.borderColor = 'rgba(180,100,100,0.3)';
+    try { await fetch(`/api/wall/${postId}/like`, { method: 'POST' }); } catch {}
   }
 
   function renderCard(p, liked) {
     const isLiked = liked.has(String(p.id));
     const likedStyle = isLiked
-      ? 'color:#e05a5a; border-color:rgba(200,60,60,0.4);'
-      : 'color:var(--muted); border-color:var(--border2);';
+      ? 'color:#c07070; border-color:rgba(180,100,100,0.3);'
+      : 'color:var(--muted); border-color:var(--border);';
 
     return `
-      <div style="background:var(--surface); border:1px solid var(--border2); border-radius:14px; overflow:hidden; margin-bottom:12px;">
-
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:10px;">
         ${p.photo_url ? `
-        <div style="height:190px; cursor:pointer; overflow:hidden;" onclick="openPhoto('${escHtml(p.photo_url)}')">
-          <img src="${escHtml(p.photo_url)}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="height:200px; cursor:pointer; overflow:hidden;" onclick="openPhoto('${escHtml(p.photo_url)}')">
+          <img src="${escHtml(p.photo_url)}" alt="Fotka" style="width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
         </div>` : ''}
-
         <div style="padding:14px 16px;">
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
             <div>
-              <p style="font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:800; text-transform:uppercase; letter-spacing:0.02em;">${escHtml(p.name)}</p>
-              <p style="font-size:0.75rem; color:var(--muted); margin-top:2px;">
+              <p style="font-size:0.95rem; font-weight:500;">${escHtml(p.name)}</p>
+              <p style="font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.02em;">
                 ${p.duration_fmt ? `🥾 ${escHtml(p.duration_fmt)} · ` : ''}${fmtDate(p.created_at)}
               </p>
             </div>
             ${p.mood_emoji ? `
             <div style="text-align:center; flex-shrink:0;">
-              <span style="font-size:1.6rem;">${p.mood_emoji}</span>
-              <p style="font-size:0.65rem; color:var(--muted); margin-top:2px; font-family:'Barlow Condensed',sans-serif; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">${MOOD_LABEL[p.mood]||''}</p>
+              <span style="font-size:1.5rem;">${p.mood_emoji}</span>
+              <p style="font-size:0.62rem; color:var(--muted); margin-top:2px; letter-spacing:0.06em; text-transform:uppercase;">${MOOD_LABEL[p.mood]||''}</p>
             </div>` : ''}
           </div>
-
           ${p.message ? `
-          <p style="font-size:0.88rem; color:var(--text); opacity:0.8; margin-top:10px; line-height:1.5; border-top:1px solid var(--border2); padding-top:10px;">"${escHtml(p.message)}"</p>
+          <p style="font-size:0.88rem; color:var(--text); opacity:0.75; margin-top:10px; line-height:1.6; border-top:1px solid var(--border); padding-top:10px; font-style:italic;">"${escHtml(p.message)}"</p>
           ` : ''}
-
           <div style="margin-top:12px; display:flex; justify-content:flex-end;">
             <button onclick="toggleLike(${p.id}, this)"
-              style="display:flex; align-items:center; gap:5px; background:none; border:1.5px solid; border-radius:20px; padding:5px 12px; font-family:'Barlow',sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all .15s; ${likedStyle}"
+              style="display:flex; align-items:center; gap:5px; background:none; border:1px solid; border-radius:20px; padding:4px 12px; font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:500; cursor:pointer; transition:all .2s; ${likedStyle}"
               ${isLiked ? 'disabled' : ''}>
               ❤️ <span class="like-count">${p.likes}</span>
             </button>
@@ -199,43 +180,27 @@
     try {
       const res = await fetch('/api/wall');
       const posts = await res.json();
-
       document.getElementById('loading').style.display = 'none';
-
-      if (!posts.length) {
-        document.getElementById('empty').style.display = 'block';
-        return;
-      }
-
+      if (!posts.length) { document.getElementById('empty').style.display = 'block'; return; }
       document.getElementById('counterText').textContent = `${posts.length} dobrodruhů zanechalo vzkaz`;
-
       const liked = getLiked();
       const container = document.getElementById('posts');
       container.style.display = 'block';
-
       const groups = [
-        { label: 'Dnes', posts: [] },
-        { label: 'Včera', posts: [] },
-        { label: 'Tento týden', posts: [] },
-        { label: 'Starší', posts: [] },
+        { label: 'Dnes', posts: [] }, { label: 'Včera', posts: [] },
+        { label: 'Tento týden', posts: [] }, { label: 'Starší', posts: [] },
       ];
       const groupIndex = { 'Dnes': 0, 'Včera': 1, 'Tento týden': 2, 'Starší': 3 };
-
-      posts.forEach(p => {
-        const g = dateGroup(p.created_at);
-        groups[groupIndex[g]].posts.push(p);
-      });
-
+      posts.forEach(p => { groups[groupIndex[dateGroup(p.created_at)]].posts.push(p); });
       let html = '';
       groups.forEach(g => {
         if (!g.posts.length) return;
-        html += `<p style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin: 20px 0 10px;">${g.label}</p>`;
+        html += `<p style="font-size:0.65rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); margin: 20px 0 10px;">${g.label}</p>`;
         html += g.posts.map(p => renderCard(p, liked)).join('');
       });
-
       container.innerHTML = html;
     } catch {
-      document.getElementById('loading').innerHTML = '<p style="color:var(--muted); text-align:center;">Nepodařilo se načíst příspěvky.</p>';
+      document.getElementById('loading').innerHTML = '<p style="color:var(--muted); text-align:center; font-size:0.88rem;">Nepodařilo se načíst příspěvky.</p>';
     }
   }
 
@@ -243,9 +208,7 @@
     document.getElementById('lightbox').style.display = 'flex';
     document.getElementById('lightboxImg').src = url;
   }
-  function closePhoto() {
-    document.getElementById('lightbox').style.display = 'none';
-  }
+  function closePhoto() { document.getElementById('lightbox').style.display = 'none'; }
 
   let formMood = null;
 
@@ -265,7 +228,7 @@
     btn.addEventListener('click', () => {
       formMood = parseInt(btn.dataset.mood);
       document.querySelectorAll('#formMoodPicker .mood-btn').forEach(b => {
-        b.style.borderColor = b === btn ? 'var(--accent)' : 'var(--border2)';
+        b.style.borderColor = b === btn ? 'var(--accent)' : 'var(--border)';
         b.style.background  = b === btn ? 'var(--accent-dim)' : 'none';
       });
     });
@@ -278,13 +241,8 @@
   async function submitForm() {
     const err = document.getElementById('formError');
     const name = document.getElementById('formName').value.trim();
-    if (!name) {
-      err.textContent = 'Zadej prosím jméno.';
-      err.style.display = 'block';
-      return;
-    }
+    if (!name) { err.textContent = 'Zadej prosím jméno.'; err.style.display = 'block'; return; }
     err.style.display = 'none';
-
     const fd = new FormData();
     fd.append('name', name);
     if (formMood) fd.append('mood', formMood);
@@ -292,15 +250,13 @@
     if (msg) fd.append('message', msg);
     const photo = document.getElementById('formPhoto').files[0];
     if (photo) fd.append('photo', photo);
-
     try {
       const res = await fetch('/api/wall', { method: 'POST', body: fd });
       if (res.ok) {
         document.getElementById('formDone').style.display = 'block';
         document.getElementById('addBtn').style.display = 'none';
         setTimeout(() => {
-          loadWall();
-          toggleForm();
+          loadWall(); toggleForm();
           document.getElementById('addBtn').style.display = 'block';
           document.getElementById('formDone').style.display = 'none';
         }, 1500);
@@ -309,22 +265,16 @@
         err.textContent = d.detail || 'Chyba při ukládání.';
         err.style.display = 'block';
       }
-    } catch {
-      err.textContent = 'Nepodařilo se spojit se serverem.';
-      err.style.display = 'block';
-    }
+    } catch { err.textContent = 'Nepodařilo se spojit se serverem.'; err.style.display = 'block'; }
   }
 
   loadWall();
 </script>
 
-<!-- Lightbox -->
 <div id="lightbox" onclick="closePhoto()"
-  style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.94); z-index:1000;
-         align-items:center; justify-content:center; padding:16px;">
-  <img id="lightboxImg" src="" alt="Fotka"
-    style="max-width:100%; max-height:100%; border-radius:12px; object-fit:contain;">
-  <div style="position:absolute; top:16px; right:20px; font-size:1.8rem; color:#fff; cursor:pointer; line-height:1;">✕</div>
+  style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; padding:16px;">
+  <img id="lightboxImg" src="" alt="Fotka" style="max-width:100%; max-height:100%; border-radius:8px; object-fit:contain;">
+  <div style="position:absolute; top:18px; right:20px; font-size:1.6rem; color:rgba(255,255,255,0.6); cursor:pointer; line-height:1;">✕</div>
 </div>
 
 {% endblock %}

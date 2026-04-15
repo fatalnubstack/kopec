@@ -3,10 +3,10 @@
 {% block title %}Bořen – Žebříček{% endblock %}
 {% block content %}
 
-<div style="padding: 20px 16px 12px;">
+<div style="padding: 24px 16px 12px;">
   <div class="card-label">🏆 Žebříček</div>
-  <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.01em; margin-bottom:4px;">Bořen</h2>
-  <p id="stats" style="font-size:0.85rem; color:var(--muted); min-height:1.2em;"></p>
+  <h2 style="font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; letter-spacing:-0.01em; margin-bottom:6px;">Bořen</h2>
+  <p id="stats" style="font-size:0.85rem; color:var(--muted); min-height:1.2em; line-height:1.6;"></p>
 </div>
 
 <div style="margin: 0 16px 12px;">
@@ -19,16 +19,14 @@
   </div>
 </div>
 
-<!-- Nejrychlejší -->
 <div class="card">
-  <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:14px;">⚡ Nejrychlejší výstup</p>
+  <p style="font-size:0.65rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:16px;">⚡ Nejrychlejší výstup</p>
   <div id="fastestBody"></div>
   <p id="fastestEmpty" class="info" style="display:none; padding:16px 0;">Žádné záznamy.</p>
 </div>
 
-<!-- Nejvíce výstupů -->
 <div class="card">
-  <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:14px;">🔁 Nejvíce výstupů</p>
+  <p style="font-size:0.65rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:16px;">🔁 Nejvíce výstupů</p>
   <div id="mostBody"></div>
   <p id="mostEmpty" class="info" style="display:none; padding:16px 0;">Žádné záznamy.</p>
 </div>
@@ -53,24 +51,23 @@
     rows.forEach(r => {
       const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : null;
       const rankEl = medal
-        ? `<span style="font-size:1.2rem;">${medal}</span>`
-        : `<span style="font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:900; color:var(--muted);">${r.rank}</span>`;
+        ? `<span style="font-size:1.1rem;">${medal}</span>`
+        : `<span style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; color:var(--muted);">${r.rank}</span>`;
 
       body.insertAdjacentHTML('beforeend', `
-        <div style="display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border2);">
-          <div style="width:30px; text-align:center; flex-shrink:0;">${rankEl}</div>
+        <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border);">
+          <div style="width:28px; text-align:center; flex-shrink:0;">${rankEl}</div>
           <div style="flex:1; min-width:0;">
-            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(r.name)}</p>
-            ${r.city ? `<p style="font-size:0.75rem; color:var(--muted); margin-top:1px;">${esc(r.city)}</p>` : ''}
+            <p style="font-size:0.9rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(r.name)}</p>
+            ${r.city ? `<p style="font-size:0.72rem; color:var(--muted); margin-top:1px;">${esc(r.city)}</p>` : ''}
           </div>
           <div style="text-align:right; flex-shrink:0;">
-            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1.15rem; font-weight:800; color:var(--accent);">${esc(r.duration_fmt)}</p>
-            <p style="font-size:0.72rem; color:var(--muted); margin-top:1px;">${esc(r.date)}</p>
+            <p style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; color:var(--accent);">${esc(r.duration_fmt)}</p>
+            <p style="font-size:0.68rem; color:var(--muted); margin-top:1px;">${esc(r.date)}</p>
           </div>
         </div>
       `);
     });
-    // remove border from last
     const last = body.lastElementChild;
     if (last) last.style.borderBottom = 'none';
   }
@@ -84,18 +81,18 @@
     rows.forEach(r => {
       const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : null;
       const rankEl = medal
-        ? `<span style="font-size:1.2rem;">${medal}</span>`
-        : `<span style="font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:900; color:var(--muted);">${r.rank}</span>`;
+        ? `<span style="font-size:1.1rem;">${medal}</span>`
+        : `<span style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; color:var(--muted);">${r.rank}</span>`;
 
       body.insertAdjacentHTML('beforeend', `
-        <div style="display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border2);">
-          <div style="width:30px; text-align:center; flex-shrink:0;">${rankEl}</div>
+        <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border);">
+          <div style="width:28px; text-align:center; flex-shrink:0;">${rankEl}</div>
           <div style="flex:1;">
-            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">${esc(r.name)}</p>
+            <p style="font-size:0.9rem; font-weight:500;">${esc(r.name)}</p>
           </div>
           <div style="text-align:right; flex-shrink:0;">
-            <p style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:var(--gold);">${r.total}×</p>
-            <p style="font-size:0.72rem; color:var(--muted); margin-top:1px;">${esc(r.best_fmt)}</p>
+            <p style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--warm);">${r.total}×</p>
+            <p style="font-size:0.68rem; color:var(--muted); margin-top:1px;">${esc(r.best_fmt)}</p>
           </div>
         </div>
       `);
@@ -105,9 +102,7 @@
   }
 
   function esc(str) {
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   document.getElementById('periodTabs').addEventListener('click', (e) => {
@@ -121,14 +116,11 @@
   loadLeaderboard(null);
 
   fetch('/api/stats').then(r=>r.json()).then(d=>{
-    const el = document.getElementById('stats');
     const n = d.last_24h;
-    if (n === 0) {
-      el.textContent = 'Dnes tu ještě nikdo nebyl — budeš první dobrodruh!';
-    } else {
-      const slovo = n===1?'dobrodruh':n<5?'dobrodruzi':'dobrodruhů';
-      el.textContent = `Za posledních 24 hodin zdolalo Bořen ${n} ${slovo}`;
-    }
+    const slovo = n===1?'dobrodruh':n<5?'dobrodruzi':'dobrodruhů';
+    document.getElementById('stats').textContent = n === 0
+      ? 'Dnes tu ještě nikdo nebyl — buď první!'
+      : `Za posledních 24 hodin zdolalo Bořen ${n} ${slovo}`;
   }).catch(()=>{});
 </script>
 {% endblock %}
