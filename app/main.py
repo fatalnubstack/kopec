@@ -118,6 +118,11 @@ def fmt_duration(seconds: int) -> str:
 # ── pages ─────────────────────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
+async def landing(request: Request):
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+
+@app.get("/boren", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 

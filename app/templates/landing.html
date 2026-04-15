@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zdolej.cz — Kopce severních Čech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #12141a;
+      --surface:  #1a1d24;
+      --accent:   #7a9e8a;
+      --warm:     #c4956a;
+      --text:     #e8e6e0;
+      --muted:    #7a8898;
+      --border:   rgba(255,255,255,0.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 24px; z-index: 10;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 300; color: #fff;
+      letter-spacing: 0.03em; text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-link {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(232,230,224,0.45);
+      text-decoration: none;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 100svh; min-height: 580px; max-height: 860px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1400&q=80') center 40%/cover no-repeat;
+      filter: brightness(0.5) saturate(0.75);
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(12,14,20,0.15) 0%,
+        rgba(12,14,20,0.25) 45%,
+        rgba(12,14,20,0.97) 100%);
+    }
+    .hero-extra {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+      background: linear-gradient(to top, rgba(8,10,16,0.75) 0%, rgba(8,10,16,0.3) 55%, transparent 100%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 24px 44px;
+      max-width: 680px;
+      animation: fadeUp .9s ease both;
+    }
+    .hero-eyebrow {
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+    }
+    .hero-eyebrow::before { content: ''; display: inline-block; width: 24px; height: 1px; background: var(--accent); }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 11vw, 5.5rem);
+      font-weight: 300; line-height: 1.0; color: #fff;
+      margin-bottom: 18px;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.95), 0 1px 6px rgba(0,0,0,0.8);
+    }
+    .hero-sub {
+      font-size: 0.88rem; color: rgba(232,230,224,0.7);
+      line-height: 1.65; max-width: 420px; margin-bottom: 32px;
+      text-shadow: 0 1px 12px rgba(0,0,0,0.85);
+    }
+    .hero-stats {
+      display: flex; gap: 24px; margin-bottom: 30px; flex-wrap: wrap;
+    }
+    .hero-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 300; color: var(--accent); line-height: 1;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.7);
+    }
+    .hero-stat-lbl {
+      font-size: 0.52rem; color: rgba(232,230,224,0.4);
+      text-transform: uppercase; letter-spacing: 0.14em; margin-top: 3px;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(122,158,138,0.45); border-radius: 8px;
+      color: var(--accent); padding: 12px 20px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      transition: border-color .2s, background .2s;
+      align-self: flex-start;
+    }
+    .hero-cta:hover { background: rgba(122,158,138,0.08); border-color: rgba(122,158,138,0.7); }
+
+    /* ── SECTION ── */
+    .section { padding: 52px 24px; max-width: 760px; margin: 0 auto; }
+    .sec-label {
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .sec-label::before { content: ''; display: inline-block; width: 18px; height: 1px; background: var(--accent); }
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 300; color: var(--text); line-height: 1.1; margin-bottom: 28px;
+    }
+
+    /* ── KOPCE ── */
+    .kopce-grid { display: flex; flex-direction: column; gap: 14px; }
+
+    @media (min-width: 600px) {
+      .kopce-grid { flex-direction: row; }
+      .kopec-card { flex: 1; }
+    }
+
+    .kopec-card {
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border);
+      text-decoration: none; display: block;
+      transition: transform .3s ease, border-color .3s;
+    }
+    .kopec-card:hover { transform: translateY(-3px); border-color: rgba(122,158,138,0.25); }
+    .kopec-card.dimmed { opacity: 0.5; pointer-events: none; }
+
+    .kopec-photo {
+      height: 200px; position: relative; overflow: hidden;
+    }
+    .kopec-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(0.58) saturate(0.8);
+      transition: transform .5s ease;
+    }
+    .kopec-card:hover .kopec-photo img { transform: scale(1.04); }
+    .kopec-photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(12,14,20,0.95) 0%, transparent 55%);
+    }
+    .kopec-photo-text {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 14px 18px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .kopec-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 300; color: #fff;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.8);
+    }
+    .kopec-region {
+      font-size: 0.6rem; color: rgba(232,230,224,0.5);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px;
+    }
+    .kopec-badge {
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .kopec-badge.active {
+      background: rgba(122,158,138,0.2); border: 1px solid rgba(122,158,138,0.4); color: var(--accent);
+    }
+    .kopec-badge.soon {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--muted);
+    }
+    .kopec-stats {
+      background: var(--surface); padding: 13px 18px;
+      display: flex; gap: 18px;
+    }
+    .kopec-stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 300; color: var(--warm);
+    }
+    .kopec-stat-lbl {
+      font-size: 0.52rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    /* ── SUPPORT ── */
+    .support-strip {
+      margin: 4px 24px 0;
+      max-width: 760px; margin-left: auto; margin-right: auto;
+      padding: 0 24px;
+    }
+    .support-inner {
+      border: 1px solid rgba(122,158,138,0.14);
+      border-radius: 12px; padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; background: rgba(122,158,138,0.03);
+    }
+    .support-inner p:first-child { font-size: 0.85rem; font-weight: 500; margin-bottom: 4px; }
+    .support-inner p:last-child { font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+    .support-btn {
+      flex-shrink: 0; border: 1px solid rgba(122,158,138,0.3);
+      background: none; color: var(--accent); padding: 9px 16px;
+      border-radius: 8px; font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; white-space: nowrap;
+      transition: background .2s;
+    }
+    .support-btn:hover { background: rgba(122,158,138,0.08); }
+
+    /* ── JAK TO FUNGUJE ── */
+    .how { background: var(--surface); margin-top: 48px; padding: 52px 24px; }
+    .how-inner { max-width: 600px; margin: 0 auto; }
+    .how-steps { display: flex; flex-direction: column; gap: 26px; margin-top: 28px; }
+    .how-step { display: flex; gap: 20px; }
+    .how-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--accent);
+      opacity: 0.45; line-height: 1; flex-shrink: 0; width: 26px;
+    }
+    .how-text { font-size: 0.86rem; color: var(--muted); line-height: 1.7; padding-top: 3px; }
+    .how-text strong { color: var(--text); font-weight: 500; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 28px 24px; text-align: center;
+      font-size: 0.7rem; color: rgba(232,230,224,0.18);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer p + p { margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-extra"></div>
+
+  <nav class="nav">
+    <a href="/" class="nav-logo">zdolej<span>.cz</span></a>
+    <a href="#kopce" class="nav-link">↓ Kopce</a>
+  </nav>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Severní Čechy · Outdoor tracker</p>
+    <h1 class="hero-title">Kopce čekají.<br>Zdolej je.</h1>
+    <p class="hero-sub">Změř čas výstupu, porovnej se s ostatními a zanech vzkaz na vrcholu. Zdarma, bez reklam, pro každého.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num" id="statKopce">2</div>
+        <div class="hero-stat-lbl">kopce</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" id="statVystupy">—</div>
+        <div class="hero-stat-lbl">výstupů celkem</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">539 m</div>
+        <div class="hero-stat-lbl">nejvyšší bod</div>
+      </div>
+    </div>
+    <a href="#kopce" class="hero-cta">▼ Vyber kopec</a>
+  </div>
+</div>
+
+<!-- KOPCE -->
+<div class="section" id="kopce">
+  <p class="sec-label">Kopce</p>
+  <h2 class="sec-title">Kde chceš dnes zdolávat?</h2>
+  <div class="kopce-grid">
+
+    <!-- BOŘEN -->
+    <a href="/boren" class="kopec-card">
+      <div class="kopec-photo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Boren_from_NW.JPG"
+             alt="Bořen"
+             onerror="this.src='/static/boren.jpg'">
+        <div class="kopec-photo-overlay"></div>
+        <div class="kopec-photo-text">
+          <div>
+            <div class="kopec-name">Bořen</div>
+            <div class="kopec-region">Bílina · České středohoří</div>
+          </div>
+          <div class="kopec-badge active">▲ Zdolej</div>
+        </div>
+      </div>
+      <div class="kopec-stats">
+        <div><div class="kopec-stat-val">539</div><div class="kopec-stat-lbl">metrů</div></div>
+        <div><div class="kopec-stat-val">~2 km</div><div class="kopec-stat-lbl">trasa</div></div>
+        <div><div class="kopec-stat-val" id="borenVystupy">—</div><div class="kopec-stat-lbl">výstupů</div></div>
+      </div>
+    </a>
+
+    <!-- MILEŠOVKA -->
+    <div class="kopec-card dimmed">
+      <div class="kopec-photo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Brezina_nature_reserve_09_-_view_to_Milesovka.jpg"
+             alt="Milešovka">
+        <div class="kopec-photo-overlay"></div>
+        <div class="kopec-photo-text">
+          <div>
+            <div class="kopec-name">Milešovka</div>
+            <div class="kopec-region">Milešov · České středohoří</div>
+          </div>
+          <div class="kopec-badge soon">⏳ Brzy</div>
+        </div>
+      </div>
+      <div class="kopec-stats">
+        <div><div class="kopec-stat-val">837</div><div class="kopec-stat-lbl">metrů</div></div>
+        <div><div class="kopec-stat-val">—</div><div class="kopec-stat-lbl">výstupů</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PODPORA -->
+<div class="support-strip">
+  <div class="support-inner">
+    <div>
+      <p>💚 Líbí se ti projekt?</p>
+      <p>Aplikace je zdarma a bez reklam. Pokud chceš podpořit další kopce — jsem rád za každou korunu.</p>
+    </div>
+    <a href="/podpora" class="support-btn">Podpořit</a>
+  </div>
+</div>
+
+<!-- JAK TO FUNGUJE -->
+<div class="how">
+  <div class="how-inner">
+    <p class="sec-label">Jak to funguje</p>
+    <h2 class="sec-title">Tři kroky k výsledku</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-text"><strong>Naskenuj QR kód u paty kopce</strong> — zadej jméno a časomíra startuje. Mobil můžeš zamknout.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-text"><strong>Zdolej kopec</strong> — tempo je na tobě. Trasa, příroda, výhled.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-text"><strong>Na vrcholu naskenuj druhý QR kód</strong> — uvidíš svůj čas, žebříček a můžeš zanechat vzkaz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>zdolej.cz · Severní Čechy</p>
+  <p>Projekt <a href="/podpora">Vašek Naprávník</a> · <a href="/boren">Bořen tracker</a></p>
+</footer>
+
+<script>
+  fetch('/api/stats').then(r => r.json()).then(d => {
+    // celkový počet výstupů nejde přímo z /api/stats, zobrazíme last 24h
+    const n = d.last_24h;
+    document.getElementById('statVystupy').textContent = n || '—';
+    document.getElementById('borenVystupy').textContent = n || '—';
+  }).catch(() => {});
+</script>
+
+</body>
+</html>
