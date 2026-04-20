@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bořen Tracker — Redesign Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0f0c;
+  font-family: 'Barlow', sans-serif;
+  color: #e8ede9;
+  padding: 40px 20px 60px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #39ff6e;
+  margin-bottom: 6px;
+}
+.sub {
+  color: #5a7060;
+  font-size: 0.82rem;
+  margin-bottom: 32px;
+}
+
+/* Screen tabs */
+.screen-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.stab {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid #1e2e21;
+  background: transparent;
+  color: #5a7060;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all .15s;
+}
+.stab.active {
+  background: #39ff6e;
+  color: #08100a;
+  border-color: #39ff6e;
+}
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ─── PHONE FRAME ─── */
+.phone {
+  width: 390px;
+  min-height: 844px;
+  background: #0c140e;
+  border-radius: 48px;
+  overflow: hidden;
+  position: relative;
+  border: 1.5px solid #1e2e21;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,255,110,0.08), inset 0 0 60px rgba(0,0,0,0.4);
+  margin: 0 auto;
+}
+
+/* Notch */
+.notch {
+  width: 120px;
+  height: 32px;
+  background: #0c140e;
+  border-radius: 0 0 20px 20px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 24px 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #e8ede9;
+  letter-spacing: 0.03em;
+}
+
+/* ─── DESIGN SYSTEM ─── */
+:root {
+  --bg: #0c140e;
+  --surface: #111a13;
+  --surface2: #162019;
+  --accent: #39ff6e;
+  --accent-dim: rgba(57,255,110,0.12);
+  --gold: #f5a623;
+  --text: #e8ede9;
+  --muted: #5a7060;
+  --border: rgba(57,255,110,0.08);
+  --border2: rgba(255,255,255,0.06);
+}
+
+.phone-content {
+  padding-bottom: 100px;
+  overflow-y: auto;
+  max-height: 780px;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: brightness(0.4) saturate(0.8);
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, var(--bg) 100%);
+}
+.hero-content {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+}
+.hero-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.hero-sub {
+  font-size: 0.88rem;
+  color: rgba(232,237,233,0.5);
+  margin-top: 6px;
+  letter-spacing: 0.05em;
+}
+
+/* Stats strip */
+.stats-strip {
+  margin: 0 16px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.stats-strip::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+.stats-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.stats-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.stats-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* Info grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 16px;
+}
+.info-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border2);
+  text-align: center;
+}
+.info-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+}
+.info-lbl {
+  font-size: 0.62rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+}
+
+/* Tags */
+.tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 16px 16px;
+  justify-content: center;
+}
+.tag {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(57,255,110,0.25);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Buttons */
+.btn {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  padding: 17px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+.btn-accent {
+  background: var(--accent);
+  color: #08100a;
+}
+.btn-outline {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--border2);
+  margin-top: 10px;
+}
+
+/* Section label */
+.sec-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 20px 16px 10px;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(12,20,14,0.97);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border2);
+  display: flex;
+  padding: 10px 0 24px;
+}
+.nav-item {
+  flex: 1;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.nav-item .nav-icon { display: block; font-size: 1.2rem; margin-bottom: 3px; }
+.nav-item.active { color: var(--accent); }
+
+/* ─── START SCREEN ─── */
+.card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 20px;
+  margin: 12px 16px;
+  border: 1px solid var(--border2);
+}
+.card-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-label::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  background: var(--accent);
+}
+.card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+.card-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+label-field {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-family: 'Barlow', sans-serif;
+  background: var(--surface2);
+  border: 1.5px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 14px;
+}
+.input::placeholder { color: var(--muted); }
+.input:focus { border-color: var(--accent); }
+
+/* ─── FINISH SCREEN ─── */
+.finish-hero {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+.finish-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  filter: brightness(0.35);
+}
+.finish-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 20%, var(--bg) 100%);
+}
+.finish-hero-content {
+  position: absolute;
+  bottom: 20px;
+  left: 0; right: 0;
+  text-align: center;
+}
+.finish-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.finish-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.result-card {
+  margin: 0 16px 12px;
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 24px;
+  border: 1px solid var(--border2);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+.result-time-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.result-time {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.result-msg {
+  font-size: 0.88rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin-top: 10px;
+}
+.result-count {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Leaderboard */
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border2);
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-rank {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--muted);
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.lb-rank.top { color: var(--gold); }
+.lb-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex: 1;
+}
+.lb-city { font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+.lb-time {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Nastenka card */
+.wall-card {
+  background: var(--surface);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  border: 1px solid var(--border2);
+}
+.wall-photo {
+  height: 180px;
+  overflow: hidden;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--muted);
+}
+.wall-body { padding: 14px 16px; }
+.wall-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.wall-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.wall-msg { font-size: 0.85rem; color: var(--text); margin-top: 10px; line-height: 1.5; opacity: 0.8; }
+.wall-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border2);
+}
+.wall-mood { font-size: 1.4rem; }
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Barlow', sans-serif;
+}
+</style>
+</head>
+<body>
+
+<h1>Bořen Tracker — Redesign Preview</h1>
+<p class="sub">Summit design · Barlow Condensed · Electric green · Athletic dark</p>
+
+<div class="screen-tabs">
+  <button class="stab active" onclick="show('home',this)">Hlavní stránka</button>
+  <button class="stab" onclick="show('start',this)">Start</button>
+  <button class="stab" onclick="show('finish',this)">Výsledek</button>
+  <button class="stab" onclick="show('leaderboard',this)">Žebříček</button>
+  <button class="stab" onclick="show('nastenka',this)">Nástěnka</button>
+</div>
+
+<!-- ─── HOME ─── -->
+<div class="screen active" id="s-home">
+<div class="phone">
+  <div style="background:#0c140e; height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px;">
+    <span style="font-size:0.7rem; font-weight:600; color:#e8ede9;">9:41</span>
+    <span style="font-size:0.8rem; color:#e8ede9;">●●●</span>
+  </div>
+  <div class="phone-content">
+    <div class="hero">
+      <img class="hero-img" src="/static/boren.jpg" alt="Bořen">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-label">⛰ Bořen</div>
+        <div class="hero-title">Bořen</div>
+        <div class="hero-sub">u Bíliny · 539 m n. m.</div>
+      </div>
+    </div>
+
+    <div style="height:12px;"></div>
+
+    <div class="stats-strip">
+      <div class="stats-icon">🥾</div>
+      <div>
+        <div class="stats-text">39 dobrodruhů za 24h</div>
+        <div class="stats-sub">Přidej se k nim!</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-val">539 m</div>
+        <div class="info-lbl">Nadmořská výška</div>
+      </div>
+      <div class="info-card">
+        <div class="info-val">~2 km</div>
+        <div class="info-lbl">Délka trasy</div>
+      </div>
+    </div>
+
+    <div class="tags">
+      <span class="tag">Lesní</span>
+      <span class="tag">Skalnatý</span>
+      <span class="tag">Výhled</span>
+      <span class="tag">Středně obtížný</span>
+    </div>
+
+    <a class="btn btn-accent" href="#">▲ Začít výstup</a>
+    <a class="btn btn-outline" href="#" style="display:block; width:calc(100% - 32px); margin:10px 16px 0; padding:15px; font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; text-align:center; border:1.5px solid rgba(255,255,255,0.06); border-radius:10px; color:#5a7060; text-decoration:none;">🥇 Žebříček</a>
+
+    <div class="sec-label">Jak to funguje?</div>
+    <div style="display:flex; flex-direction:column; gap:8px; margin:0 16px;">
+      <div style="display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:10px; padding:12px 14px; border:1px solid rgba(255,255,255,0.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:var(--accent); width:24px; text-align:center; flex-shrink:0;">1</div>
+        <p style="font-size:0.82rem; color:#5a7060; line-height:1.4;">U paty kopce naskenuj QR kód a zadej jméno — časomíra startuje.</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:10px; padding:12px 14px; border:1px solid rgba(255,255,255,0.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:var(--accent); width:24px; text-align:center; flex-shrink:0;">2</div>
+        <p style="font-size:0.82rem; color:#5a7060; line-height:1.4;">Vydrž a zdolej kopec — mobil můžeš zamknout.</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:10px; padding:12px 14px; border:1px solid rgba(255,255,255,0.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:900; color:var(--accent); width:24px; text-align:center; flex-shrink:0;">3</div>
+        <p style="font-size:0.82rem; color:#5a7060; line-height:1.4;">Na vrcholu naskenuj QR kód na sloupu — čas se uloží.</p>
+      </div>
+    </div>
+    <div style="height:20px;"></div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item active"><span class="nav-icon">⛰️</span>Bořen</div>
+    <div class="nav-item"><span class="nav-icon">▲</span>Start</div>
+    <div class="nav-item"><span class="nav-icon">🪧</span>Nástěnka</div>
+    <div class="nav-item"><span class="nav-icon">🥇</span>Žebříček</div>
+  </div>
+</div>
+</div>
+
+<!-- ─── START ─── -->
+<div class="screen" id="s-start">
+<div class="phone">
+  <div style="background:#0c140e; height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px;">
+    <span style="font-size:0.7rem; font-weight:600; color:#e8ede9;">9:41</span>
+    <span style="font-size:0.8rem; color:#e8ede9;">●●●</span>
+  </div>
+  <div class="phone-content">
+    <div class="card" style="margin-top:16px;">
+      <div class="card-label">Startovní čára</div>
+      <div class="card-title">Připrav se!</div>
+      <div class="card-desc">Zadej jméno a spusť časomíru.</div>
+
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Tvoje jméno / přezdívka</div>
+      <input class="input" type="text" placeholder="Např. Jan Novák nebo Rychlonožka">
+
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Město <span style="font-weight:400; opacity:0.5;">(nepovinné)</span></div>
+      <input class="input" type="text" placeholder="Např. Bílina, Praha…">
+
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Výstup</div>
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <button style="flex:1; padding:14px; background:var(--accent-dim); border:1.5px solid var(--accent); border-radius:10px; color:var(--accent); font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.05em; cursor:pointer; text-transform:uppercase;">🧍 Jdu sám</button>
+        <button style="flex:1; padding:14px; background:var(--surface2); border:1.5px solid rgba(255,255,255,0.06); border-radius:10px; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:700; letter-spacing:0.05em; cursor:pointer; text-transform:uppercase;">👥 Skupina</button>
+      </div>
+    </div>
+    <button style="display:block; width:calc(100% - 32px); margin:0 16px; padding:17px; background:var(--accent); color:#08100a; font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; border:none; border-radius:10px; cursor:pointer;">▲ Začít výstup</button>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item"><span class="nav-icon">⛰️</span>Bořen</div>
+    <div class="nav-item active"><span class="nav-icon">▲</span>Start</div>
+    <div class="nav-item"><span class="nav-icon">🪧</span>Nástěnka</div>
+    <div class="nav-item"><span class="nav-icon">🥇</span>Žebříček</div>
+  </div>
+</div>
+</div>
+
+<!-- ─── FINISH ─── -->
+<div class="screen" id="s-finish">
+<div class="phone">
+  <div style="background:#0c140e; height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px;">
+    <span style="font-size:0.7rem; font-weight:600; color:#e8ede9;">9:41</span>
+    <span style="font-size:0.8rem; color:#e8ede9;">●●●</span>
+  </div>
+  <div class="phone-content">
+    <div class="finish-hero">
+      <img src="/static/vrchol.png" alt="Vrchol">
+      <div class="finish-hero-overlay"></div>
+      <div class="finish-hero-content">
+        <div class="finish-badge">🥾 Vrchol zdolán!</div>
+        <div class="finish-name">Jan Novák</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-time-label">Čas výstupu</div>
+      <div class="result-time">34:21</div>
+      <div class="result-msg">Solidní výkon — na Bořen jako z vody. 👍</div>
+      <div class="result-count">Dobrá společnost — dnes tu bylo 23 lidí před tebou.</div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin:0 16px 12px;">
+      <button style="flex:1; padding:14px; background:transparent; border:1.5px solid rgba(255,255,255,0.06); border-radius:10px; color:#5a7060; font-family:'Barlow Condensed',sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">🏆 Žebříček</button>
+      <button style="flex:1; padding:14px; background:var(--accent); border:none; border-radius:10px; color:#08100a; font-family:'Barlow Condensed',sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">⛰️ Domů</button>
+    </div>
+
+    <!-- Statistiky -->
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:0 16px 12px;">
+      <div style="background:var(--surface); border-radius:10px; padding:12px 8px; text-align:center; border:1px solid rgba(255,255,255,0.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:800; color:var(--accent);">24</div>
+        <div style="font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:3px;">Dnes</div>
+      </div>
+      <div style="background:var(--surface); border-radius:10px; padding:12px 8px; text-align:center; border:1px solid rgba(255,255,255,0.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:800; color:var(--accent);">142</div>
+        <div style="font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:3px;">Týden</div>
+      </div>
+      <div style="background:var(--surface); border-radius:10px; padding:12px 8px; text-align:center; border:1px solid rgba(255,255,255,0.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:800; color:var(--accent);">891</div>
+        <div style="font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:3px;">Měsíc</div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item"><span class="nav-icon">⛰️</span>Bořen</div>
+    <div class="nav-item"><span class="nav-icon">▲</span>Start</div>
+    <div class="nav-item"><span class="nav-icon">🪧</span>Nástěnka</div>
+    <div class="nav-item"><span class="nav-icon">🥇</span>Žebříček</div>
+  </div>
+</div>
+</div>
+
+<!-- ─── LEADERBOARD ─── -->
+<div class="screen" id="s-leaderboard">
+<div class="phone">
+  <div style="background:#0c140e; height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px;">
+    <span style="font-size:0.7rem; font-weight:600; color:#e8ede9;">9:41</span>
+    <span style="font-size:0.8rem; color:#e8ede9;">●●●</span>
+  </div>
+  <div class="phone-content">
+    <div style="padding:20px 16px 8px;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; display:flex; align-items:center; gap:6px;"><span style="display:inline-block; width:14px; height:2px; background:var(--accent);"></span>Rychlostní</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.02em;">Žebříček</div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex; gap:6px; margin:0 16px 12px;">
+      <button style="padding:6px 14px; background:var(--accent); border:none; border-radius:4px; color:#08100a; font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer;">Nejrychlejší</button>
+      <button style="padding:6px 14px; background:transparent; border:1px solid rgba(255,255,255,0.06); border-radius:4px; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer;">Nejvíce výstupů</button>
+    </div>
+
+    <div class="card" style="margin-top:0;">
+      <div class="lb-row">
+        <div class="lb-rank top">1</div>
+        <div><div class="lb-name">Rychlonožka</div><div class="lb-city">Bílina</div></div>
+        <div class="lb-time">18:34</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank top">2</div>
+        <div><div class="lb-name">Martin K.</div><div class="lb-city">Teplice</div></div>
+        <div class="lb-time">21:12</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank top">3</div>
+        <div><div class="lb-name">Jana Nová</div><div class="lb-city">Praha</div></div>
+        <div class="lb-time">23:45</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">4</div>
+        <div><div class="lb-name">Petr Horák</div><div class="lb-city">Most</div></div>
+        <div class="lb-time">25:03</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">5</div>
+        <div><div class="lb-name">Tomáš B.</div><div class="lb-city">Ústí n. L.</div></div>
+        <div class="lb-time">26:18</div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item"><span class="nav-icon">⛰️</span>Bořen</div>
+    <div class="nav-item"><span class="nav-icon">▲</span>Start</div>
+    <div class="nav-item"><span class="nav-icon">🪧</span>Nástěnka</div>
+    <div class="nav-item active"><span class="nav-icon">🥇</span>Žebříček</div>
+  </div>
+</div>
+</div>
+
+<!-- ─── NÁSTĚNKA ─── -->
+<div class="screen" id="s-nastenka">
+<div class="phone">
+  <div style="background:#0c140e; height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px;">
+    <span style="font-size:0.7rem; font-weight:600; color:#e8ede9;">9:41</span>
+    <span style="font-size:0.8rem; color:#e8ede9;">●●●</span>
+  </div>
+  <div class="phone-content">
+    <div style="padding:20px 16px 8px; display:flex; justify-content:space-between; align-items:flex-end;">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; display:flex; align-items:center; gap:6px;"><span style="display:inline-block; width:14px; height:2px; background:var(--accent);"></span>Nástěnka</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.02em;">Vzkazy</div>
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">47 dobrodruhů zanechalo vzkaz</div>
+      </div>
+      <button style="padding:10px 14px; background:var(--accent); border:none; border-radius:8px; color:#08100a; font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">✏️ Přidat</button>
+    </div>
+
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin:8px 16px 10px;">Dnes</div>
+
+    <div style="margin:0 16px;">
+      <div class="wall-card">
+        <div class="wall-photo">🏔️</div>
+        <div class="wall-body">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="wall-name">Martina H.</div>
+              <div class="wall-meta">🥾 34m 21s · Teplice · dnes</div>
+            </div>
+            <div style="font-size:1.6rem;">😄</div>
+          </div>
+          <div class="wall-msg">"Výstup s dětma, zvládli jsme to na jednom dechu. Příště znovu!"</div>
+          <div class="wall-footer">
+            <button class="like-btn">❤️ 12</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin:4px 16px 10px;">Včera</div>
+
+    <div style="margin:0 16px;">
+      <div class="wall-card">
+        <div class="wall-body">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="wall-name">Pavel K.</div>
+              <div class="wall-meta">🥾 28m 07s · Most · včera</div>
+            </div>
+            <div style="font-size:1.6rem;">🤩</div>
+          </div>
+          <div class="wall-msg">"Osobák! Děkuju Bořen Trackeru za motivaci."</div>
+          <div class="wall-footer">
+            <button class="like-btn">❤️ 5</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item"><span class="nav-icon">⛰️</span>Bořen</div>
+    <div class="nav-item"><span class="nav-icon">▲</span>Start</div>
+    <div class="nav-item active"><span class="nav-icon">🪧</span>Nástěnka</div>
+    <div class="nav-item"><span class="nav-icon">🥇</span>Žebříček</div>
+  </div>
+</div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.stab').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

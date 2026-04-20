@@ -3,24 +3,35 @@
 {% block title %}Bořen – Start{% endblock %}
 {% block content %}
 
-<!-- Počasí + datum/čas -->
+<style>
+  .mood-btn {
+    font-size: 1.7rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+</style>
+
+<!-- Počasí -->
 <div id="weatherCard" style="margin:16px 16px 0; display:none;">
   <div class="card-sm" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-    <span id="wLeft" style="font-size:0.88rem;"></span>
-    <span style="font-size:0.82rem; color:var(--muted);">Západ slunce: <span id="wSunset"></span></span>
+    <span id="wLeft" style="font-size:0.85rem;"></span>
+    <span style="font-size:0.78rem; color:var(--muted);">Západ: <span id="wSunset"></span></span>
   </div>
 </div>
 
-<!-- Datum a čas -->
 <div style="margin:10px 16px 0; text-align:right;">
-  <span id="liveClock" style="font-size:0.8rem; color:var(--muted);"></span>
+  <span id="liveClock" style="font-size:0.72rem; color:var(--muted); letter-spacing:0.04em;"></span>
 </div>
 
 <!-- Start formulář -->
 <div class="card" id="startCard">
-  <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--green); margin-bottom:8px;">▲ STARTOVNÍ ČÁRA</p>
-  <h2 style="font-size:1.4rem; font-weight:800; margin-bottom:6px;">Připrav se!</h2>
-  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Zadej jméno a spusť časomíru.</p>
+  <div class="card-label">▲ Startovní čára</div>
+  <h2 style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:300; margin-bottom:6px; letter-spacing:-0.01em;">Připrav se</h2>
+  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:20px; line-height:1.6;">Zadej jméno a spusť časomíru.</p>
 
   <form id="startForm">
     <label for="name">Tvoje jméno / přezdívka</label>
@@ -30,66 +41,62 @@
     <input type="text" id="city" name="city" placeholder="Např. Bílina, Praha…" maxlength="60" autocomplete="off">
 
     <!-- Skupinový výstup -->
-    <div style="margin-top:14px;">
+    <div style="margin-top:16px;">
       <label>Výstup</label>
       <div style="display:flex; gap:8px;">
         <button type="button" id="btnSolo" onclick="setGroup(false)"
-          style="flex:1; padding:14px; background:rgba(90,138,58,0.2); border:2px solid var(--green); border-radius:12px; color:var(--green); font-size:0.9rem; font-weight:700; cursor:pointer;">
+          style="flex:1; padding:12px; background:var(--accent-dim); border:1px solid var(--border-a); border-radius:8px; color:var(--accent); font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:600; letter-spacing:0.04em; cursor:pointer;">
           🧍 Jdu sám
         </button>
         <button type="button" id="btnGroup" onclick="setGroup(true)"
-          style="flex:1; padding:14px; background:var(--card2); border:2px solid var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; font-weight:700; cursor:pointer;">
-          👥 Jdeme skupina
+          style="flex:1; padding:12px; background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:600; letter-spacing:0.04em; cursor:pointer;">
+          👥 Skupina
         </button>
       </div>
     </div>
 
     <div id="groupWrap" style="display:none; margin-top:12px;">
       <label>Počet lidí (včetně tebe)</label>
-      <div style="display:flex; align-items:center; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; overflow:hidden;">
+      <div style="display:flex; align-items:center; background:var(--surface2); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
         <button type="button" onclick="changeGroup(-1)"
-          style="width:52px; height:52px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">−</button>
-        <span id="groupCount" style="flex:1; text-align:center; font-size:1.4rem; font-weight:800;">2</span>
+          style="width:50px; height:50px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">−</button>
+        <span id="groupCount" style="flex:1; text-align:center; font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300;">2</span>
         <button type="button" onclick="changeGroup(1)"
-          style="width:52px; height:52px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">+</button>
+          style="width:50px; height:50px; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer;">+</button>
       </div>
     </div>
 
     <p class="error" id="error"></p>
-    <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:16px;">▲ Začít výstup</button>
+    <button type="submit" class="btn btn-green" id="submitBtn" style="margin-top:20px;">▲ Začít výstup</button>
   </form>
 </div>
 
 <!-- Aktivní výstup -->
 <div class="card" id="activeClimb" style="display:none; text-align:center; padding:28px 20px;">
-  <div style="font-size:2.5rem; margin-bottom:12px;">🥾</div>
-  <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Výstup probíhá</p>
-  <p id="activeName" style="font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:16px;"></p>
+  <div style="font-size:2.2rem; margin-bottom:12px;">🥾</div>
+  <div class="card-label" style="justify-content:center; margin-bottom:8px;">Výstup probíhá</div>
+  <p id="activeName" style="font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:300; color:var(--text); margin-bottom:20px;"></p>
 
-  <!-- Info: jak dokončit -->
-  <div style="background:var(--card2); border-radius:12px; padding:16px; margin-bottom:8px; text-align:left;">
-    <p style="font-size:0.9rem; font-weight:700; color:var(--text); margin-bottom:4px;">🏁 Jak dokončit výstup?</p>
-    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">Na vrcholu naskenuj QR kód na sloupu — výstup se automaticky uloží.</p>
+  <div style="background:var(--surface2); border-radius:8px; padding:14px; margin-bottom:10px; text-align:left; border:1px solid var(--border);">
+    <p style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:4px; letter-spacing:0.04em;">🏁 Jak dokončit výstup?</p>
+    <p style="font-size:0.82rem; color:var(--muted); line-height:1.6;">Na vrcholu naskenuj QR kód na sloupu — výstup se automaticky uloží.</p>
   </div>
 
-  <!-- Tip: zamknout mobil -->
-  <div style="background:rgba(90,138,58,0.12); border:1px solid rgba(90,138,58,0.25); border-radius:12px; padding:14px; margin-bottom:16px; text-align:left;">
-    <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">📵 Mobil můžeš zamknout a aplikaci zavřít. Stačí nahoře naskenovat QR kód a záznam se uloží.</p>
+  <div style="background:var(--accent-dim); border:1px solid var(--border-a); border-radius:8px; padding:13px; margin-bottom:20px; text-align:left;">
+    <p style="font-size:0.82rem; color:var(--muted); line-height:1.6;">📵 Mobil můžeš zamknout a aplikaci zavřít. Stačí nahoře naskenovat QR kód.</p>
   </div>
 
-  <!-- Jsem na vrcholu (záložní možnost) -->
   <button class="btn" id="summitBtn"
-    style="background:rgba(90,138,58,0.15); border:1.5px solid rgba(90,138,58,0.35); color:var(--green); font-size:0.88rem; padding:14px; margin-bottom:8px;">
+    style="background:var(--accent-dim); border:1px solid var(--border-a); color:var(--accent); font-size:0.85rem; padding:13px; margin-bottom:8px;">
     ⛰ Jsem na vrcholu
   </button>
-  <p style="font-size:0.72rem; color:var(--muted); margin-bottom:16px; line-height:1.4;">Záložní možnost pokud nejde naskenovat QR kód.<br>Doporučujeme použít QR kód na sloupu.</p>
+  <p style="font-size:0.72rem; color:var(--muted); margin-bottom:20px; line-height:1.5;">Záložní možnost pokud nejde naskenovat QR kód.</p>
 
-  <!-- Zrušit výstup -->
   <button class="btn" id="cancelBtn"
-    style="background:rgba(200,60,60,0.12); border:1.5px solid rgba(200,60,60,0.35); color:#e05a5a; font-size:0.85rem; padding:14px;">
+    style="background:rgba(180,80,80,0.08); border:1px solid rgba(180,80,80,0.2); color:#c07070; font-size:0.85rem; padding:13px;">
     ✕ Zrušit výstup
   </button>
-  <p style="font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.4;">Čas se nezapočítá a výstup se neuloží do žebříčku.</p>
+  <p style="font-size:0.72rem; color:var(--muted); margin-top:8px; line-height:1.4;">Čas se nezapočítá a výstup se neuloží.</p>
 </div>
 
 <script>
@@ -97,7 +104,6 @@
   const NAME_KEY    = 'boren_name';
   const CITY_KEY    = 'boren_city';
 
-  // Živé hodiny + datum
   function updateClock() {
     const now = new Date();
     const days = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
@@ -109,7 +115,6 @@
   updateClock();
   setInterval(updateClock, 10000);
 
-  // Počasí
   const WMO = {
     0:['☀️','Jasno'],1:['🌤️','Převážně jasno'],2:['⛅','Polojasno'],3:['☁️','Zataženo'],
     45:['🌫️','Mlha'],48:['🌫️','Mlha'],51:['🌦️','Mrholení'],53:['🌦️','Mrholení'],55:['🌧️','Mrholení'],
@@ -122,14 +127,13 @@
   fetch('https://api.open-meteo.com/v1/forecast?latitude=50.556&longitude=13.775&current=temperature_2m,weathercode&daily=sunset&timezone=Europe%2FPrague&forecast_days=1')
     .then(r=>r.json()).then(d=>{
       const [icon,desc] = WMO[d.current.weathercode]||['🌡️','Počasí'];
-      const temp   = Math.round(d.current.temperature_2m);
+      const temp = Math.round(d.current.temperature_2m);
       const sunset = d.daily.sunset[0].split('T')[1];
       document.getElementById('wLeft').textContent = `${icon} ${temp} °C · ${desc}`;
       document.getElementById('wSunset').textContent = sunset;
       document.getElementById('weatherCard').style.display = 'block';
     }).catch(()=>{});
 
-  // Předvyplnění jména/města
   const savedName = localStorage.getItem(NAME_KEY);
   const savedCity = localStorage.getItem(CITY_KEY);
   if (savedName) document.getElementById('name').value = savedName;
@@ -138,18 +142,17 @@
   const BANNED = ['pica','picus','píca','píčus','zmrd','kokot','kunda','pizda','negr','cigan','cigán','retard','debil','kurva','hovno','bastard'];
   function hasBanned(str) { const s = str.toLowerCase(); return BANNED.some(w => s.includes(w)); }
 
-  // Skupinový výstup
   let groupSize = 1;
   let bigGroupWarned = false;
 
   function setGroup(isGroup) {
     document.getElementById('groupWrap').style.display = isGroup ? 'block' : 'none';
-    document.getElementById('btnSolo').style.background  = isGroup ? 'var(--card2)' : 'rgba(90,138,58,0.2)';
-    document.getElementById('btnSolo').style.borderColor = isGroup ? 'var(--border)' : 'var(--green)';
-    document.getElementById('btnSolo').style.color       = isGroup ? 'var(--muted)'  : 'var(--green)';
-    document.getElementById('btnGroup').style.background  = isGroup ? 'rgba(90,138,58,0.2)' : 'var(--card2)';
-    document.getElementById('btnGroup').style.borderColor = isGroup ? 'var(--green)'  : 'var(--border)';
-    document.getElementById('btnGroup').style.color       = isGroup ? 'var(--green)'  : 'var(--muted)';
+    document.getElementById('btnSolo').style.background   = isGroup ? 'transparent' : 'var(--accent-dim)';
+    document.getElementById('btnSolo').style.borderColor  = isGroup ? 'var(--border)' : 'var(--border-a)';
+    document.getElementById('btnSolo').style.color        = isGroup ? 'var(--muted)'  : 'var(--accent)';
+    document.getElementById('btnGroup').style.background  = isGroup ? 'var(--accent-dim)' : 'transparent';
+    document.getElementById('btnGroup').style.borderColor = isGroup ? 'var(--border-a)' : 'var(--border)';
+    document.getElementById('btnGroup').style.color       = isGroup ? 'var(--accent)' : 'var(--muted)';
     groupSize = isGroup ? parseInt(document.getElementById('groupCount').textContent) : 1;
   }
 
@@ -173,7 +176,6 @@
   const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
   if (existing && existing.climb_id) showActive(existing);
 
-  // Zrušit výstup
   document.getElementById('cancelBtn').addEventListener('click', () => {
     if (confirm('Opravdu chceš zrušit výstup? Výsledek se nezaznamená do žebříčku.')) {
       localStorage.removeItem(STORAGE_KEY);
@@ -181,45 +183,30 @@
     }
   });
 
-  // Jsem na vrcholu (manuální dokončení)
   document.getElementById('summitBtn').addEventListener('click', async () => {
-    const ok = confirm(
-      'Opravdu jsi na vrcholu Bořenu?\n\nPotvrzením se výstup ukončí a čas zaznamená.\n\n' +
-      'Doporučujeme spíše naskenovat QR kód na sloupu — je to spolehlivější.'
-    );
+    const ok = confirm('Opravdu jsi na vrcholu Bořenu?\n\nPotvrzením se výstup ukončí a čas zaznamená.\n\nDoporučujeme spíše naskenovat QR kód na sloupu.');
     if (!ok) return;
-
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (!data || !data.climb_id) { alert('Nenalezen aktivní výstup.'); return; }
-
     if (data.start_time) {
       const elapsed = (Date.now() - new Date(data.start_time).getTime()) / 1000;
       if (elapsed < 600) {
-        const rychlik = confirm(
-          'Ty si teda rychlík! 😮\n\nOpravdu jsi nahoře na vrcholu, nebo ses ukliknul?\n\n' +
-          'Potvrď jen pokud jsi opravdu na Bořenu.'
-        );
+        const rychlik = confirm('Ty si teda rychlík! 😮\n\nOpravdu jsi nahoře na vrcholu, nebo ses ukliknul?\n\nPotvrď jen pokud jsi opravdu na Bořenu.');
         if (!rychlik) return;
       }
     }
-
     const body = new FormData();
     body.append('climb_id', data.climb_id);
-
     try {
       const res = await fetch('/api/finish', { method: 'POST', body });
-      if (res.ok) {
-        window.location.href = '/finish';
-      } else {
+      if (res.ok) { window.location.href = '/finish'; }
+      else {
         const err = await res.json().catch(() => ({}));
         alert(err.detail || 'Nepodařilo se uložit výstup.');
       }
-    } catch {
-      alert('Nepodařilo se spojit. Zkus naskenovat QR kód.');
-    }
+    } catch { alert('Nepodařilo se spojit. Zkus naskenovat QR kód.'); }
   });
 
-  // Start formulář
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value.trim();
@@ -227,16 +214,8 @@
     const err  = document.getElementById('error');
     const btn  = document.getElementById('submitBtn');
 
-    if (!name) {
-      err.textContent = 'Zadej prosím své jméno.';
-      err.style.display = 'block';
-      return;
-    }
-    if (hasBanned(name) || hasBanned(city)) {
-      err.textContent = 'Jméno obsahuje nevhodné slovo.';
-      err.style.display = 'block';
-      return;
-    }
+    if (!name) { err.textContent = 'Zadej prosím své jméno.'; err.style.display = 'block'; return; }
+    if (hasBanned(name) || hasBanned(city)) { err.textContent = 'Jméno obsahuje nevhodné slovo.'; err.style.display = 'block'; return; }
 
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Spouštím…';

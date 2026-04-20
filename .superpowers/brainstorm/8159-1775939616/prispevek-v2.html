@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Příspěvek B + Admin</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #111a11; --card: #1e2d1e; --card2: #253225;
+      --green: #5a8a3a; --text: #f0ede8; --muted: #8a9e85;
+      --border: rgba(255,255,255,0.07); --red: #e05a5a;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0e1a0e; color: var(--text);
+      padding: 20px 16px 60px;
+    }
+    h1 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+    .sub { color: var(--muted); font-size: 0.83rem; margin-bottom: 24px; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 28px; }
+    .tab {
+      padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted); font-size: 0.82rem;
+      font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .variant { display: none; }
+    .variant.active { display: block; }
+
+    .card {
+      background: var(--card); border-radius: 16px; padding: 20px;
+      border: 1px solid var(--border); margin-bottom: 14px; max-width: 420px;
+    }
+    .label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 6px;
+    }
+    h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+    p.desc { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 14px; }
+
+    label {
+      display: block; font-size: 0.82rem; font-weight: 600; color: var(--muted);
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .opt-label { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
+    input[type="text"], input[type="email"], textarea {
+      width: 100%; padding: 13px; font-size: 0.95rem;
+      background: var(--card2); border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text); outline: none; font-family: inherit;
+      margin-bottom: 12px;
+    }
+    textarea { resize: none; }
+    input:focus, textarea:focus { border-color: var(--green); }
+
+    .btn {
+      display: block; width: 100%; padding: 15px; font-size: 0.95rem;
+      font-weight: 700; border: none; border-radius: 14px; cursor: pointer; text-align: center;
+    }
+    .btn-green { background: var(--green); color: #fff; margin-top: 12px; }
+    .btn-outline { background: none; border: 1.5px solid var(--border); color: var(--muted); margin-top: 8px; }
+
+    .tier {
+      border: 2px solid var(--border); border-radius: 14px; padding: 16px;
+      margin-bottom: 10px; cursor: pointer; transition: all .15s;
+    }
+    .tier.selected { border-color: var(--green); background: rgba(90,138,58,0.12); }
+    .tier-price { font-size: 1.4rem; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+    .tier-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.4; }
+
+    .qr-box {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; padding: 18px; background: var(--card2);
+      border-radius: 16px; border: 1px solid var(--border); margin-bottom: 14px;
+    }
+    .qr-mock {
+      width: 150px; height: 150px; background: #fff; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; color: #333; font-weight: 700;
+    }
+    .qr-amount { font-size: 1.8rem; font-weight: 800; color: var(--green); }
+    .qr-bank { font-size: 0.78rem; color: var(--muted); text-align: center; line-height: 1.6; }
+
+    .info-box {
+      background: rgba(90,138,58,0.1); border: 1px solid rgba(90,138,58,0.2);
+      border-radius: 10px; padding: 12px 14px; font-size: 0.82rem;
+      color: var(--muted); line-height: 1.6; margin-bottom: 14px;
+    }
+    .info-box strong { color: var(--text); }
+
+    .warn-box {
+      background: rgba(255,200,50,0.08); border: 1px solid rgba(255,200,50,0.2);
+      border-radius: 10px; padding: 12px 14px; font-size: 0.82rem;
+      color: #c8a84b; line-height: 1.6; margin-bottom: 14px;
+    }
+
+    .sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    .photo-upload {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      background: var(--card2); border: 1.5px dashed var(--border);
+      border-radius: 12px; padding: 14px; color: var(--muted); font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+
+    /* Admin styly */
+    .admin-wrap { max-width: 680px; }
+    .admin-card {
+      background: var(--card); border-radius: 16px; padding: 20px;
+      border: 1px solid var(--border); margin-bottom: 14px;
+    }
+    .order-row {
+      background: var(--card2); border-radius: 12px; padding: 16px;
+      margin-bottom: 10px; border: 1px solid var(--border);
+    }
+    .order-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 12px; gap: 12px;
+    }
+    .order-name { font-weight: 800; font-size: 1rem; margin-bottom: 2px; }
+    .order-meta { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .order-photo {
+      width: 70px; height: 70px; border-radius: 8px; object-fit: cover;
+      background: #2a3a2a; flex-shrink: 0; display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem;
+    }
+    .checklist { display: flex; flex-direction: column; gap: 6px; }
+    .check-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--border); font-size: 0.85rem;
+      transition: all .15s; user-select: none;
+    }
+    .check-item.done {
+      border-color: rgba(90,138,58,0.4);
+      background: rgba(90,138,58,0.1);
+      color: var(--muted);
+    }
+    .check-box {
+      width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 0.7rem; transition: all .15s;
+    }
+    .check-item.done .check-box {
+      background: var(--green); border-color: var(--green); color: #fff;
+    }
+    .check-date { margin-left: auto; font-size: 0.72rem; color: var(--muted); }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700;
+    }
+    .badge-wait { background: rgba(255,200,50,0.15); color: #c8a84b; }
+    .badge-done { background: rgba(90,138,58,0.2); color: var(--green); }
+  </style>
+</head>
+<body>
+
+<h1>Příspěvek (varianta B) + Admin</h1>
+<p class="sub">Upravený formulář + náhled admin sekce pro správu fotek k tisku.</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('form', this)">Formulář (varianta B)</button>
+  <button class="tab" onclick="show('admin', this)">Admin — objednávky fotek</button>
+</div>
+
+<!-- FORMULÁŘ B -->
+<div class="variant active" id="var-form">
+  <div class="card">
+    <p class="label">💚 Podpoř projekt</p>
+    <h2>Přispěj na Bořen</h2>
+    <p class="desc">Pomáháš udržet aplikaci v chodu. Za příspěvek 200 Kč a více pošlu tvoji fotku z výstupu vytištěnou domů do schránky — tisk i poštovné za mě.</p>
+
+    <div class="tier selected" id="tier-50" onclick="selectTier(50)">
+      <div class="tier-price">50 Kč</div>
+      <div class="tier-desc">Příspěvek na provoz. Díky moc!</div>
+    </div>
+    <div class="tier" id="tier-200" onclick="selectTier(200)">
+      <div class="tier-price">200+ Kč</div>
+      <div class="tier-desc">Příspěvek + vytištěná fotka z Bořně poštou domů. Tisk i poštovné za mě.</div>
+    </div>
+
+    <div class="qr-box" style="margin-top:14px;">
+      <div class="qr-mock">[ QR KÓD ]</div>
+      <div class="qr-amount" id="qr-price">50 Kč</div>
+      <div class="qr-bank">Částku můžeš v bance libovolně upravit</div>
+    </div>
+
+    <div class="warn-box" id="note-hint" style="display:none;">
+      ⚠️ <strong>Důležité:</strong> Do poznámky k platbě napiš své jméno a příjmení (<strong id="hint-name">Jan Novák</strong>), abych věděl, ke komu fotku poslat.
+    </div>
+
+    <div id="btn-zaplatil" style="display:none;">
+      <button class="btn btn-green" onclick="showPhotoForm()">✅ Zaplatil jsem 200+ Kč — chci fotku</button>
+    </div>
+
+    <div id="photo-form" style="display:none;">
+      <hr class="sep">
+      <p class="label" style="margin-bottom:12px;">📷 Tvoje fotka a adresa</p>
+
+      <div class="info-box">
+        📬 Pošli fotku a adresu a já ji vytisknu a zašlu poštou. Nic ti neúčtuji.
+      </div>
+
+      <label>Fotka z Bořně</label>
+      <div class="photo-upload">📷 Nahrát fotku (JPG, PNG, max 20 MB)</div>
+
+      <label>Jméno a příjmení</label>
+      <input type="text" id="nameInput" placeholder="Jan Novák" oninput="updateHint(this.value)">
+
+      <label>Adresa doručení</label>
+      <textarea rows="3" placeholder="Ulice 12&#10;110 00 Praha 1"></textarea>
+
+      <label>E-mail <span class="opt-label">(nepovinný — jen pro případ nejasností)</span></label>
+      <input type="email" placeholder="jan@example.cz" style="margin-bottom:4px;">
+      <p style="font-size:0.72rem; color:var(--muted); margin-bottom:12px; line-height:1.4;">E-mail použiji pouze pokud budu potřebovat upřesnit adresu nebo fotku.</p>
+
+      <button class="btn btn-green">📬 Odeslat žádost o tisk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="variant" id="var-admin">
+  <div class="admin-wrap">
+    <div class="admin-card">
+      <p class="label" style="margin-bottom:14px;">🖨️ Objednávky fotek k tisku</p>
+
+      <!-- Objednávka 1 — čeká -->
+      <div class="order-row">
+        <div class="order-header">
+          <div>
+            <div class="order-name">Martina Horáková</div>
+            <div class="order-meta">
+              Přijato: 8. 4. 2026 · 200 Kč<br>
+              Adresa: Lipová 5, 415 01 Teplice<br>
+              E-mail: martina@gmail.com
+            </div>
+            <div style="margin-top:6px;"><span class="badge badge-wait">⏳ Čeká na tisk</span></div>
+          </div>
+          <div class="order-photo">🏔️</div>
+        </div>
+        <div class="checklist">
+          <div class="check-item" onclick="toggleCheck(this, 'Vytisknuto')">
+            <div class="check-box"></div>
+            <span>Vytisknuto</span>
+            <span class="check-date"></span>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 'Zabaleno')">
+            <div class="check-box"></div>
+            <span>Zabaleno</span>
+            <span class="check-date"></span>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 'Odesláno')">
+            <div class="check-box"></div>
+            <span>Odesláno na poštu</span>
+            <span class="check-date"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Objednávka 2 — hotovo -->
+      <div class="order-row">
+        <div class="order-header">
+          <div>
+            <div class="order-name">Pavel Krátký</div>
+            <div class="order-meta">
+              Přijato: 5. 4. 2026 · 250 Kč<br>
+              Adresa: Hlavní 88, 430 01 Chomutov<br>
+              E-mail: —
+            </div>
+            <div style="margin-top:6px;"><span class="badge badge-done">✅ Odesláno</span></div>
+          </div>
+          <div class="order-photo">🌄</div>
+        </div>
+        <div class="checklist">
+          <div class="check-item done">
+            <div class="check-box">✓</div>
+            <span>Vytisknuto</span>
+            <span class="check-date">5. 4. 2026</span>
+          </div>
+          <div class="check-item done">
+            <div class="check-box">✓</div>
+            <span>Zabaleno</span>
+            <span class="check-date">6. 4. 2026</span>
+          </div>
+          <div class="check-item done">
+            <div class="check-box">✓</div>
+            <span>Odesláno na poštu</span>
+            <span class="check-date">7. 4. 2026</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function show(v, el) {
+    document.querySelectorAll('.variant').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.getElementById('var-' + v).classList.add('active');
+    el.classList.add('active');
+  }
+
+  function selectTier(amount) {
+    document.getElementById('tier-50').classList.toggle('selected', amount === 50);
+    document.getElementById('tier-200').classList.toggle('selected', amount === 200);
+    document.getElementById('qr-price').textContent = amount === 200 ? '200+ Kč' : '50 Kč';
+    document.getElementById('btn-zaplatil').style.display = amount === 200 ? 'block' : 'none';
+    document.getElementById('note-hint').style.display = amount === 200 ? 'block' : 'none';
+    document.getElementById('photo-form').style.display = 'none';
+  }
+
+  function showPhotoForm() {
+    document.getElementById('photo-form').style.display = 'block';
+    document.getElementById('btn-zaplatil').style.display = 'none';
+  }
+
+  function updateHint(val) {
+    document.getElementById('hint-name').textContent = val || 'Jan Novák';
+  }
+
+  function toggleCheck(el, label) {
+    const isDone = el.classList.toggle('done');
+    const dateEl = el.querySelector('.check-date');
+    if (isDone) {
+      const now = new Date();
+      dateEl.textContent = now.toLocaleDateString('cs-CZ', {day:'numeric', month:'numeric', year:'numeric'});
+    } else {
+      dateEl.textContent = '';
+    }
+    // Aktualizuj badge
+    const row = el.closest('.order-row');
+    const checks = row.querySelectorAll('.check-item');
+    const allDone = [...checks].every(c => c.classList.contains('done'));
+    const badge = row.querySelector('.badge');
+    badge.className = 'badge ' + (allDone ? 'badge-done' : 'badge-wait');
+    badge.textContent = allDone ? '✅ Odesláno' : '⏳ Čeká na tisk';
+  }
+</script>
+</body>
+</html>
